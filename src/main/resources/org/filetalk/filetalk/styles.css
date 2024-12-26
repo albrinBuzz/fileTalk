@@ -1,0 +1,20 @@
+/* Estilo para el Label de Estado de Conexión */
+.statusLabel {
+    font-size: 14px;
+    font-weight: bold;
+    text-fill: white;
+    background-color: #4CAF50; /* Verde para 'Esperando Conexión' */
+    padding: 5px;
+    border-radius: 5px;
+    alignment: center;
+    margin-left: 10px;
+}
+
+/* Estilo cuando la conexión está establecida (Ejemplo) */
+.connectedLabel {
+    background-color: #2196F3; /* Azul para 'Conectado' */
+}
+
+.failedLabel {
+    background-color: #F44336; /* Rojo para 'Fallo de Conexión' */
+}

@@ -1,0 +1,139 @@
+Estructura Expandidida del Software: Cliente-Servidor para Aplicación de Chat y Transferencia de Archivos
+
+1. Servidor (Server)
+
+   A. Clase `Server`
+      - Responsabilidad: Acepta conexiones, gestiona los hilos para cada cliente y coordina la comunicación entre ellos.
+      - Métodos clave:
+        - startServer(int port): Inicia el servidor.
+        - stopServer(): Detiene el servidor.
+        - broadcastMessage(String message): Envía un mensaje a todos los clientes conectados.
+        - sendFileToAll(File file): Envía un archivo a todos los clientes conectados.
+      - Atributos clave:
+        - serverSocket: Socket que escucha por conexiones.
+        - clientHandlers: Lista de objetos ClientHandler que manejan las conexiones de los clientes.
+
+   B. Clase `ClientHandler`
+      - Responsabilidad: Maneja la comunicación con un cliente específico, procesando los mensajes de texto y archivos.
+      - Métodos clave:
+        - run(): Hilo que maneja la comunicación con el cliente.
+        - sendMessage(String message): Envía un mensaje de vuelta al cliente.
+        - sendFile(File file): Envía un archivo al cliente.
+        - handleFileTransfer(File file): Procesa la transferencia de archivos.
+        - close(): Cierra la conexión con el cliente.
+      - Atributos clave:
+        - clientSocket: Socket que conecta al cliente.
+        - clientName: Nombre del cliente.
+        - clientOutputStream: Flujo de salida para enviar datos.
+
+   C. Clase `UserManager`
+      - Responsabilidad: Gestiona los usuarios conectados, maneja autenticaciones y registros.
+      - Métodos clave:
+        - authenticateUser(String username, String password): Verifica las credenciales de un usuario.
+        - addUser(ClientHandler clientHandler): Añade un nuevo usuario conectado.
+        - removeUser(String username): Elimina un usuario de la lista de usuarios activos.
+        - getAllUsers(): Devuelve una lista de todos los usuarios conectados.
+      - Atributos clave:
+        - users: Lista de usuarios activos.
+
+   D. Clase `FileTransferManager`
+      - Responsabilidad: Maneja la lógica de transferencia de archivos.
+      - Métodos clave:
+        - receiveFile(InputStream inputStream, String fileName): Recibe un archivo y lo guarda.
+        - sendFile(OutputStream outputStream, String fileName): Envía un archivo a un cliente.
+        - storeFile(File file): Almacena un archivo.
+        - deleteFile(String fileName): Elimina un archivo.
+      - Atributos clave:
+        - storageDirectory: Directorio de almacenamiento de archivos.
+
+   E. Clase `ChatHistoryManager`
+      - Responsabilidad: Guarda y gestiona el historial de chat.
+      - Métodos clave:
+        - saveMessage(String message, String sender): Guarda un mensaje.
+        - getChatHistory(): Devuelve el historial.
+        - clearChatHistory(): Borra el historial.
+      - Atributos clave:
+        - chatHistory: Lista de mensajes.
+
+2. Cliente (Client)
+
+   A. Clase `Client`
+      - Responsabilidad: Conecta al servidor, gestiona los mensajes y archivos.
+      - Métodos clave:
+        - connect(String serverIP, int port): Conecta al servidor.
+        - disconnect(): Desconecta del servidor.
+        - sendMessage(String message): Envía mensaje.
+        - receiveMessage(String message): Recibe mensaje.
+        - sendFile(File file): Envía archivo.
+        - receiveFile(File file): Recibe archivo.
+      - Atributos clave:
+        - clientSocket: Socket de conexión.
+        - inputStream: Flujo de entrada.
+        - outputStream: Flujo de salida.
+
+   B. Clase `ChatUIController`
+      - Responsabilidad: Controla la interfaz de usuario del chat.
+      - Métodos clave:
+        - onSendMessageClick(): Evento de envío de mensaje.
+        - onConnectClick(): Evento de conexión.
+        - onFileTransferClick(): Evento de transferencia de archivo.
+        - onReceiveFile(File file): Recibe un archivo del servidor.
+      - Atributos clave:
+        - chatWindow: Componente GUI de chat.
+        - fileChooser: Componente para seleccionar archivo.
+
+   C. Clase `FileManager`
+      - Responsabilidad: Gestiona la selección y transferencia de archivos.
+      - Métodos clave:
+        - chooseFile(): Abre el cuadro de selección de archivos.
+        - compressAndSend(File file): Comprime y envía un archivo.
+        - receiveFile(String filePath): Recibe un archivo.
+      - Atributos clave:
+        - fileChooser: Componente GUI para elegir un archivo.
+        - storageDirectory: Directorio de almacenamiento.
+
+   D. Clase `ProgressMonitor`
+      - Responsabilidad: Monitorea el progreso de la transferencia de archivos.
+      - Métodos clave:
+        - updateProgress(int percentage): Actualiza la barra de progreso.
+        - onCancelTransfer(): Cancela la transferencia.
+        - showProgressDialog(): Muestra la ventana de progreso.
+      - Atributos clave:
+        - progressBar: Barra de progreso.
+        - cancelButton: Botón de cancelación.
+
+3. Comunicación y Transferencia de Datos
+
+   A. Clase `NetworkUtils`
+      - Métodos clave:
+        - sendData(Socket socket, byte[] data): Envía datos.
+        - receiveData(Socket socket): Recibe datos.
+        - sendFile(Socket socket, File file): Envía un archivo.
+        - receiveFile(Socket socket, String filePath): Recibe un archivo.
+        - closeConnection(Socket socket): Cierra la conexión.
+      - Atributos clave:
+        - socket: Socket utilizado para comunicación.
+        - inputStream: Flujo de entrada.
+        - outputStream: Flujo de salida.
+
+   B. Clase `FileCompressor`
+      - Métodos clave:
+        - compressFiles(List<File> files): Comprime archivos.
+        - decompressFile(File zipFile): Descomprime archivos.
+        - generateChecksum(File file): Genera el hash de un archivo.
+      - Atributos clave:
+        - compressionLevel: Nivel de compresión.
+        - zipFile: Archivo comprimido.
+
+4. Flujo de Datos
+
+   A. Flujo de Mensajes (Texto)
+      - Cliente -> Servidor: Enviar un mensaje de texto.
+      - Servidor -> Cliente: El servidor retransmite el mensaje.
+
+   B. Flujo de Archivos
+      - Cliente -> Servidor: Selección y envío de archivo.
+      - Servidor -> Cliente: Recepción y almacenamiento de archivo.
+
+Conclusión:
+Este diseño extiende y modulariza aún más la aplicación. La separación de responsabilidades, tanto para la gestión de usuarios, archivos, mensajes y la interfaz gráfica, permite mantener el sistema escalable y fácil de mantener.

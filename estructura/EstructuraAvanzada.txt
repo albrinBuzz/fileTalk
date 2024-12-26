@@ -1,0 +1,96 @@
+.
+├── breathOfLife.mp4
+├── el-senor-de-los-anillos-las-dos-torres-edicion-extendida-1.0.mp4
+├── FileTalk.jar
+├── genero.png
+├── jakarta.png
+├── L07_Probabilidades_vf_corregido.xlsx
+├── logs
+│   └── sqlbrowserfx.log
+├── mvnw
+├── mvnw.cmd
+├── out
+│   └── artifacts
+│       └── FileTalk_jar
+│           └── FileTalk.jar
+├── pom.xml
+├── recomedacionClases.txt
+├── recomendaciones.txt
+├── sqlbrowser.db
+├── sqlbrowserfx-fat.jar
+├── src
+│   ├── main
+│   │   ├── java
+│   │   │   ├── module-info.java
+│   │   │   └── org
+│   │   │       └── filetalk
+│   │   │           ├── client
+│   │   │           │   ├── ui                        # Interfaz de usuario del Cliente
+│   │   │           │   │   ├── components            # Componentes reusables (botones, paneles, etc.)
+│   │   │           │   │   ├── chat                   # Todo lo relacionado con el chat
+│   │   │           │   │   └── filetransfer           # UI de transferencia de archivos
+│   │   │           │   ├── network                    # Comunicación Cliente-Servidor
+│   │   │           │   │   ├── connection            # Manejo de la conexión cliente-servidor
+│   │   │           │   │   ├── protocols              # Protocolos de comunicación (HTTP, WebSocket, etc.)
+│   │   │           │   │   └── messagehandlers        # Manejo de los mensajes recibidos y enviados
+│   │   │           │   ├── service                    # Servicios del cliente
+│   │   │           │   │   ├── authentication        # Autenticación de usuario
+│   │   │           │   │   └── configuration         # Configuración del cliente
+│   │   │           │   ├── model                      # Modelos de datos (usuarios, mensajes, archivos)
+│   │   │           │   │   ├── usuario               # Datos del usuario
+│   │   │           │   │   ├── mensaje               # Estructura del mensaje
+│   │   │           │   │   └── archivo               # Representación de un archivo
+│   │   │           │   └── controller                 # Controladores para la interacción con la UI
+│   │   │           │       ├── ChatController.java
+│   │   │           │       └── FileTransferController.java
+│   │   │           ├── server
+│   │   │           │   ├── core                       # Lógica del servidor (gestión de conexiones, administración)
+│   │   │           │   │   ├── Server.java
+│   │   │           │   │   └── ClientManager.java      # Gestor de conexiones de clientes
+│   │   │           │   ├── network                    # Comunicación y protocolos del servidor
+│   │   │           │   │   ├── ConnectionManager.java # Gestión de las conexiones de los clientes
+│   │   │           │   │   ├── MessageDispatcher.java # Despachador de mensajes a los clientes
+│   │   │           │   │   └── Protocols.java         # Protocolos y estructura de los mensajes
+│   │   │           │   ├── service                    # Servicios del servidor
+│   │   │           │   │   ├── DatabaseService.java   # Servicios relacionados con la base de datos
+│   │   │           │   │   └── FileTransferService.java # Servicios de transferencia de archivos
+│   │   │           │   ├── handler                    # Manejo de comandos y acciones
+│   │   │           │   │   ├── CommandHandler.java    # Manejo de comandos del servidor
+│   │   │           │   │   └── EventListener.java     # Escucha de eventos de los clientes
+│   │   │           │   ├── model                      # Modelos de datos en el servidor (usuarios, estadísticas, etc.)
+│   │   │           │   │   ├── Usuario.java
+│   │   │           │   │   └── Statistics.java        # Estadísticas de uso y mensajes
+│   │   │           │   ├── utils                      # Utilidades del servidor (logger, helpers)
+│   │   │           │   │   ├── LoggerUtil.java
+│   │   │           │   │   └── ConfigLoader.java      # Cargar la configuración del servidor
+│   │   │           │   └── exceptions                 # Excepciones personalizadas
+│   │   │           │       └── ServerException.java
+│   │   │           ├── shared
+│   │   │           │   ├── communication             # Componentes comunes de comunicación cliente-servidor
+│   │   │           │   │   ├── Message.java          # Clase de base para mensajes
+│   │   │           │   │   ├── MessageType.java      # Tipos de mensajes que se pueden enviar
+│   │   │           │   │   └── CommunicationProtocol.java # Definición del protocolo de comunicación
+│   │   │           │   ├── utils                     # Utilidades compartidas entre cliente y servidor
+│   │   │           │   │   ├── EncryptionUtil.java   # Utilidades para cifrado/descifrado
+│   │   │           │   │   └── FileUtil.java         # Utilidades para manejo de archivos
+│   │   │           │   └── exceptions                # Excepciones comunes
+│   │   │           │       └── CommunicationException.java
+│   │   │           └── view                          # Componentes visuales de la aplicación
+│   │   │               ├── chat                      # Elementos UI del chat
+│   │   │               ├── filetransfer              # Elementos UI para la transferencia de archivos
+│   │   │               └── settings                   # UI para configuración
+│   │   └── resources
+│   │       ├── log4j2.xml
+│   │       ├── META-INF
+│   │       │   └── MANIFEST.MF
+│   │       └── org
+│   │           └── filetalk
+│   │               └── filetalk
+│   │                   ├── main-view.fxml
+│   │                   └── styles.css
+│   └── test
+│       ├── ServerTest.java
+│       ├── ClientTest.java
+│       ├── IntegrationTest.java
+│       └── MessageHandlerTest.java # Pruebas específicas del manejo de mensajes
+└── README.md

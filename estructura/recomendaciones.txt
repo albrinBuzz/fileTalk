@@ -1,0 +1,77 @@
+1. Mantén la Separación de Responsabilidades
+
+Es importante dividir la lógica de la interfaz de usuario (UI) de la lógica de negocio del programa. Puedes utilizar el patrón de diseño **MVC (Modelo-Vista-Controlador)** o **MVVM (Modelo-Vista-ViewModel)**. Aquí, la interfaz de usuario se mantiene lo más simple posible, solo mostrando información al usuario, mientras que toda la lógica y el procesamiento de datos se manejan fuera de la vista.
+
+- **Modelo**: Representa la lógica de negocio y los datos (por ejemplo, la conexión con el servidor, el envío de mensajes, la transferencia de archivos).
+- **Vista**: Se encarga de mostrar la interfaz de usuario y de manejar las interacciones con el usuario.
+- **Controlador o ViewModel**: Actúa como intermediario entre el Modelo y la Vista. Procesa las interacciones del usuario y actualiza la vista.
+
+**Ventaja**: Te permitirá tener una interfaz más limpia y mantenible, y las clases de lógica de negocio podrán ser reutilizadas o modificadas sin afectar a la UI.
+
+2. Manejo de Eventos de Forma Centralizada
+
+En tu interfaz gráfica, observamos que tienes varios botones (`btnEnviarMensaje`, `searchServerButton`, `connectButton`, etc.). En lugar de manejar eventos en cada uno de los controles de la UI de manera dispersa, es una buena práctica centralizar la lógica del manejo de eventos.
+
+- **Evita la repetición**: Si varios botones realizan tareas similares (por ejemplo, abrir un cuadro de diálogo o enviar datos), crea métodos comunes que puedas reutilizar.
+- **Delegación de Eventos**: Usa un controlador de eventos que pueda delegar la acción correspondiente en un único lugar (por ejemplo, un método general de manejo de botones) y que, dependiendo del botón presionado, ejecute la acción necesaria.
+
+**Ventaja**: Centralizar la lógica de eventos hace que el código sea más limpio y fácil de mantener, ya que los eventos se manejan desde un único punto.
+
+3. Validación y Manejo de Errores
+
+Tu aplicación tiene que manejar situaciones de error, como errores de conexión, mensajes no enviados correctamente, archivos no seleccionados, entre otros. Es importante tener un manejo de errores robusto.
+
+- **Validación de entradas**: Antes de intentar realizar una conexión o enviar un mensaje, valida las entradas del usuario (por ejemplo, asegúrate de que la IP y el puerto sean válidos, que los archivos seleccionados no estén vacíos, etc.).
+- **Excepciones controladas**: Usa bloques `try-catch` para manejar excepciones en las operaciones de red o de archivos. Al capturar excepciones, puedes mostrar mensajes de error más claros y evitar que la aplicación se caiga de manera inesperada.
+
+**Ventaja**: El manejo adecuado de errores previene problemas inesperados y mejora la experiencia del usuario.
+
+4. Usar Componentes Reutilizables y Modularidad
+
+Tu interfaz gráfica tiene varios elementos que podrían ser reutilizados, como botones para "Buscar Servidor", "Conectar", "Enviar", etc. Además, la lógica de conexión y de envío de mensajes puede ser modularizada.
+
+- **Crear clases reutilizables**: Por ejemplo, puedes crear un componente de botón personalizado que combine texto y funcionalidad de una manera más modular.
+- **Desacoplar la lógica**: Por ejemplo, la funcionalidad de la conexión al servidor y el envío de mensajes puede vivir en clases independientes (por ejemplo, `ConnectionManager`, `MessageSender`), lo que facilita la extensión y mantenimiento de la aplicación.
+
+**Ventaja**: Facilita la reutilización del código, haciendo que el proyecto sea más modular y escalable.
+
+5. Uso de Hilos para Operaciones Largas
+
+En tu aplicación, hay muchas operaciones que pueden bloquear la interfaz de usuario, como la conexión al servidor, la transferencia de archivos y el envío de mensajes. Para mantener la interfaz reactiva, es necesario usar hilos o tareas en segundo plano.
+
+- **ExecutorService**: Utiliza `ExecutorService` para manejar tareas en segundo plano sin bloquear la UI. Puedes usarlo para realizar tareas como la transferencia de archivos o la conexión al servidor.
+- **Actualizar la UI desde un hilo**: Cuando termines una operación en segundo plano (por ejemplo, la transferencia de un archivo), asegúrate de actualizar la UI en el hilo principal usando métodos como `Platform.runLater()` en JavaFX.
+
+**Ventaja**: Mejora la experiencia de usuario al mantener la aplicación responsiva incluso cuando realiza tareas largas.
+
+6. Separación de la Lógica de Transferencia de Archivos
+
+La transferencia de archivos es un proceso complejo que involucra múltiples pasos, como la selección de archivos, la compresión y la transferencia real. Es una buena práctica separar esta lógica en diferentes clases o módulos.
+
+- **Dividir la lógica**: Crea una clase o servicio específico para la transferencia de archivos que maneje la compresión, la segmentación de archivos y el monitoreo del progreso.
+- **Actualizar el progreso de la transferencia**: Utiliza una barra de progreso que se actualice conforme el archivo se transfiere. Si hay varios archivos, considera mostrar el progreso de cada uno de manera independiente.
+
+**Ventaja**: Hace que el código sea más modular, fácil de probar y mantener.
+
+7. Uso de Patrones de Diseño
+
+Existen algunos patrones de diseño que pueden mejorar la estructura y escalabilidad de tu aplicación. Algunos recomendados para este tipo de aplicaciones son:
+
+- **Singleton**: Para manejar la conexión al servidor de manera global y asegurarte de que solo haya una instancia de la conexión.
+- **Factory**: Si tienes varias maneras de crear objetos (por ejemplo, diferentes tipos de archivos a transferir), un patrón de fábrica puede facilitar la creación de objetos complejos.
+- **Observer**: Este patrón puede ser útil para mantener la interfaz de usuario actualizada con el progreso de las transferencias o el estado de la conexión al servidor.
+
+**Ventaja**: Usar patrones de diseño conocidos ayuda a estructurar tu código de manera más eficiente, haciendo que sea más fácil de mantener y entender.
+
+8. Pruebas y Cobertura de Código
+
+Finalmente, para garantizar que tu código sea robusto y no se introduzcan errores a medida que añades nuevas funcionalidades, es importante escribir pruebas unitarias y de integración. Puedes usar frameworks como **JUnit** o **TestFX** (para pruebas de UI en JavaFX).
+
+- **Pruebas unitarias**: Prueba las funciones individuales (como el manejo de mensajes, la conexión al servidor o la compresión de archivos).
+- **Pruebas de integración**: Asegúrate de que las distintas partes del sistema interactúan correctamente (por ejemplo, que la UI se actualice correctamente al recibir mensajes o archivos).
+
+**Ventaja**: Las pruebas aseguran que tu código funciona correctamente, lo que facilita el mantenimiento y la adición de nuevas funcionalidades sin introducir errores.
+
+---
+
+Siguiendo estas recomendaciones, podrás desarrollar una aplicación que no solo sea eficiente, sino también escalable y fácil de mantener en el futuro. Además, implementando buenas prácticas de diseño y modularización, estarás mejor preparado para agregar nuevas características o realizar mejoras sin comprometer la calidad del código.

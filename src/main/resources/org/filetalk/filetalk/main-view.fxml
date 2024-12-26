@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="861.0" prefWidth="1658.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.filetalk.filetalk.MainViewController">
+    <children>
+        <!-- Main messaging area -->
+        <VBox fx:id="vboxMain" layoutX="72.0" layoutY="151.0" prefHeight="320.0" prefWidth="960.0" spacing="10.0">
+            <children>
+                <ScrollPane fx:id="scrollMsj" prefHeight="424.0" prefWidth="1233.0">
+                    <content>
+                        <VBox fx:id="vboxMsj" prefHeight="342.0" prefWidth="950.0" />
+                    </content>
+                </ScrollPane>
+            </children>
+        </VBox>
+
+        <!-- Message input area -->
+        <HBox layoutX="70.0" layoutY="477.0" prefHeight="113.0" prefWidth="783.0" spacing="10.0">
+            <children>
+                <TextArea fx:id="txtMensajes" onDragEntered="#enviarMensaje" onMouseDragEntered="#enviarMensaje" prefHeight="133.0" prefWidth="562.0" />
+                <Button fx:id="btnEnvirMensaje" mnemonicParsing="false" onAction="#enviarMensaje" prefHeight="30.0" prefWidth="200.0" styleClass="mainButton" text="Enviar Mensaje" />
+            </children>
+        </HBox>
+
+        <!-- Conexión al servidor -->
+        <VBox layoutX="70.0" layoutY="20.0" prefHeight="131.0" prefWidth="600.0" spacing="15.0" styleClass="connectionBox">
+            <children>
+                <!-- TabPane for connection settings (Basic and Advanced) -->
+                <TabPane prefHeight="200.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
+                    <tabs>
+                        <!-- Basic Tab -->
+                        <Tab text="Conexión Básica">
+                            <content>
+                                <VBox prefHeight="87.0" prefWidth="600.0" spacing="10.0">
+                                    <!-- Opción de Conexión Automática -->
+                                    <HBox spacing="10.0">
+                                        <CheckBox fx:id="autoConnectCheckBox" disable="true" onAction="#toggleAutoConnect" text="Conexión Automática" underline="true" />
+                                    </HBox>
+
+                                    <!-- Conectar Button -->
+                                    <HBox alignment="center" prefHeight="38.0" prefWidth="600.0" spacing="10.0">
+                                        <Button fx:id="searchServerButton" onAction="#searchServer" prefWidth="150.0" styleClass="mainButton" text="Conectar" />
+                                        <Label fx:id="lblStatusConexion" styleClass="statusLabel" text="Esperando Conexion..." />
+                                    </HBox>
+                                </VBox>
+                            </content>
+                        </Tab>
+
+                        <!-- Advanced Tab -->
+                        <Tab text="Conexión Avanzada">
+                            <content>
+                                <VBox spacing="10.0">
+                                    <!-- IP y Puerto -->
+                                    <HBox spacing="10.0">
+                                        <Label styleClass="label" text="IP Servidor:" />
+                                        <ChoiceBox fx:id="ipComboBox" prefWidth="150.0" styleClass="choiceBox" />
+                                        <Label styleClass="label" text="Puerto:" />
+                                        <TextField fx:id="portField" prefWidth="70.0" promptText="Puerto" styleClass="textField" />
+                                    </HBox>
+
+                                    <!-- Advanced options -->
+                                    <HBox spacing="10.0">
+                                        <Button fx:id="connectButton" onAction="#connectToServer" prefWidth="150.0" styleClass="mainButton" text="Conectar con Avanzado" />
+                                        <Label prefHeight="18.0" prefWidth="129.0" text="Label" />
+                                    </HBox>
+
+                                    <!-- Conectar con opciones avanzadas -->
+                                    <HBox alignment="center" spacing="10.0" />
+                                </VBox>
+                            </content>
+                        </Tab>
+                    </tabs>
+                </TabPane>
+            </children>
+        </VBox>
+
+        <!-- Progress Bar for file upload -->
+        <VBox layoutX="70.0" layoutY="620.0" spacing="15.0" styleClass="progressBox" />
+
+        <!-- Host panel for connected hosts -->
+        <Pane fx:id="hostPane" layoutX="1050.0" layoutY="120.0" prefHeight="351.0" prefWidth="602.0" />
+
+        <!-- Configuration Button -->
+        <Button fx:id="configButton" layoutX="1500.0" layoutY="50.0" onAction="#openAdvancedSettings" styleClass="configButton" text="Configuración Avanzada" />
+      <Pane fx:id="transfersPane" layoutX="72.0" layoutY="590.0" prefHeight="267.0" prefWidth="562.0" />
+    </children>
+</Pane>

@@ -1,0 +1,64 @@
+.
+├── breathOfLife.mp4
+├── el-senor-de-los-anillos-las-dos-torres-edicion-extendida-1.0.mp4
+├── FileTalk.jar
+├── genero.png
+├── jakarta.png
+├── L07_Probabilidades_vf_corregido.xlsx
+├── logs
+│   └── sqlbrowserfx.log
+├── mvnw
+├── mvnw.cmd
+├── out
+│   └── artifacts
+│       └── FileTalk_jar
+│           └── FileTalk.jar
+├── pom.xml
+├── recomedacionClases.txt
+├── recomendaciones.txt
+├── sqlbrowser.db
+├── sqlbrowserfx-fat.jar
+├── src
+│   ├── main
+│   │   ├── java
+│   │   │   ├── module-info.java
+│   │   │   └── org
+│   │   │       └── filetalk
+│   │   │           ├── client
+│   │   │           │   ├── ui                # UI del Cliente (JavaFX/Swing)
+│   │   │           │   ├── network            # Comunicación Cliente-Servidor
+│   │   │           │   ├── service            # Servicios del cliente (autenticación, configuración)
+│   │   │           │   ├── model              # Modelos de datos (mensaje, usuario, etc.)
+│   │   │           │   └── controller         # Lógica de control del cliente (para manejar eventos)
+│   │   │           │
+│   │   │           ├── server
+│   │   │           │   ├── core               # Lógica principal del servidor
+│   │   │           │   ├── network            # Manejo de conexiones de red, mensajes
+│   │   │           │   ├── service            # Servicios del servidor (base de datos, persistencia, etc.)
+│   │   │           │   ├── handler            # Manejadores de eventos (comandos, notificaciones)
+│   │   │           │   ├── model              # Modelos de datos del servidor (usuario, estadísticas, etc.)
+│   │   │           │   └── utils              # Utilidades del servidor (logger, helpers)
+│   │   │           │
+│   │   │           ├── shared
+│   │   │           │   ├── communication      # Comunicación entre cliente y servidor (mensajes, tipos de datos)
+│   │   │           │   ├── utils              # Utilidades generales que comparten cliente y servidor (logs, configuraciones)
+│   │   │           │   └── exceptions         # Excepciones personalizadas
+│   │   │           │
+│   │   │           └── view                    # Vista de la aplicación (si se usa patrón MVC o similar)
+│   │   │               ├── chat                # Componentes específicos para la UI del chat
+│   │   │               ├── filetransfer        # Componentes específicos para la UI de transferencia de archivos
+│   │   │               └── settings             # Paneles para configuración y ajustes
+│   │   └── resources
+│   │       ├── log4j2.xml
+│   │       ├── META-INF
+│   │       │   └── MANIFEST.MF
+│   │       └── org
+│   │           └── filetalk
+│   │               └── filetalk
+│   │                   ├── main-view.fxml
+│   │                   └── styles.css
+│   └── test
+│       ├── ServerTest.java
+│       ├── ClientTest.java
+│       └── IntegrationTest.java
+└── README.md
