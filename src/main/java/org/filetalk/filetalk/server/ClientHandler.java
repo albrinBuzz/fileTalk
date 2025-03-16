@@ -146,7 +146,7 @@ public class ClientHandler implements Runnable {
         if (parts.length == 3) {
             String recipientNick = parts[1];
             String dmMessage = parts[2];
-            ClientHandler recipient = findClientByNickname(recipientNick);
+            ClientHandler recipient = findClientByIp(recipientNick);
             if (recipient != null) {
                 recipient.sendComunicacion(new Mensaje( nick + " -> " + dmMessage,CommunicationType.MESSAGE));
             } else {
@@ -157,9 +157,9 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private ClientHandler findClientByNickname(String nickname) {
+    private ClientHandler findClientByIp(String ip) {
         for (ClientHandler client : server.getClientPool()) {
-            if (client.nick.equals(nickname)) {
+            if (client.ip.equals(ip)) {
                 return client;
             }
         }
@@ -174,7 +174,7 @@ public class ClientHandler implements Runnable {
             String recipientNick = parts[1];
             //String filePath = parts[2];
 
-            ClientHandler recipient = findClientByNickname(recipientNick);
+            ClientHandler recipient = findClientByIp(recipientNick);
 
                 LOGGER.info("Enviando archivo a: {}", recipientNick);
                 LOGGER.info("Ip: {}", recipient.ip.substring(1));

@@ -21,12 +21,14 @@ import javafx.stage.Stage;
 import org.filetalk.filetalk.model.Observers.Observer;
 import org.filetalk.filetalk.Client.Client;
 import org.filetalk.filetalk.view.hosts.HostsPanel;
+import org.filetalk.filetalk.view.servidor.ServerInfoPane;
 import org.filetalk.filetalk.view.tranferens.TransferencesPanel;
 
 
 import java.io.*;
 import java.net.Socket;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -42,6 +44,8 @@ public class MainViewController implements Initializable, Observer {
     public Label connectionStatus;
     public Label lblStatusConexion;
     public Pane transfersPane;
+    public Label lblConexion;
+    public Pane serverPane;
     @FXML
     private ChoiceBox<String> ipComboBox;
     private VBox messagesBox;
@@ -179,10 +183,23 @@ public class MainViewController implements Initializable, Observer {
 
         transfersPane.getChildren().add(panelTransfers);
 
+        try {
+            ServerInfoPane serverInfoPane = new ServerInfoPane();
 
+            serverPane.widthProperty().addListener((observable, oldValue, newValue) -> {
 
+                serverInfoPane.setPrefWidth(newValue.doubleValue());
+            });
 
+            serverPane.heightProperty().addListener((observable, oldValue, newValue) -> {
+                serverInfoPane.setPrefHeight(newValue.doubleValue());
+            });
 
+            serverPane.getChildren().add(serverInfoPane);
+
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
 
 
         client.addObserver(this);
@@ -634,8 +651,8 @@ public class MainViewController implements Initializable, Observer {
             connectButton.setDisable(true);
             searchServerButton.setDisable(true);
 
-            lblStatusConexion.setText("Conectado");
-
+            //lblStatusConexion.setText("Conectado");
+            lblConexion.setText("Conectado");
 
 
 
@@ -869,5 +886,20 @@ public class MainViewController implements Initializable, Observer {
     }
 
     public void toggleAutoConnect(ActionEvent actionEvent) {
+    }
+
+    public void startServer(ActionEvent actionEvent) {
+    }
+
+    public void stopServer(ActionEvent actionEvent) {
+    }
+
+    public void restartServer(ActionEvent actionEvent) {
+    }
+
+    public void viewServerLogs(ActionEvent actionEvent) {
+    }
+
+    public void openServerConfig(ActionEvent actionEvent) {
     }
 }

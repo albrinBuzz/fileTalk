@@ -54,7 +54,7 @@ public class TransferenceControlPanel extends Pane {
         // Establecer el color de la etiqueta "modeLabel"
         this.setModeColor();
 
-        this.modeLabel.setPrefSize(70, 20);
+        this.modeLabel.setPrefSize(90, 1);
         this.titleAddrLabel.setPrefSize(90, 20);
         this.addrLabel.setPrefSize(120, 20);
         this.fileNameLabel.setPrefSize(150, 20);
@@ -172,7 +172,10 @@ public class TransferenceControlPanel extends Pane {
         // Desactivar el botón "Detener" y activar el botón "Continuar"
         this.stopButton.setDisable(true);
         this.continueButton.setDisable(false);
-
+        this.modeLabel.setText("[ Pausado ]");
+        System.out.println("Pausado");
+        mode="paused";
+        setModeColor();
         transferManager.pause();
     }
 
@@ -181,6 +184,10 @@ public class TransferenceControlPanel extends Pane {
         if (this.isPaused) {
             // Lógica para continuar con la transferencia
             this.isPaused = false;  // Desmarcar como pausado
+            this.modeLabel.setText("[ Enviando ]");
+            System.out.println("Pausado");
+            mode="send";
+            setModeColor();
 
             // Reactivar el botón "Detener" y desactivar el botón "Continuar"
             this.stopButton.setDisable(false);

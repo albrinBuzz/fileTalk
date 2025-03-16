@@ -1,0 +1,39 @@
+[CMake]
+Build Directory Count=1
+Current Build Directory Index-Sistema anfitrión=0
+
+[CMake][CMake Build Directory 0]
+Build Directory Path=/home/cris/cc++/FileTalk/build
+Build Type=Debug
+CMake Binary=/usr/bin/cmake
+CMake Executable=/usr/bin/cmake
+Environment Profile=
+Extra Arguments=
+Install Directory=/usr/local
+Runtime=Sistema anfitrión
+
+[Launch]
+Launch Configurations=Launch Configuration 0
+
+[Launch][Launch Configuration 0]
+Configured Launch Modes=execute
+Configured Launchers=scriptAppLauncher
+Name=Nuevo lanzador de Aplicación de script
+Type=Script Application
+
+[Launch][Launch Configuration 0][Data]
+Arguments=
+EnvironmentGroup=
+Executable=
+Execute on Remote Host=false
+Interpreter=
+Output Filtering Mode=2
+Remote Host=
+Run current file=true
+Working Directory=
+
+[Project]
+VersionControlSupport=
+
+[SourceFileTemplates]
+LastUsedTemplate=/home/cris/.local/share/kdevfiletemplates/template_descriptions/cpp_basic.desktop

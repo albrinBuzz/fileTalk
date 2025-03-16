@@ -51,6 +51,30 @@ public class Server {
         // Tarea programada para hacer broadcast del estado del servidor cada 1 segundo
         scheduler.scheduleAtFixedRate(this::brocastServer, 0, 1, TimeUnit.SECONDS);
 
+
+        // Iniciar el socket del servidor para aceptar conexiones de clientes
+        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                ClientHandler clientHandler = new ClientHandler(clientSocket, this);
+                clientPool.add(clientHandler);
+
+                new Thread(clientHandler).start(); // Iniciar un nuevo hilo para manejar al cliente
+
+            }
+        } catch (IOException e) {
+            System.out.println("Error con el servidor: " + e.getMessage());
+        }
+    }
+
+
+    public  void starServerCLI(){
+        serverStartTime = System.currentTimeMillis();
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+        // Tarea programada para hacer broadcast del estado del servidor cada 1 segundo
+        scheduler.scheduleAtFixedRate(this::brocastServer, 0, 1, TimeUnit.SECONDS);
+
         // Iniciar la interfaz administrativa en un hilo separado
         new Thread(this::administrativeInterface).start();
 
@@ -184,7 +208,7 @@ public class Server {
 
         while (true) {
             //clearConsole();
-            //serverInfo();
+            serverInfo();
             try {
                 String serverStatusV1 = constructServerStatusV1(spinner[index]);
                 System.out.print("\r" + serverStatusV1);

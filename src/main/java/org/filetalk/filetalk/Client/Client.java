@@ -8,10 +8,7 @@ import javafx.scene.control.TextArea;
 import org.filetalk.filetalk.model.Observers.HostsObserver;
 import org.filetalk.filetalk.model.Observers.TransferencesObserver;
 import org.filetalk.filetalk.model.Observers.Observer;
-import org.filetalk.filetalk.shared.ClientListMessage;
-import org.filetalk.filetalk.shared.Communication;
-import org.filetalk.filetalk.shared.CommunicationType;
-import org.filetalk.filetalk.shared.Mensaje;
+import org.filetalk.filetalk.shared.*;
 import org.filetalk.filetalk.utils.FileTransferHandler;
 
 import java.io.*;
@@ -86,7 +83,7 @@ public class Client {
         DatagramSocket socket = new DatagramSocket(9092);
         byte[] buffer = new byte[1024];
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-
+       
         socket.receive(packet); // Recibe el mensaje de broadcast
         String received = new String(packet.getData(), 0, packet.getLength());
         String[] argsServer = received.split("\\[|]");
@@ -350,7 +347,7 @@ public class Client {
                     if (bytesRead == -1) break;
                     fileOutputStream.write(buffer, 0, bytesRead);
                     totalBytesRead += bytesRead;
-                    transferencesObserver.updateTransference("receive", recipientNick, (int)((totalBytesRead * 100) / fileSize));
+                    transferencesObserver.updateTransference(FileTransferState.RECEIVING, recipientNick, (int)((totalBytesRead * 100) / fileSize));
 
                 }
 

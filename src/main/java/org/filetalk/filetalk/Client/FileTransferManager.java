@@ -3,6 +3,7 @@ package org.filetalk.filetalk.Client;
 import org.filetalk.filetalk.model.Observers.TransferencesObserver;
 import org.filetalk.filetalk.server.ClientHandler;
 import org.filetalk.filetalk.shared.CommunicationType;
+import org.filetalk.filetalk.shared.FileTransferState;
 import org.filetalk.filetalk.shared.Mensaje;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,18 +58,19 @@ public class FileTransferManager {
                     //totalBytesReaded<totalFileSize;
 
                 synchronized (pauseLock) {
-                    bytesRead = fileInputStream.read(buffer);
+
                     if (paused){
                         logInfo("pausando el envio");
                         pauseLock.wait();
 
                     }else {
+                        bytesRead = fileInputStream.read(buffer);
                         salida.write(buffer, 0, bytesRead);
                         salida.flush();
                         totalBytesReaded += bytesRead;
                         //transferencesObserver.updateTransference("sending", recipientNick, (int)((totalBytesReaded * 100) / totalFileSize));
                         double totalMB = totalBytesReaded / 1_048_576.0;  // Convertir bytes a MB
-                        transferencesObserver.updateTransference("send", recipientNick, (int) ((totalBytesReaded * 100) / totalFileSize));
+                        transferencesObserver.updateTransference(FileTransferState.SENDING, recipientNick, (int) ((totalBytesReaded * 100) / totalFileSize));
                         logInfo("Bytes leido " + bytesRead/1_048_576.0 + " MB");
                         logInfo("Enviando " + totalMB + " MB enviados.");
 
@@ -116,7 +118,7 @@ public class FileTransferManager {
                     fileOutputStream.write(buffer, 0, bytesRead);
                     totalBytesRead += bytesRead;
                     double totalMB = totalBytesRead / 1_048_576.0;
-                    transferencesObserver.updateTransference("receive", recipientNick, (int)((totalBytesRead * 100) / fileSize));
+                    transferencesObserver.updateTransference(FileTransferState.RECEIVING, recipientNick, (int)((totalBytesRead * 100) / fileSize));
                     logInfo("Recibiendo " + totalMB + " MB Recibidos.");
                 }
 

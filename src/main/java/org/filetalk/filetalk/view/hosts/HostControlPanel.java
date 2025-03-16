@@ -95,7 +95,7 @@ public class HostControlPanel extends Pane {
 
             try {
                 //System.out.println("/file " + host.getNick() + " " + selectedFile.getAbsolutePath());
-                client.handleFileTransfer("/file " + host.getNick() + " " + selectedFile.getAbsolutePath());
+                client.handleFileTransfer("/file " + host.getAddress() + " " + selectedFile.getAbsolutePath());
 
                 long time=90;
                 int minutes = (int) (time / 60);

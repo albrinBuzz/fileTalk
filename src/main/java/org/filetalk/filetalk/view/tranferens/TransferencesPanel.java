@@ -6,10 +6,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.control.ScrollPane;
 import org.filetalk.filetalk.Client.FileTransferManager;
 import org.filetalk.filetalk.model.Observers.TransferencesObserver;
+import org.filetalk.filetalk.shared.FileTransferState;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -81,10 +81,10 @@ public class TransferencesPanel extends ScrollPane implements TransferencesObser
     }
 
     @Override
-    public void updateTransference(String mode, String addr, int progress) {
-        if (mode.equals(SEND_MODE)) {
+    public void updateTransference(FileTransferState mode, String addr, int progress) {
+        if (mode==FileTransferState.SENDING) {
             this.clientTransferencesMap.get(addr).updateProgressBar(progress);
-        } else if (mode.equals(RECEIVE_MODE)) {
+        } else if (mode==FileTransferState.RECEIVING) {
             this.serverTransferencesMap.get(addr).updateProgressBar(progress);
         }
     }
