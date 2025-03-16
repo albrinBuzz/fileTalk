@@ -1,19 +1,15 @@
 #include <iostream>
 #include "src/models/socket/socket_factory.h"
 #include "src/models/server/servidor.h"
+#include "src/models/server/clienthandler.h"
 
+#include "src/models/socket/unixsocket.h"
 
-int main(int argc, char** argv) {
+int main() {
 
+    Servidor server;
 
-    std::cout << "Creando el servidor..." << std::endl;
-
-
-    Servidor servidor;
-
-
-    servidor.startServer();
-
+    server.startServer();
 
 
     return 0;

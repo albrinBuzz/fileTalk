@@ -56,6 +56,8 @@ public:
 
     void shutDown();
 
+    std::string bytesToString(const std::vector<uint8_t>& bytes);
+
 
     /**
      * Destructor

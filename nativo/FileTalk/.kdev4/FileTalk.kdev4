@@ -1,3 +1,6 @@
+[Buildset]
+BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x01\x00\x00\x00\x10\x00F\x00i\x00l\x00e\x00T\x00a\x00l\x00k)
+
 [CMake]
 Build Directory Count=1
 Current Build Directory Index-Sistema anfitrión=0
@@ -13,7 +16,7 @@ Install Directory=/usr/local
 Runtime=Sistema anfitrión
 
 [Launch]
-Launch Configurations=Launch Configuration 0
+Launch Configurations=Launch Configuration 0,Launch Configuration 1
 
 [Launch][Launch Configuration 0]
 Configured Launch Modes=execute
@@ -22,6 +25,23 @@ Name=Nuevo lanzador de Aplicación de script
 Type=Script Application
 
 [Launch][Launch Configuration 0][Data]
+Arguments=
+EnvironmentGroup=
+Executable=
+Execute on Remote Host=false
+Interpreter=
+Output Filtering Mode=2
+Remote Host=
+Run current file=true
+Working Directory=
+
+[Launch][Launch Configuration 1]
+Configured Launch Modes=execute
+Configured Launchers=scriptAppLauncher
+Name=Nuevo lanzador de Aplicación de script (2)
+Type=Script Application
+
+[Launch][Launch Configuration 1][Data]
 Arguments=
 EnvironmentGroup=
 Executable=

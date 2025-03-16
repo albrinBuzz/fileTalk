@@ -27,6 +27,25 @@ void ClientHandler::operator()()
         std::cout << "Manejando al cliente con dirección: "
         << clienteSocket->getRemoteAddress() << std::endl;
 
+          try{
+
+            while(true){
+
+
+                std::vector<uint8_t> mensajeBt = clienteSocket->receiveBytes(1024);
+
+                std::string mesajeStr(mensajeBt.begin(), mensajeBt.end());
+
+                    std::cout << "Mensaje  del cliente: " << mesajeStr << std::endl;
+
+            }
+
+
+        }catch(const std::exception& e){
+                std::cerr << "Error manejando cliente: " << e.what() << std::endl;
+        }
+
+
 
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
@@ -35,7 +54,9 @@ void ClientHandler::operator()()
 
 }
 
-
+std::string bytesToString(const std::vector<uint8_t>& bytes) {
+    return std::string(reinterpret_cast<const char*>(bytes.data()), bytes.size());
+}
 
 ClientHandler::ClientHandler()
 {
