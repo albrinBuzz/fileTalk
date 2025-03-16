@@ -52,7 +52,7 @@ public class Server {
         scheduler.scheduleAtFixedRate(this::brocastServer, 0, 1, TimeUnit.SECONDS);
 
         // Iniciar la interfaz administrativa en un hilo separado
-        //new Thread(this::administrativeInterface).start();
+        new Thread(this::administrativeInterface).start();
 
         // Iniciar el socket del servidor para aceptar conexiones de clientes
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
