@@ -125,7 +125,7 @@ public class MainViewController implements Initializable, Observer {
         ipComboBox.getItems().addAll(
                 "192.168.1.10",
                 "192.168.100.5",
-                "192.168.1.12",
+                "10.220.57.99",
                 "192.168.1.13"
         );
 

@@ -70,10 +70,10 @@ public class Server {
 
     public  void starServerCLI(){
         serverStartTime = System.currentTimeMillis();
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        //ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
         // Tarea programada para hacer broadcast del estado del servidor cada 1 segundo
-        scheduler.scheduleAtFixedRate(this::brocastServer, 0, 1, TimeUnit.SECONDS);
+        //scheduler.scheduleAtFixedRate(this::brocastServer, 0, 1, TimeUnit.SECONDS);
 
         // Iniciar la interfaz administrativa en un hilo separado
         new Thread(this::administrativeInterface).start();
