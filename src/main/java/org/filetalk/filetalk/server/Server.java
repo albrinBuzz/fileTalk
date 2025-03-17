@@ -190,7 +190,7 @@ public class Server {
         }).start();
 
         // Espera de comandos administrativos en la consola
-        while (true) {
+        /*while (true) {
             System.out.println(ANSI_YELLOW + "Ingresa un comando (exit):" + ANSI_RESET);
             String command = scanner.nextLine();
             if (command.equalsIgnoreCase("exit")) {
@@ -200,7 +200,7 @@ public class Server {
             } else {
                 System.out.println(ANSI_RED + "Comando no reconocido." + ANSI_RESET);
             }
-        }
+        }*/
     }
 
     // Método para mostrar el estado del servidor con animación
