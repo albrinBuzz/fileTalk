@@ -82,10 +82,12 @@ public class Server {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
-                ClientHandler clientHandler = new ClientHandler(clientSocket, this);
-                clientPool.add(clientHandler);
+                System.out.println("Cliente aceptado desde: "+clientSocket.getInetAddress().toString());
 
-                new Thread(clientHandler).start(); // Iniciar un nuevo hilo para manejar al cliente
+                //ClientHandler clientHandler = new ClientHandler(clientSocket, this);
+                //clientPool.add(clientHandler);
+
+                //new Thread(clientHandler).start(); // Iniciar un nuevo hilo para manejar al cliente
 
             }
         } catch (IOException e) {
