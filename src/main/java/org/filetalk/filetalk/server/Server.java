@@ -5,6 +5,9 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
 import java.net.*;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -235,7 +238,8 @@ public class Server {
         String osVersion = System.getProperty("os.version");
         String javaVersion = System.getProperty("java.version");
         int availableProcessors = Runtime.getRuntime().availableProcessors();
-        String ip= InetAddress.getLocalHost().getHostAddress();
+        //String ip= InetAddress.getLocalHost().getHostAddress();
+        String ip= getPublicIP();
         long maxMemory = Runtime.getRuntime().maxMemory() / (1024 * 1024 * 1024);
         double maxMemoryMB = Runtime.getRuntime().maxMemory() / (1024.0 * 1024.0);
         String maxMem;
@@ -334,6 +338,33 @@ public class Server {
             }
         } catch (IOException | InterruptedException e) {
             System.out.println(ANSI_RED + "Error limpiando la consola." + ANSI_RESET);
+        }
+    }
+
+
+    public String getPublicIP(){
+        try {
+            // URL del servicio que devuelve la IP pública
+            String url = "https://api.ipify.org"; // También puedes usar "https://checkip.amazonaws.com" o "https://icanhazip.com"
+
+            // Crear el cliente HTTP
+            HttpClient client = HttpClient.newHttpClient();
+
+            // Crear la solicitud GET
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .build();
+
+            // Enviar la solicitud y obtener la respuesta
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // Mostrar la IP pública
+            System.out.println("IP pública: " + response.body());
+            return response.body();
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            return  "";
         }
     }
 
