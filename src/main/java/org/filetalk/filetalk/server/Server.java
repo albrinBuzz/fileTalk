@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 public class Server {
     // Configuración del puerto y otras variables del servidor
-    private final int PORT = 9090;
+    private final int PORT = 10000;
     static final ConcurrentHashMap<Socket, ClientInfo> clients = new ConcurrentHashMap<>();
     private final Logger LOGGER = LoggerFactory.getLogger(Server.class);
     private final List<ClientHandler> clientPool = new ArrayList<>();
