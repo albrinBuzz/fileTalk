@@ -7,7 +7,7 @@ WORKDIR /app
 # Copiar el archivo .jar desde tu máquina local al contenedor
 COPY ./FileTalk.jar /app/FileTalk.jar
 
-EXPOSE 10000
+EXPOSE 9090
 
 # Comando por defecto para ejecutar el archivo .jar con Java
 CMD ["java", "-jar", "/app/FileTalk.jar"]
