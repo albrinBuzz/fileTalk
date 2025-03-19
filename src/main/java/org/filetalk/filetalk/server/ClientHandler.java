@@ -43,6 +43,7 @@ public class ClientHandler implements Runnable {
 
         try {
 
+            System.out.println("Cliente aceptado desde: "+clientSocket.getInetAddress().toString());
             entrada = new ObjectInputStream(clientSocket.getInputStream());
             salida = new ObjectOutputStream(clientSocket.getOutputStream());
 
