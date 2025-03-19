@@ -212,7 +212,7 @@ public class Server {
         int index = 0;
 
         while (true) {
-            //clearConsole();
+            clearConsole();
             serverInfo();
             try {
                 String serverStatusV1 = constructServerStatusV1(spinner[index]);

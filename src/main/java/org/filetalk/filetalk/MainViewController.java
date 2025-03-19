@@ -126,6 +126,8 @@ public class MainViewController implements Initializable, Observer {
                 "192.168.1.10",
                 "192.168.100.5",
                 "10.220.57.99",
+                "https://filetalk.onrender.com",
+
                 "192.168.1.13"
         );
 
