@@ -47,6 +47,11 @@ public class ClientHandler implements Runnable {
             entrada = new ObjectInputStream(clientSocket.getInputStream());
             salida = new ObjectOutputStream(clientSocket.getOutputStream());
 
+            if(salida==null||entrada==null) {
+                shutDown();
+                return;
+            }
+
             logInfo("Conectando");
 
             Mensaje mensaje=(Mensaje) entrada.readObject();
