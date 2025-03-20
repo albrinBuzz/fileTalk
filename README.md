@@ -29,4 +29,4 @@ Este proyecto actúa como un reemplazo de un dispositivo USB, utilizando la red 
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/tuusuario/nombre-del-proyecto.git
+git clone https://github.com/albrinBuzz/fileTalk.git
