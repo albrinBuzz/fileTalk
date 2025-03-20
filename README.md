@@ -2,6 +2,8 @@
 
 **Descripción**: Este proyecto proporciona una solución para la transferencia rápida y segura de archivos entre dispositivos en una red local. Sirve como un reemplazo de un dispositivo USB, permitiendo a los usuarios compartir archivos fácilmente sin necesidad de dispositivos físicos, utilizando solo su red local.
 
+![Interfaz de usuario](https://github.com/albrinBuzz/fileTalk/blob/main/data/interfaz.png)
+
 ## Requisitos de Ejecución
 
 Antes de ejecutar el proyecto, asegúrate de tener los siguientes requisitos:
