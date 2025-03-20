@@ -28,7 +28,7 @@ public class FileTransferManager {
 
     public   void sendFile(File file, String message, String SERVER_ADDRESS) {
         try  {
-            Socket socket=new Socket(SERVER_ADDRESS,9090);
+            Socket socket=new Socket(SERVER_ADDRESS,8080);
             //DataOutputStream salida=new DataOutputStream(socket.getOutputStream());
             ObjectOutputStream salida=new ObjectOutputStream(socket.getOutputStream());
 

@@ -14,6 +14,12 @@ public class ClientInfo implements Serializable {
         this.nick=nick;
     }
 
+    public ClientInfo(String version, long tiempoConexion, String nick) {
+        this.address = version;
+        this.connectionTime = tiempoConexion;
+        this.nick = nick;
+    }
+
     public String getAddress() {
         return address;
     }
@@ -23,7 +29,7 @@ public class ClientInfo implements Serializable {
         return connectionTime;
     }
 
-    private String formatUptime() {
+    public String formatUptime() {
         long uptime = System.currentTimeMillis() - connectionTime;
         long seconds = (uptime / 1000) % 60;
         long minutes = (uptime / (1000 * 60)) % 60;

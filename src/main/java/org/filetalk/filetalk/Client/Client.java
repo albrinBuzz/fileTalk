@@ -119,66 +119,6 @@ public class Client {
 
     }
 
-    /*private  void sendFile(File file,String message) {
-
-        try  {
-            Socket socket=new Socket(SERVER_ADDRESS,9090);
-            //DataOutputStream salida=new DataOutputStream(socket.getOutputStream());
-            ObjectOutputStream salida=new ObjectOutputStream(socket.getOutputStream());
-
-            FileInputStream fileInputStream = new FileInputStream(file);
-            String[] parts = message.split(" ", 3);
-            String recipientNick = parts[1];
-            String filePath = parts[2];
-
-
-            transferencesObserver.addTransference("send", recipientNick, recipientNick,filePath.substring(filePath.lastIndexOf(File.separator)));
-
-            salida.writeObject(new Mensaje("enviando",CommunicationType.MESSAGE));
-            salida.flush();
-            //TimeUnit.SECONDS.sleep(1);
-            salida.writeObject(new Mensaje(message,CommunicationType.FILE));
-            salida.flush();
-            //TimeUnit.MILLISECONDS.sleep(500); // Esperar 1 segundo antes de la próxima actualización
-            salida.writeUTF(file.getName());
-            salida.writeLong(file.length());
-            byte[] buffer = new byte[50 * 1024 * 1024];  // 50 MB
-            //byte[] buffer = new byte[1024*4];
-            int bytesRead;
-            long totalBytesReaded = 0;
-            long totalFileSize=file.length();
-            while ((bytesRead = fileInputStream.read(buffer)) != -1) {
-
-                salida.write(buffer, 0, bytesRead);
-                salida.flush();
-                totalBytesReaded+=bytesRead;
-
-                //transferencesObserver.updateTransference("sending", recipientNick, (int)((totalBytesReaded * 100) / totalFileSize));
-                transferencesObserver.updateTransference("send", recipientNick, (int)((totalBytesReaded * 100) / totalFileSize));
-
-            }
-            if (socket.isConnected()&&entrada.readUTF().equals("ok")){
-
-            }
-            salida.flush();
-            System.out.println("Archivo Enviado: " + file.getName());
-            TimeUnit.SECONDS.sleep(10);
-            salida.writeUTF("termino");
-            TimeUnit.SECONDS.sleep(5);
-            socket.close();
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Error sending file: " + e.getMessage());
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-*/
-
-
-
     public void enviarMensaje(String mensaje) throws IOException {
         salida.writeObject(new Mensaje(mensaje,CommunicationType.MESSAGE));
     }
@@ -238,13 +178,6 @@ public class Client {
     }
 
 
-
-    /*private void updateClientes(String message) {
-        this.msj = message;
-        for (Observer observer : observers) {
-            observer.updateClientsList(clienteConectados);
-        } // Notificar a los observadores que hay un nuevo mensaje
-    }*/
 
     // Hilo que lee los mensajes del servidor
     private class ReadMessages implements Runnable {
@@ -327,41 +260,6 @@ public class Client {
             }
         }
     }
-
-    private  void receiveFiles(Socket socket) {
-        try (ObjectInputStream entrada = new ObjectInputStream(socket.getInputStream())) {
-            String recipientNick = entrada.readUTF();
-            String fileName = entrada.readUTF(); // Leer nombre del archivo
-            long fileSize = entrada.readLong();  // Leer tamaño del archivo
-            //transferencesObserver.addTransference("receive", recipientNick, recipientNick,fileName,this);
-            TimeUnit.MILLISECONDS.sleep(300); // Esperar 1 segundo antes de la próxima actualización
-            try (FileOutputStream fileOutputStream = new FileOutputStream(fileName)) {
-                //byte[] buffer = new byte[4096];
-                byte[] buffer = new byte[50 * 1024 * 1024];  // 50 MB
-
-                int bytesRead;
-                long totalBytesRead = 0;
-
-                while (totalBytesRead < fileSize) {
-                    bytesRead = entrada.read(buffer);
-                    if (bytesRead == -1) break;
-                    fileOutputStream.write(buffer, 0, bytesRead);
-                    totalBytesRead += bytesRead;
-                    transferencesObserver.updateTransference(FileTransferState.RECEIVING, recipientNick, (int)((totalBytesRead * 100) / fileSize));
-
-                }
-
-                System.out.println("Archivo recibido: " + fileName);
-            }
-            socket.close();
-        } catch (IOException e) {
-            System.err.println("Error durante la recepción de archivos: " + e.getMessage());
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
 
 
 }

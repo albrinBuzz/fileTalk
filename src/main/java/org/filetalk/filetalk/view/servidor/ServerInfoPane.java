@@ -1,23 +1,32 @@
 package org.filetalk.filetalk.view.servidor;
 
 import javafx.application.Platform;
+import javafx.beans.Observable;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import org.filetalk.filetalk.Client.ClientInfo;
+import org.filetalk.filetalk.model.Observers.ServerObserver;
 import org.filetalk.filetalk.server.Server;
+import org.filetalk.filetalk.test.ServerInfoApp;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.List;
 
-public class ServerInfoPane extends Pane {
+public class ServerInfoPane extends Pane implements ServerObserver {
 
     @FXML
-    private Label lblServerStatus, lblVersion, lblIP, lblOS, lblJavaVersion, lblAvailableProcessors, lblMaxMemory, lblUptime, lblBytesSent, lblThreadsActive;
+    private Label lblServerStatus, lblVersion, lblIP,lblPORT, lblOS, lblJavaVersion, lblAvailableProcessors, lblMaxMemory, lblUptime, lblBytesSent, lblThreadsActive;
     @FXML
     private TextArea txtClientsInfo;
     @FXML
@@ -27,12 +36,13 @@ public class ServerInfoPane extends Pane {
     private boolean isServerRunning;
     private int bytesSent = 0;  // Simulando bytes enviados
     private int threadsActive = 5;  // Simulando hilos activos
-
+    private TableView<ClientInfo> tableView;
     public ServerInfoPane() throws UnknownHostException {
         startTime = System.nanoTime();
         isServerRunning = false;
         initGUI();
         server=Server.getInstance();
+        server.setServerObserver(this);
     }
 
     public void initGUI() throws UnknownHostException {
@@ -47,6 +57,7 @@ public class ServerInfoPane extends Pane {
         lblServerStatus = new Label("Estado: Apagado");
         lblVersion = new Label("Versión del Servidor: 1.0.0");
         lblIP = new Label("IP: " + InetAddress.getLocalHost().getHostAddress());
+        lblPORT= new Label("Puerto: ");
         lblOS = new Label("Sistema Operativo: " + System.getProperty("os.name") + " " + System.getProperty("os.version"));
         lblJavaVersion = new Label("Versión de Java: " + System.getProperty("java.version"));
         lblAvailableProcessors = new Label("Procesadores Disponibles: " + Runtime.getRuntime().availableProcessors());
@@ -75,6 +86,32 @@ public class ServerInfoPane extends Pane {
         btnStartServer = new Button("Encender Servidor");
         btnStartServer.setOnAction(event -> startServer());
 
+        // Crear una tabla para mostrar los detalles del servidor
+        tableView = new TableView<>();
+        tableView.setEditable(false);
+
+        // Definir columnas de la tabla
+        TableColumn<ClientInfo, String> versionColumn = new TableColumn<>("IP Cliente");
+        versionColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAddress()));
+
+        TableColumn<ClientInfo, String> portColumn = new TableColumn<>("Tiempo Conexión");
+        portColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().formatUptime()));
+
+        TableColumn<ClientInfo, String> ipColumn = new TableColumn<>("Nick");
+        ipColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNick()));
+
+        // Agregar las columnas a la tabla
+        tableView.getColumns().addAll(versionColumn, portColumn, ipColumn);
+
+
+        /*tableView.getItems().add(new ClientInfo("1.0.0", 9L, "cliente1"));
+        tableView.getItems().add(new ClientInfo("1.0.0", 9, "cliente1"));
+        tableView.getItems().add(new ClientInfo("1.0.0", 43, "cliente1"));*/
+
+
+        // Agregar los datos a la tabla
+        //tableView.getItems().add(serverInfo);
+
         // Layout para organizar la información del servidor y los clientes conectados
         HBox infoContainer = new HBox(30);
         VBox serverInfoBox = new VBox(15);
@@ -87,6 +124,7 @@ public class ServerInfoPane extends Pane {
                 lblServerStatus,
                 lblVersion,
                 lblIP,
+                lblPORT,
                 lblOS,
                 lblJavaVersion,
                 lblAvailableProcessors,
@@ -102,7 +140,7 @@ public class ServerInfoPane extends Pane {
         // Agregar la información de clientes conectados a clientsInfoBox
         clientsInfoBox.getChildren().addAll(
                 new Label("Clientes Conectados:"),
-                txtClientsInfo
+                tableView
         );
 
         // Agregar ambos contenedores a infoContainer (lado a lado)
@@ -127,15 +165,36 @@ public class ServerInfoPane extends Pane {
 
             // Cambiar el texto del botón a "Detener Servidor" cuando el servidor esté encendido
             btnStartServer.setText("Detener Servidor");
-            Thread thread=new Thread(()->{
+            /*Thread thread=new Thread(()->{
                 server.starServerCLI();
             });
-            thread.start();
+            thread.start();*/
+
+
+            Service<Void> servicio = new Service<Void>() {
+                @Override
+                protected Task<Void> createTask() {
+                    return new Task<Void>() {
+                        @Override
+                        protected Void call() throws Exception {
+                            // Simulamos una operación de larga duración
+
+                            server.startServer();
+                            return null;
+                        }
+                    };
+                }
+            };
+
+            servicio.start(); // Inicia el servicio
+
+
             // Mostrar toda la información del servidor
             setServerInfoVisible(true);
+            lblPORT.setText("Puerto: "+server.getPORT());
 
             // Iniciar el ciclo de actualización de la interfaz
-            startUpdating();
+            //startUpdating();
         } else {
             // Detener el servidor
             stopServer();
@@ -184,22 +243,36 @@ public class ServerInfoPane extends Pane {
     // Método para actualizar la vista en un ciclo de vida del servidor (por ejemplo, un thread para actualizar información)
     public void startUpdating() {
 
+        Service<Void> servicio = new Service<Void>() {
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
 
-        Platform.runLater(()->{
-            while (isServerRunning) {
-                //Thread.sleep(1000);  // Actualiza cada segundo
-                updateUptime();  // Actualiza el uptime
-                // Simulación de actualización de Bytes enviados y hilos activos
-                bytesSent += 1024;  // Simulamos que se enviaron 1024 bytes
-                threadsActive = 5 + (int)(Math.random() * 5);  // Simulamos que el número de hilos activos cambia
 
-                // Actualizamos las etiquetas
-                lblBytesSent.setText("Bytes Enviados: " + bytesSent + " Bytes");
-                lblThreadsActive.setText("Hilos Activos: " + threadsActive);
+
+                            while (isServerRunning) {
+                                //Thread.sleep(1000);  // Actualiza cada segundo
+                                updateUptime();  // Actualiza el uptime
+                                // Simulación de actualización de Bytes enviados y hilos activos
+                                bytesSent += 1024;  // Simulamos que se enviaron 1024 bytes
+                                threadsActive = 5 + (int)(Math.random() * 5);  // Simulamos que el número de hilos activos cambia
+
+                                // Actualizamos las etiquetas
+                                //lblBytesSent.setText("Bytes Enviados: " + bytesSent + " Bytes");
+                                //lblThreadsActive.setText("Hilos Activos: " + threadsActive);
+                            }
+
+
+
+                        return null;
+                    }
+                };
             }
-        });
+        };
 
-
+        servicio.start(); // Inicia el servicio
 
     }
 
@@ -209,5 +282,27 @@ public class ServerInfoPane extends Pane {
         lblBytesSent.setVisible(visible);
         lblThreadsActive.setVisible(visible);
         txtClientsInfo.setVisible(visible);
+    }
+
+    @Override
+    public void updateClient(List< ClientInfo> clientInfoList, int threadsActive) {
+
+        ObservableList<ClientInfo>clientInfos= FXCollections.observableArrayList(clientInfoList);
+
+        this.tableView.getItems().clear();
+        tableView.setItems(clientInfos);
+
+        Platform.runLater(()-> this.lblThreadsActive.setText("Hilos Activos: "+threadsActive));
+    }
+
+    @Override
+    public void updateUptime(String uptime) {
+
+        Platform.runLater(()->this.lblUptime.setText(uptime));
+    }
+
+    @Override
+    public void updateBytes(String bytes) {
+      Platform.runLater(()->this.lblBytesSent.setText("Bytes Enviados: "+bytes));
     }
 }

@@ -223,10 +223,10 @@ public class MainViewController implements Initializable, Observer {
         // Validar IP y puerto
         if (ip == null || ip.isEmpty() || port.isEmpty()) {
             connectButton.setDisable(true);
-            statusText.setText("Please enter both Server IP and Port.");
+            //statusText.setText("Please enter both Server IP and Port.");
         } else {
             connectButton.setDisable(false);
-            statusText.setText("Ready to connect...");
+            //statusText.setText("Ready to connect...");
         }
     }
 
@@ -689,7 +689,7 @@ public class MainViewController implements Initializable, Observer {
 
             try {
                 client.setConexion(serverIP,serverPort);
-                connectionStatus.setText("Conexión Establecida");
+                //connectionStatus.setText("Conexión Establecida");
                 connectButton.setDisable(true);
                 searchServerButton.setDisable(true);
                 //client.setConexion("192.168.100.5",9090);

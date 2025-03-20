@@ -7,6 +7,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.scene.paint.Color;
 import org.filetalk.filetalk.Client.Client;
@@ -17,39 +18,44 @@ import java.io.IOException;
 
 public class HostControlPanel extends Pane {
     private Label hostNameLabel;
-    private Button sendFileButton; // Nuevo botón para enviar archivo
+    private Button sendFileButton;
     private Client client;
-    private  ClientInfo host;
+    private ClientInfo host;
     private Label connectionStatusLabel;
     private Circle connectionStatusCircle;
     private Label timerLabel;
+    private ComboBox<String> selectionComboBox;
 
     public HostControlPanel(ClientInfo host, Client cliente) {
-        this.client=cliente;
-        this.host=host;
+        this.client = cliente;
+        this.host = host;
         this.initGUI(host);
-
     }
 
     private void initGUI(ClientInfo host) {
-
         // Crear las etiquetas para el nombre y dirección del host
-        this.hostNameLabel = new Label(host.getNick()+" "+host.getAddress());
+        this.hostNameLabel = new Label(host.getNick() + " " + host.getAddress());
 
-        // Nuevo botón para enviar archivo
-        this.sendFileButton = new Button("Enviar archivo");
+        // Crear un ComboBox para seleccionar el tipo de elemento a enviar
+        this.selectionComboBox = new ComboBox<>();
+        selectionComboBox.getItems().addAll("Enviar archivo", "Enviar directorio", "Enviar carpeta");
+        selectionComboBox.setValue("Enviar archivo"); // Valor por defecto
 
-        // Acción para el botón de enviar archivo
-        this.sendFileButton.setOnAction(event -> performSendFileAction());
+        // Nuevo botón para enviar el elemento seleccionado
+        this.sendFileButton = new Button("Enviar");
+
+        // Acción para el botón de enviar
+        this.sendFileButton.setOnAction(event -> performSendAction());
 
         // Crear un HBox para organizar los elementos horizontalmente
         HBox container = new HBox(10); // Espaciado de 10px entre los elementos
         container.setAlignment(Pos.CENTER_LEFT); // Alinear los elementos a la izquierda
-        container.getChildren().addAll(hostNameLabel, sendFileButton);
+        container.getChildren().addAll(hostNameLabel, selectionComboBox, sendFileButton);
 
-        // Configuración de tamaño preferido para la etiqueta
-        this.hostNameLabel.setPrefWidth(150); // Dar un tamaño adecuado al nombre del host
-        this.sendFileButton.setPrefWidth(120); // Dar un tamaño adecuado al botón de enviar archivo
+        // Configuración de tamaño preferido para los elementos
+        this.hostNameLabel.setPrefWidth(150);
+        this.selectionComboBox.setPrefWidth(150);
+        this.sendFileButton.setPrefWidth(100);
 
         // Estilo del panel: añadir fondo blanco y bordes opcionales
         this.setStyle("-fx-background-color: white; -fx-padding: 10;");
@@ -62,6 +68,7 @@ public class HostControlPanel extends Pane {
         // Ajuste de la etiqueta de estado
         this.connectionStatusLabel = new Label("Desconectado");
         container.getChildren().add(connectionStatusLabel);
+
         // Añadir el HBox al pane
         this.getChildren().add(container);
 
@@ -83,33 +90,44 @@ public class HostControlPanel extends Pane {
         }
     }
 
-    // Método para manejar la acción de enviar archivo
-    private void performSendFileAction()   {
-        // Crear un FileChooser para seleccionar el archivo
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("All Files", "*.*"));
-        File selectedFile = fileChooser.showOpenDialog(new Stage());
+    // Método para manejar la acción de enviar el elemento seleccionado
+    private void performSendAction() {
+        String selectedOption = selectionComboBox.getValue();
+        File selectedFile = null;
+
+        switch (selectedOption) {
+            case "Enviar archivo":
+                // Crear un FileChooser para seleccionar el archivo
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("All Files", "*.*"));
+                selectedFile = fileChooser.showOpenDialog(new Stage());
+                break;
+            case "Enviar directorio":
+            case "Enviar carpeta":
+                // Crear un DirectoryChooser para seleccionar el directorio
+                DirectoryChooser directoryChooser = new DirectoryChooser();
+                selectedFile = directoryChooser.showDialog(new Stage());
+
+                break;
+        }
 
         if (selectedFile != null) {
-            // Aquí puedes agregar la lógica para enviar el archivo
-
             try {
-                //System.out.println("/file " + host.getNick() + " " + selectedFile.getAbsolutePath());
+                // Lógica para enviar el archivo o directorio
                 client.handleFileTransfer("/file " + host.getAddress() + " " + selectedFile.getAbsolutePath());
 
-                long time=90;
+                // Actualizar el temporizador (ejemplo con 90 segundos)
+                long time = 90;
                 int minutes = (int) (time / 60);
                 int seconds = (int) (time % 60);
                 timerLabel.setText(String.format("Tiempo restante: %02d:%02d", minutes, seconds));
 
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
-
-            // Implementa la lógica de envío de archivo aquí, por ejemplo, usando sockets o alguna otra tecnología.
         } else {
-            // Si no se seleccionó ningún archivo
-            System.out.println("No se seleccionó ningún archivo.");
+            // Si no se seleccionó ningún archivo o directorio
+            System.out.println("No se seleccionó ningún elemento.");
         }
     }
 
@@ -117,5 +135,6 @@ public class HostControlPanel extends Pane {
     public void enableHostOptions(boolean enable) {
         // Si se añaden más botones o controles, este método los habilitaría o deshabilitaría
         this.sendFileButton.setDisable(!enable);
+        this.selectionComboBox.setDisable(!enable);
     }
 }

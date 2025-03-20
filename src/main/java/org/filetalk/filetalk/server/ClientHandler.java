@@ -43,14 +43,15 @@ public class ClientHandler implements Runnable {
 
         try {
 
+            if(clientSocket.getInputStream()==null||clientSocket.getOutputStream()==null) {
+
+                return;
+            }
+
+
             System.out.println("Cliente aceptado desde: "+clientSocket.getInetAddress().toString());
             entrada = new ObjectInputStream(clientSocket.getInputStream());
             salida = new ObjectOutputStream(clientSocket.getOutputStream());
-
-            if(salida==null||entrada==null) {
-                shutDown();
-                return;
-            }
 
             logInfo("Conectando");
 
@@ -61,7 +62,7 @@ public class ClientHandler implements Runnable {
             sendComunicacion(new Mensaje( "Conectado al servidor como: " + nick, CommunicationType.MESSAGE));
 
             Server.clients.put(clientSocket, new ClientInfo(clientSocket, nick));
-
+            server.addClientUpdate(new ClientInfo(clientSocket, nick));
             //System.out.printf("[%s] has joined the chat%n", nick);
             if (!nick.equals("enviando")){
                 server.broadcastMessage("[ " + nick + "] Se ha unido al Chat", this);
@@ -110,6 +111,11 @@ public class ClientHandler implements Runnable {
             Mensaje mensaje=(Mensaje)communication;
             sendFileToClient(mensaje.getContenido());
         }
+        else if (communication.getType().equals(CommunicationType.DIRECTORY)) {
+            Mensaje mensaje=(Mensaje)communication;
+            sendFileToClient(mensaje.getContenido());
+        }
+
     }
 
     private void handleMessage(String message) throws IOException {
@@ -224,6 +230,7 @@ public class ClientHandler implements Runnable {
 
                     System.out.printf("Enviados %d bytes a %s...%n", totalBytesSent, recipientNick);
                     server.addBytes(totalBytesSent);
+                    server.updateBytes();
                     salida.flush();
                     System.out.println("Archivo enviado correctamente a " + recipientNick);
                     shutDown();

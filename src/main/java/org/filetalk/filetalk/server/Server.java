@@ -13,6 +13,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.filetalk.filetalk.Client.ClientInfo;
+import org.filetalk.filetalk.model.Observers.ServerObserver;
 import org.filetalk.filetalk.shared.ClientListMessage;
 import org.filetalk.filetalk.shared.CommunicationType;
 import org.filetalk.filetalk.shared.Mensaje;
@@ -22,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 public class Server {
     // Configuración del puerto y otras variables del servidor
-    private final int PORT = 8080;
+
     static final ConcurrentHashMap<Socket, ClientInfo> clients = new ConcurrentHashMap<>();
     private final Logger LOGGER = LoggerFactory.getLogger(Server.class);
     private final List<ClientHandler> clientPool = new ArrayList<>();
@@ -31,16 +32,16 @@ public class Server {
     public AtomicLong totalMessagesReceived = new AtomicLong(0);
     public long totalBytesSent = 0;
     private final String startTime = new Date().toString();
-
     // Códigos de escape ANSI para colores en la consola
     private final String ANSI_RESET = "\u001B[0m"; // Reset
     private final String ANSI_RED = "\u001B[31m";   // Rojo
     private final String ANSI_GREEN = "\u001B[32m"; // Verde
     private final String ANSI_YELLOW = "\u001B[33m"; // Amarillo
     private final String ANSI_CYAN = "\u001B[36m";  // Cian
-
+    private ServerObserver serverObserver;
     private static volatile Server serverInstancia;
-
+    private ConfiguracionServidor config = new ConfiguracionServidor();
+    private final int PORT = Integer.parseInt(config.obtener("servidor.puerto"));
     // Constructor vacío del servidor
     private Server() {
 
@@ -49,11 +50,15 @@ public class Server {
     // Método que inicia el servidor y maneja las conexiones de los clientes
     public void startServer() {
         serverStartTime = System.currentTimeMillis();
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
 
         // Tarea programada para hacer broadcast del estado del servidor cada 1 segundo
         scheduler.scheduleAtFixedRate(this::brocastServer, 0, 1, TimeUnit.SECONDS);
 
+        //scheduler.scheduleAtFixedRate(this::updateUptime, 0, 1, TimeUnit.SECONDS);
+
+
+        scheduler.scheduleAtFixedRate(this::updateStatus, 0, 1, TimeUnit.SECONDS);
 
         // Iniciar el socket del servidor para aceptar conexiones de clientes
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
@@ -61,7 +66,6 @@ public class Server {
                 Socket clientSocket = serverSocket.accept();
                 ClientHandler clientHandler = new ClientHandler(clientSocket, this);
                 clientPool.add(clientHandler);
-
                 new Thread(clientHandler).start(); // Iniciar un nuevo hilo para manejar al cliente
 
             }
@@ -108,6 +112,12 @@ public class Server {
             }
         }
         return serverInstancia;
+    }
+
+    public synchronized void setServerObserver(ServerObserver observer){
+        synchronized (Server.class) {
+            this.serverObserver=observer;
+        }
     }
 
     // Método sincronizado para agregar un mensaje al historial de mensajes
@@ -475,8 +485,35 @@ public class Server {
         for (ClientHandler client : clientPool) {
             client.sendComunicacion(clientListMessage);  // Enviar el ClientListMessage a cada cliente
         }
+
     }
 
 
+    public void addClientUpdate(ClientInfo clientInfo){
+        List<ClientInfo>clientInfos=new ArrayList<>(clients.values());
+        serverObserver.updateClient(clientInfos, Thread.activeCount());
+
+    }
+
+    private void updateUptime(){
+        this.serverObserver.updateUptime(formatUptime(serverStartTime));
+    }
+
+    public void updateStatus(){
+        this.serverObserver.updateUptime(formatUptime(serverStartTime));
+        //serverObserver.updateClient(clients.forEach();,Thread.activeCount());
+        //clients.forEach(()-> serverObserver.updateClient(t));
+        List<ClientInfo>clientInfos=new ArrayList<>(clients.values());
+        serverObserver.updateClient(clientInfos, Thread.activeCount());
+        //clients.forEach((clave,valor)->serverObserver.updateClient(valor, Thread.activeCount()));
+    }
+
+    public void updateBytes() {
+
+        this.serverObserver.updateBytes(formatBytes(totalBytesSent));
+    }
+    public int getPORT() {
+        return PORT;
+    }
 }
 
