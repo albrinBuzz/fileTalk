@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
@@ -11,63 +10,62 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="860.0" prefWidth="1676.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.filetalk.filetalk.MainViewController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="860.0" prefWidth="1676.0" style="-fx-background-color: #2e2e2e;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.filetalk.filetalk.MainViewController">
     <children>
         <!-- Main messaging area -->
-        <VBox fx:id="vboxMain" layoutX="70.0" layoutY="170.0" prefHeight="320.0" prefWidth="960.0" spacing="10.0">
+        <VBox fx:id="vboxMain" layoutX="70.0" layoutY="170.0" prefHeight="320.0" prefWidth="960.0" spacing="10.0" style="-fx-background-color: #2e2e2e; -fx-padding: 10px;">
             <children>
-                <ScrollPane fx:id="scrollMsj" prefHeight="424.0" prefWidth="1233.0">
+                <ScrollPane fx:id="scrollMsj" prefHeight="424.0" prefWidth="1233.0" style="-fx-background-color: transparent;">
                     <content>
-                        <VBox fx:id="vboxMsj" prefHeight="325.0" prefWidth="950.0" />
+                        <VBox fx:id="vboxMsj" prefHeight="334.0" prefWidth="950.0" style="-fx-background-color: #2e2e2e;" />
                     </content>
                 </ScrollPane>
             </children>
         </VBox>
 
         <!-- Message input area -->
-        <HBox layoutX="70.0" layoutY="507.0" prefHeight="113.0" prefWidth="795.0" spacing="10.0">
+        <HBox layoutX="70.0" layoutY="554.0" prefHeight="66.0" prefWidth="795.0" spacing="10.0" style="-fx-background-color: #2e2e2e;">
             <children>
-                <TextArea fx:id="txtMensajes" onDragEntered="#enviarMensaje" onMouseDragEntered="#enviarMensaje" prefHeight="133.0" prefWidth="562.0" />
-                <Button fx:id="btnEnvirMensaje" mnemonicParsing="false" onAction="#enviarMensaje" prefHeight="30.0" prefWidth="200.0" styleClass="mainButton" text="Enviar Mensaje" />
+                <TextArea fx:id="txtMensajes" maxHeight="60.0" minHeight="60.0" onDragEntered="#enviarMensaje" onMouseDragEntered="#enviarMensaje" prefHeight="60.0" prefWidth="566.0" style="-fx-background-color: #21716d; -fx-text-fill: black; -fx-font-size: 14px; -fx-padding: 5px;" />
+                <Button fx:id="btnEnvirMensaje" layoutX="150.0" layoutY="60.0" mnemonicParsing="false" onAction="#enviarMensaje" prefHeight="28.0" prefWidth="200.0" style="-fx-background-color: #4a90e2; -fx-text-fill: white; -fx-font-size: 14px;" styleClass="mainButton" text="Enviar Mensaje" />
             </children>
         </HBox>
 
         <!-- Conexión al servidor -->
-        <VBox layoutX="75.0" layoutY="50.0" prefHeight="122.0" prefWidth="600.0" spacing="15.0" styleClass="connectionBox">
+        <VBox layoutX="75.0" layoutY="50.0" prefHeight="122.0" prefWidth="600.0" spacing="15.0" style="-fx-background-color: #2e2e2e; -fx-padding: 10px;">
             <children>
                 <!-- TabPane for connection settings (Basic and Advanced) -->
-                <TabPane prefHeight="200.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
+                <TabPane prefHeight="200.0" prefWidth="600.0" style="-fx-background-color: #333333;" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
                         <!-- Basic Tab -->
-                        <Tab text="Conexión Básica">
+                        <Tab style="-fx-background-color: 20e4db;" text="Conexión Básica">
                             <content>
-                                <VBox prefHeight="87.0" prefWidth="600.0" spacing="10.0">
-                           <Label prefHeight="18.0" prefWidth="148.0" text="Conexion Automatica" />
-
+                                <VBox prefHeight="60.0" prefWidth="569.0" spacing="10.0" style="-fx-background-color: #444444;">
+                                    <Label prefHeight="18.0" prefWidth="148.0" style="-fx-text-fill: white;" text="Conexion Automatica" />
+                                     <Button fx:id="searchServerButton" onAction="#searchServer" prefHeight="42.0" prefWidth="211.0" style="-fx-background-color: #4a90e2; -fx-text-fill: white;" text="Conectar" />
                                     <!-- Conectar Button -->
-                                    <HBox alignment="center" prefHeight="38.0" prefWidth="600.0" spacing="10.0">
-                                        <Button fx:id="searchServerButton" onAction="#searchServer" prefHeight="26.0" prefWidth="210.0" styleClass="mainButton" text="Conectar" />
-                                    </HBox>
+                                    <HBox alignment="center" prefHeight="38.0" prefWidth="600.0" spacing="10.0" style="-fx-background-color: #444444;" />
                                 </VBox>
                             </content>
                         </Tab>
 
                         <!-- Advanced Tab -->
-                        <Tab text="Conexión Avanzada">
+                        <Tab style="-fx-background-color: 20e4db;" text="Conexión Avanzada">
                             <content>
-                                <VBox prefHeight="75.0" prefWidth="600.0" spacing="10.0">
+                                <VBox prefHeight="75.0" prefWidth="600.0" spacing="10.0" style="-fx-background-color: #444444;">
                                     <!-- IP y Puerto -->
-                                    <HBox spacing="10.0">
-                                        <Label styleClass="label" text="IP Servidor:" />
-                                        <ChoiceBox fx:id="ipComboBox" prefWidth="150.0" styleClass="choiceBox" />
-                                        <Label styleClass="label" text="Puerto:" />
-                                        <TextField fx:id="portField" prefWidth="70.0" promptText="Puerto" styleClass="textField" />
+                                    <HBox spacing="10.0" style="-fx-background-color: #444444;">
+                                        <Label style="-fx-text-fill: white;" text="IP Servidor:" />
+                              <TextField fx:id="ipReceptorTxt" promptText="192.168.100.5" />
+                                        <Label style="-fx-text-fill: white;" text="Puerto:" />
+                                        <TextField fx:id="portField" prefWidth="70.0" promptText="8080" style="-fx-background-color: #333333; -fx-text-fill: white;" />
                                     </HBox>
 
                                     <!-- Advanced options -->
-                                    <HBox spacing="10.0">
-                                        <Button fx:id="connectButton" onAction="#connectToServer" prefHeight="26.0" prefWidth="203.0" styleClass="mainButton" text="Conectar con Avanzado" />
+                                    <HBox spacing="10.0" style="-fx-background-color: #444444;">
+                                        <Button fx:id="connectButton" onAction="#connectToServer" prefHeight="26.0" prefWidth="203.0" style="-fx-background-color: #4a90e2; -fx-text-fill: white;" text="Conectar con Avanzado" />
                                     </HBox>
 
                                     <!-- Conectar con opciones avanzadas -->
@@ -81,16 +79,20 @@
         </VBox>
 
         <!-- Progress Bar for file upload -->
-        <VBox layoutX="70.0" layoutY="620.0" spacing="15.0" styleClass="progressBox" />
+        <VBox layoutX="70.0" layoutY="620.0" spacing="15.0" style="-fx-background-color: #2e2e2e; -fx-padding: 10px;" />
 
-              <!-- Host panel for connected hosts -->
-        <Pane fx:id="hostPane" layoutX="1050.0" layoutY="170.0" prefHeight="320.0" prefWidth="602.0" />
+        <!-- Host panel for connected hosts -->
+        <Pane fx:id="hostPane" layoutX="1050.0" layoutY="170.0" prefHeight="320.0" prefWidth="602.0" style="-fx-background-color: #2e2e2e;" />
 
-        <!-- Configuration Button -->
-        <Button fx:id="configButton" layoutX="1495.0" layoutY="72.0" onAction="#openAdvancedSettings" styleClass="configButton" text="Configuración Avanzada" />
-      <Pane fx:id="transfersPane" layoutX="70.0" layoutY="620.0" prefHeight="217.0" prefWidth="562.0" />
-      <Label fx:id="lblConexion" layoutX="706.0" layoutY="50.0" prefHeight="18.0" prefWidth="153.0" text="EsperandoConexion" />
-      <Pane fx:id="serverPane" layoutX="872.0" layoutY="507.0" prefHeight="340.0" prefWidth="795.0" />
+        <!-- Transfers Panel -->
+        <Pane fx:id="transfersPane" layoutX="70.0" layoutY="617.0" prefHeight="223.0" prefWidth="562.0" style="-fx-background-color: #2e2e2e;" />
 
+        <!-- Connection Label -->
+        <Label fx:id="lblConexion" layoutX="686.0" layoutY="63.0" prefHeight="18.0" prefWidth="153.0" style="-fx-text-fill: white;" text="EsperandoConexion" />
+
+        <!-- Server Panel -->
+        <Pane fx:id="serverPane" layoutX="872.0" layoutY="507.0" prefHeight="340.0" prefWidth="795.0" style="-fx-background-color: #2e2e2e;" />
+      <Circle fx:id="crConexion" fill="DODGERBLUE" layoutX="834.0" layoutY="76.0" radius="15.0" stroke="BLACK" strokeType="INSIDE" />
+      <Button fx:id="btnDesconectarse" layoutX="696.0" layoutY="98.0" mnemonicParsing="false" onAction="#desconctarServidor" text="Desconectarse" textAlignment="RIGHT" />
     </children>
 </Pane>

@@ -19,7 +19,7 @@ public class TransferencesPanel extends ScrollPane implements TransferencesObser
     private final String SEND_MODE = "send";
     private final String RECEIVE_MODE = "receive";
 
-    private final int MAX_WIDTH = 488;
+    private final int MAX_WIDTH = 588;
 
     private VBox transferencesContentPanel;
     private HashMap<String, TransferenceControlPanel> clientTransferencesMap, serverTransferencesMap;
@@ -33,8 +33,6 @@ public class TransferencesPanel extends ScrollPane implements TransferencesObser
     private void initGUI() {
         // Estilo general para el panel
         //this.setStyle("-fx-background-color: #f4f6f9; -fx-border-radius: 8px; -fx-padding: 20px; -fx-border-color: #e0e0e0;");
-        this.setPrefWidth(MAX_WIDTH);
-        this.setMaxWidth(MAX_WIDTH);
 
         // Contenedor principal con espaciado
         this.transferencesContentPanel = new VBox(10);
@@ -44,11 +42,13 @@ public class TransferencesPanel extends ScrollPane implements TransferencesObser
         // Panel de "No hay transferencias"
         HBox infoPanel = new HBox(10);
         infoPanel.setAlignment(Pos.CENTER_LEFT);
-        infoPanel.setStyle("-fx-background-color: #ffffff; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 2 0;");
+        infoPanel.setStyle("-fx-background-color: #2e2e2e; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 2 0;");
         infoPanel.getChildren().add(createLabel("No hay transferencias en proceso", "#888888"));
         this.transferencesContentPanel.getChildren().add(infoPanel);
+        this.setStyle("-fx-padding: 20; -fx-background-color: #2d2d2d; -fx-border-color: #00BFFF; -fx-border-width: 2;"); // Celeste en los márgenes del root
 
         setContent(transferencesContentPanel);
+
     }
 
     private void clearTransferences() {
@@ -57,7 +57,7 @@ public class TransferencesPanel extends ScrollPane implements TransferencesObser
         // Panel de información (sin transferencias)
         HBox infoPanel = new HBox(10);
         infoPanel.setAlignment(Pos.CENTER_LEFT);
-        infoPanel.setStyle("-fx-background-color: #ffffff; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 2 0;");
+        infoPanel.setStyle("-fx-background-color: #2e2e2e; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 2 0;");
         infoPanel.getChildren().add(createLabel("No hay transferencias en proceso", "#888888"));
 
         this.transferencesContentPanel.getChildren().add(infoPanel);

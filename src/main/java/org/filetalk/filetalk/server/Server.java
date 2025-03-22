@@ -18,14 +18,11 @@ import org.filetalk.filetalk.shared.ClientListMessage;
 import org.filetalk.filetalk.shared.CommunicationType;
 import org.filetalk.filetalk.shared.Mensaje;
 import org.filetalk.filetalk.utils.Color;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 public class Server {
     // Configuración del puerto y otras variables del servidor
-
     static final ConcurrentHashMap<Socket, ClientInfo> clients = new ConcurrentHashMap<>();
-    private final Logger LOGGER = LoggerFactory.getLogger(Server.class);
     private final List<ClientHandler> clientPool = new ArrayList<>();
     private long serverStartTime;
     private final List<String> messageHistory = new ArrayList<>();
@@ -35,14 +32,15 @@ public class Server {
     // Códigos de escape ANSI para colores en la consola
     private final String ANSI_RESET = "\u001B[0m"; // Reset
     private final String ANSI_RED = "\u001B[31m";   // Rojo
-    private final String ANSI_GREEN = "\u001B[32m"; // Verde
-    private final String ANSI_YELLOW = "\u001B[33m"; // Amarillo
     private final String ANSI_CYAN = "\u001B[36m";  // Cian
     private ServerObserver serverObserver;
     private static volatile Server serverInstancia;
     private ConfiguracionServidor config = new ConfiguracionServidor();
     private final int PORT = Integer.parseInt(config.obtener("servidor.puerto"));
+    private ServerSocket serverSocket;
+
     // Constructor vacío del servidor
+
     private Server() {
 
     }
@@ -55,15 +53,14 @@ public class Server {
         // Tarea programada para hacer broadcast del estado del servidor cada 1 segundo
         scheduler.scheduleAtFixedRate(this::brocastServer, 0, 1, TimeUnit.SECONDS);
 
-        //scheduler.scheduleAtFixedRate(this::updateUptime, 0, 1, TimeUnit.SECONDS);
-
-
         scheduler.scheduleAtFixedRate(this::updateStatus, 0, 1, TimeUnit.SECONDS);
-
+        //new Thread(this::administrativeInterface).start();
         // Iniciar el socket del servidor para aceptar conexiones de clientes
-        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-            while (true) {
+        try  {
+            serverSocket = new ServerSocket(PORT);
+            while (!serverSocket.isClosed()) {
                 Socket clientSocket = serverSocket.accept();
+
                 ClientHandler clientHandler = new ClientHandler(clientSocket, this);
                 clientPool.add(clientHandler);
                 new Thread(clientHandler).start(); // Iniciar un nuevo hilo para manejar al cliente
@@ -76,30 +73,19 @@ public class Server {
 
 
     public  void starServerCLI(){
-        serverStartTime = System.currentTimeMillis();
-        //ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-        // Tarea programada para hacer broadcast del estado del servidor cada 1 segundo
-        //scheduler.scheduleAtFixedRate(this::brocastServer, 0, 1, TimeUnit.SECONDS);
-
-        // Iniciar la interfaz administrativa en un hilo separado
         new Thread(this::administrativeInterface).start();
 
-        // Iniciar el socket del servidor para aceptar conexiones de clientes
-        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-            while (true) {
-                Socket clientSocket = serverSocket.accept();
+        startServer();
+    }
 
-                //System.out.println("Cliente aceptado desde: "+clientSocket.getInetAddress().toString());
-                ClientHandler clientHandler = new ClientHandler(clientSocket, this);
-                clientPool.add(clientHandler);
 
-                new Thread(clientHandler).start(); // Iniciar un nuevo hilo para manejar al cliente
+    public void stopServer() throws IOException {
 
-            }
-        } catch (IOException e) {
-            System.out.println("Error con el servidor: " + e.getMessage());
-        }
+        clientPool.forEach(ClientHandler::shutDown);
+
+        serverSocket.close();
+
     }
 
     // Método para obtener la instancia única del servidor (Singleton)
@@ -189,31 +175,13 @@ public class Server {
 
     // Método para la interfaz administrativa del servidor
     private void administrativeInterface() {
-        Scanner scanner = new Scanner(System.in);
 
-        // Hilo separado para mostrar información sobre el servidor con animación
-        new Thread(() -> {
-            while (true) {
-                try {
-                    displayServerStatusWithAnimation();
-                } catch (UnknownHostException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }).start();
+        try {
+            displayServerStatusWithAnimation();
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
 
-        // Espera de comandos administrativos en la consola
-        /*while (true) {
-            System.out.println(ANSI_YELLOW + "Ingresa un comando (exit):" + ANSI_RESET);
-            String command = scanner.nextLine();
-            if (command.equalsIgnoreCase("exit")) {
-                System.out.println(ANSI_RED + "Saliendo de la interfaz administrativa." + ANSI_RESET);
-                scanner.close();
-                System.exit(1);
-            } else {
-                System.out.println(ANSI_RED + "Comando no reconocido." + ANSI_RESET);
-            }
-        }*/
     }
 
     // Método para mostrar el estado del servidor con animación

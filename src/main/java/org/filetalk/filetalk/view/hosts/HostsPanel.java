@@ -21,13 +21,12 @@ public class HostsPanel extends ScrollPane implements HostsObserver {
         // Crear un VBox como contenedor para los servicios
         vbox = new VBox();
         vbox.setSpacing(10);  // Espacio entre los elementos
-        vbox.setStyle("-fx-padding: 10;");  // Opcional: estilo para darle un poco de margen
+        vbox.setStyle("-fx-padding: 10; -fx-background-color: #2e2e2e;");  // Fondo oscuro con margen
         this.cliente = cliente;
 
         // Título de la sección de clientes conectados
         Label titleLabel = new Label("Clientes Conectados");
-        titleLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #007bff;");
-        titleLabel.setStyle("-fx-padding: 5px;");
+        titleLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #007bff; -fx-padding: 5px;");
 
         // Añadir el título al VBox al principio
         vbox.getChildren().add(titleLabel);
@@ -39,6 +38,8 @@ public class HostsPanel extends ScrollPane implements HostsObserver {
         setFitToWidth(true);  // Ajustar el ancho del contenido
         setVbarPolicy(ScrollBarPolicy.ALWAYS); // Hacer visible la barra de desplazamiento vertical
         setHbarPolicy(ScrollBarPolicy.NEVER);  // No mostrar barra de desplazamiento horizontal
+        this.setStyle("-fx-padding: 10; -fx-background-color: #2e2e2e;");  // Fondo oscuro con margen
+        this.setStyle("-fx-padding: 20; -fx-background-color: #2d2d2d; -fx-border-color: #00BFFF; -fx-border-width: 2;"); // Celeste en los márgenes del root
     }
 
     @Override
@@ -55,8 +56,7 @@ public class HostsPanel extends ScrollPane implements HostsObserver {
 
             // Añadir de nuevo el título
             Label titleLabel = new Label("Clientes Conectados");
-            titleLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #007bff;");
-            titleLabel.setStyle("-fx-padding: 5px;");
+            titleLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #007bff; -fx-padding: 5px;");
             vbox.getChildren().add(titleLabel);  // Reinsertar el título
 
             // Agregar un elemento por cada host en la lista
@@ -64,6 +64,7 @@ public class HostsPanel extends ScrollPane implements HostsObserver {
                 if (!host.getNick().equals("enviando")) {
                     HostControlPanel hostControlPanel = new HostControlPanel(host, this.cliente);
                     // Agregar el panel de host al VBox
+                    hostControlPanel.setStyle("-fx-background-color: #2e2e2e;");  // Fondo oscuro para cada panel de host
                     vbox.getChildren().add(hostControlPanel);
                 }
             }

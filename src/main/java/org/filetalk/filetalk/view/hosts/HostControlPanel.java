@@ -35,14 +35,17 @@ public class HostControlPanel extends Pane {
     private void initGUI(ClientInfo host) {
         // Crear las etiquetas para el nombre y dirección del host
         this.hostNameLabel = new Label(host.getNick() + " " + host.getAddress());
+        hostNameLabel.setStyle("-fx-text-fill: white;");
 
         // Crear un ComboBox para seleccionar el tipo de elemento a enviar
         this.selectionComboBox = new ComboBox<>();
         selectionComboBox.getItems().addAll("Enviar archivo", "Enviar directorio", "Enviar carpeta");
         selectionComboBox.setValue("Enviar archivo"); // Valor por defecto
+        selectionComboBox.setStyle("-fx-text-fill: white;");
 
         // Nuevo botón para enviar el elemento seleccionado
         this.sendFileButton = new Button("Enviar");
+        sendFileButton.setStyle("-fx-text-fill: white; -fx-background-color: #333333;");
 
         // Acción para el botón de enviar
         this.sendFileButton.setOnAction(event -> performSendAction());
@@ -57,27 +60,27 @@ public class HostControlPanel extends Pane {
         this.selectionComboBox.setPrefWidth(150);
         this.sendFileButton.setPrefWidth(100);
 
-        // Estilo del panel: añadir fondo blanco y bordes opcionales
-        this.setStyle("-fx-background-color: white; -fx-padding: 10;");
+        // Estilo del panel: añadir fondo oscuro y bordes opcionales
+        this.setStyle("-fx-background-color: #2e2e2e; -fx-padding: 10;");
         this.connectionStatusCircle = new Circle(10);
-        this.connectionStatusCircle.setFill(Color.RED); // Inicialmente desconectado
+        this.connectionStatusCircle.setFill(Color.GREEN); // Inicialmente desconectado
 
         // Agregar el círculo a la interfaz
         container.getChildren().add(connectionStatusCircle);
 
         // Ajuste de la etiqueta de estado
-        this.connectionStatusLabel = new Label("Desconectado");
+        this.connectionStatusLabel = new Label("Conectado");
+        connectionStatusLabel.setStyle("-fx-text-fill: white;");
         container.getChildren().add(connectionStatusLabel);
 
         // Añadir el HBox al pane
         this.getChildren().add(container);
 
-        this.timerLabel = new Label("Tiempo restante: 00:00");
-        container.getChildren().add(timerLabel);
 
         // Configurar el tamaño máximo y preferido del pane
         this.setMaxSize(Region.USE_PREF_SIZE, 48);
         this.setPrefSize(500, 48);
+        this.setStyle("-fx-padding: 20; -fx-background-color: #2d2d2d; -fx-border-color: #00BFFF; -fx-border-width: 2;"); // Celeste en los márgenes del root
     }
 
     public void updateConnectionStatus(boolean isConnected) {
@@ -107,7 +110,6 @@ public class HostControlPanel extends Pane {
                 // Crear un DirectoryChooser para seleccionar el directorio
                 DirectoryChooser directoryChooser = new DirectoryChooser();
                 selectedFile = directoryChooser.showDialog(new Stage());
-
                 break;
         }
 

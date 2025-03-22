@@ -60,8 +60,8 @@ public class TransferenceControlPanel extends Pane {
         this.fileNameLabel.setPrefSize(150, 20);
 
         // Resaltar el nombre del archivo y la dirección
-        this.fileNameLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #333333;");
-        this.addrLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #333333;");
+        this.fileNameLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: white;");
+        this.addrLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: white;");
 
         // Barra de progreso
         this.progressBar = new ProgressBar(0);
@@ -69,7 +69,7 @@ public class TransferenceControlPanel extends Pane {
 
         // Etiqueta para mostrar el porcentaje
         this.progressPercentageLabel = new Label("0%"); // Inicialmente 0%
-        this.progressPercentageLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #333333;");
+        this.progressPercentageLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: white;");
         this.progressPercentageLabel.setPrefSize(40, 20);
 
         // Botón para detener la transferencia
@@ -128,6 +128,7 @@ public class TransferenceControlPanel extends Pane {
         this.setPrefSize(530, 140);
         this.setMaxSize(530, 140);
         this.setMinSize(530, 140);
+        this.setStyle("-fx-padding: 20; -fx-background-color: #2d2d2d; -fx-border-color: #00BFFF; -fx-border-width: 2;"); // Celeste en los márgenes del root
     }
 
     // Método para asignar el color dependiendo del modo

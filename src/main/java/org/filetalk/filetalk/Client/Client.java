@@ -23,35 +23,21 @@ public class Client {
     private List<Observer> observers = new ArrayList<>();
     private List<HostsObserver>hostsObservers=new ArrayList<>();
     private  TransferencesObserver transferencesObserver;
-
     private String SERVER_ADDRESS;
     private int SERVER_PORT;
     private Socket socket;
-    private ObjectOutputStream out;
-    //private BufferedReader in;
-    //private DataInputStream entrada;
     private ObjectInputStream entrada;
-    private DataOutputStream salidaStream;
     private ObjectOutputStream salida;
     private String msj;
-    private List<ClientInfo> clienteConectados;
-    private TextArea chatArea; // Para mostrar mensajes
-    private ListView<String> clientesListView; // Para mostrar clientes conectados
     private ExecutorService executorService;
+    private DatagramSocket socketUdp;
+    private Servidor servidor;
+    private Observer observer;
 
     public Client(){
         this.executorService = Executors.newFixedThreadPool(10); // Usar un pool de hilos para manejar tareas concurrentes
-        this.clienteConectados = new ArrayList<>();
     }
 
-
-    public Client( ListView<String> clientesListView) {
-
-        this.clientesListView = clientesListView;
-        this.executorService = Executors.newFixedThreadPool(10); // Usar un pool de hilos para manejar tareas concurrentes
-        this.clienteConectados = new ArrayList<>();
-
-    }
 
 
     public void setConexion(String SERVER_ADDRESS, int SERVER_PORT) throws IOException, InterruptedException {
@@ -65,10 +51,6 @@ public class Client {
 
         System.out.println("El nombre de la máquina es: " + hostName);
         salida=new ObjectOutputStream(socket.getOutputStream());
-        //salidaStream=new DataOutputStream(new DataOutputStream(socket.getOutputStream()));
-        //out = new ObjectOutputStream(socket.getOutputStream());
-        //in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        //entrada = new DataInputStream(socket.getInputStream());
         entrada=new ObjectInputStream(socket.getInputStream());
         salida.writeObject(new Mensaje(hostName, CommunicationType.MESSAGE));
         TimeUnit.MILLISECONDS.sleep(500); // Esperar 1 segundo antes de la próxima actualización
@@ -76,21 +58,57 @@ public class Client {
 
         // Iniciar hilos para leer mensajes y recibir archivos
         executorService.submit(new ReadMessages(entrada));
-        executorService.submit(new Servidor(9091)); // Suponiendo que este es el puerto para recibir archivos
+        servidor=new Servidor(9091);
+        executorService.submit(servidor); // Suponiendo que este es el puerto para recibir archivos
+        cerrarBusqueda();
     }
 
     public void conexionAutomatica() throws IOException, InterruptedException {
-        DatagramSocket socket = new DatagramSocket(9092);
+         socketUdp = new DatagramSocket(9092);
+
         byte[] buffer = new byte[1024];
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
        
-        socket.receive(packet); // Recibe el mensaje de broadcast
+        socketUdp.receive(packet); // Recibe el mensaje de broadcast
         String received = new String(packet.getData(), 0, packet.getLength());
         String[] argsServer = received.split("\\[|]");
         SERVER_ADDRESS = argsServer[1];
         SERVER_PORT = Integer.parseInt(argsServer[3]);
         setConexion(SERVER_ADDRESS, SERVER_PORT);
 
+    }
+
+    public void cerrarBusqueda(){
+        socketUdp.close();
+    }
+
+    public void desconect() {
+        try {
+            // Verificar si la salida y el socket no están ya cerrados
+            if (socket != null && !socket.isClosed()) {
+                salida.writeObject(new Mensaje(CommunicationType.DISCONNECT));
+            }
+
+            // Solo cerrar el socket y la entrada si no están ya cerrados
+            if (socket != null && !socket.isClosed()) {
+                socket.close();
+            }
+
+            if (entrada != null) {
+                entrada.close();
+            }
+
+            // Llamada al método para desconectar del servidor
+            this.servidor.disconect();
+
+            // Actualización del estado de la conexión en el observador
+            this.observer.updateServerConnection(ServerStatusConnection.DISCONNECTED);
+
+        } catch (IOException e) {
+            // Manejo de la excepción
+            System.err.println("Error al desconectar: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
 
@@ -120,43 +138,25 @@ public class Client {
     }
 
     public void enviarMensaje(String mensaje) throws IOException {
+        System.out.printf(" [ "+mensaje+" ] ");
         salida.writeObject(new Mensaje(mensaje,CommunicationType.MESSAGE));
     }
 
-    // Método para actualizar la interfaz de usuario con el nuevo mensaje
-    public void actualizarUIConMensaje(String message) {
-        Platform.runLater(() -> chatArea.appendText(message + "\n"));
-    }
 
-    // Método para actualizar la lista de clientes conectados en la UI
-
-    public String getMsj() {
-        return this.msj;
-    }
-
-    public void resetMsj() {
-        this.msj=null;
-    }
 
 
     public void addObserver(Observer observer) {
-        observers.add(observer);
+       this.observer = observer;
     }
     public void addHostOserver(HostsObserver observer){
         hostsObservers.add(observer);
     }
 
-    public void removeObserver(Observer observer) {
-        observers.remove(observer);
-    }
 
     // Notificar a todos los observadores
     private void notifyObservers() {
-        for (Observer observer : observers) {
-            if (msj != null) {
-                observer.updateMessaje(msj);  // Notifica a los observadores con el nuevo mensaje
-            }
-        }
+
+        this.observer.updateMessaje(msj);
     }
 
     private void notifyHostobserves(List<ClientInfo>hosts) {
@@ -197,6 +197,7 @@ public class Client {
 
                     Object object = entrada.readObject();
                     if (object != null) {
+
                         communication = (Communication) object;
                         if (communication instanceof ClientListMessage) {
                             ClientListMessage listCliets = (ClientListMessage) communication;
@@ -210,6 +211,8 @@ public class Client {
                             handleIncomingMessage(msj);  // Procesamos el mensaje recibido
                             // actualizarUIConMensaje(msj); // Actualiza la UI con el mensaje recibido
                         }
+                    }else {
+                        logInfo("Mensaje nulo");
                     }
                 }
 
@@ -223,7 +226,7 @@ public class Client {
         }
 
 
-        private void cleanUp() {
+        public void cleanUp() {
             try {
                 if (entrada != null) {
                     entrada.close();
@@ -231,6 +234,8 @@ public class Client {
                 if (socket != null) {
                     socket.close();
                 }
+                notifyHostobserves(new ArrayList<>());
+                desconect();
             } catch (IOException e) {
                 System.out.println("Error al cerrar recursos: " + e.getMessage());
             }
@@ -240,16 +245,17 @@ public class Client {
     // Servidor que recibe los archivos en un puerto diferente
      class Servidor implements Runnable {
         private int port;
-
+        private ServerSocket serverSocket;
         public Servidor(int port) {
             this.port = port;
         }
 
         @Override
         public void run() {
-            try (ServerSocket serverSocket = new ServerSocket(port)) {
+            try  {
+                serverSocket = new ServerSocket(port);
                 System.out.println("Servidor escuchando en el puerto: " + port);
-                while (true) {
+                while (!serverSocket.isClosed()) {
                     Socket clientSocket = serverSocket.accept();
                     System.out.println("Conexión aceptada de un cliente.");
                     FileTransferManager transferManager =new FileTransferManager(transferencesObserver);
@@ -259,7 +265,23 @@ public class Client {
                 System.err.println("Error en el servidor: " + e.getMessage());
             }
         }
+
+        public void disconect() throws IOException {
+            this.serverSocket.close();
+        }
+
     }
 
+    private void logInfo(String message) {
+        // Obtención de la clase, el método y la línea mediante el StackTrace
+        StackTraceElement element = Thread.currentThread().getStackTrace()[2];
+        String className = element.getClassName();
+        String methodName = element.getMethodName();
+        int lineNumber = element.getLineNumber();
+
+        // Registro de la información con detalles de la clase, el método y la línea
+        //LOGGER.info("Clase: {}, Método: {}, Línea: {} - {}", className, methodName, lineNumber, message);
+        System.out.println("Clase: "+className+" Metodo: "+methodName+" Linea: "+lineNumber+" Log: "+message);
+    }
 
 }

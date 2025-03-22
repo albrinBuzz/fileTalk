@@ -8,8 +8,11 @@ public class Mensaje extends Communication {
 
     public Mensaje( String contenido,CommunicationType type) {
         super(type);
-
         this.contenido = contenido;
+    }
+
+    public Mensaje(CommunicationType type) {
+        super(type);
     }
 
 

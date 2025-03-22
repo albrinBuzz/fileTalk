@@ -53,7 +53,7 @@ public class ClientHandler implements Runnable {
             entrada = new ObjectInputStream(clientSocket.getInputStream());
             salida = new ObjectOutputStream(clientSocket.getOutputStream());
 
-            logInfo("Conectando");
+            logInfo("Conectando al Servidor");
 
             Mensaje mensaje=(Mensaje) entrada.readObject();
 
@@ -70,13 +70,17 @@ public class ClientHandler implements Runnable {
 
             server.updateClient(nick);
             Communication communication;
+            logInfo("Esperando mensajes");
             while (clientSocket.isConnected()) {
+                logInfo("Leyendo mensajes mensajes");
                 communication =(Communication) entrada.readObject();
                 if (communication != null) {
                         server.totalMessagesReceived.getAndIncrement();
                         System.out.printf("[%s] => %s%n", nick, mensaje.getContenido());
                         //handleMessage(mensaje.getContenido());
                         handleComunication(communication);
+                }else {
+                    logInfo("Mensaje nulo");
                 }
             }
 
@@ -97,6 +101,7 @@ public class ClientHandler implements Runnable {
             System.err.println("Clase no encontrada: " + e.getMessage());
             e.printStackTrace();
         }finally {
+
             shutDown();
         }
     }
@@ -114,6 +119,9 @@ public class ClientHandler implements Runnable {
         else if (communication.getType().equals(CommunicationType.DIRECTORY)) {
             Mensaje mensaje=(Mensaje)communication;
             sendFileToClient(mensaje.getContenido());
+        }
+        else if (communication.getType().equals(CommunicationType.DISCONNECT)) {
+           shutDown();
         }
 
     }
@@ -247,7 +255,10 @@ public class ClientHandler implements Runnable {
 
     }
 
-    private void shutDown() {
+    public void shutDown() {
+
+        logInfo("shutDown");
+
         try {
 
             server.broadcastMessage(nick + " Se a desconectado", this);

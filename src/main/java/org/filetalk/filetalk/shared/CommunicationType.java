@@ -10,5 +10,6 @@ public enum CommunicationType {
     COMMAND,        // Comandos o peticiones del cliente
     NOTIFICATION,   // Notificaciones generales
     ALERT,   // Mensaje de error
-    UPDATE
+    UPDATE,
+    DISCONNECT
 }
