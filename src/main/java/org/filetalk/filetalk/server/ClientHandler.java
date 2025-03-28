@@ -126,29 +126,7 @@ public class ClientHandler implements Runnable {
 
     }
 
-    private void handleMessage(String message) throws IOException {
 
-        if (message.startsWith("/nick")) {
-            changeNickname(message);
-        } else if (message.startsWith("/file")) {
-            sendFileToClient(message);
-        } else if (message.startsWith("/dm")) {
-            directMessage(message);
-        } else if (message.startsWith("/quit")) {
-            server.broadcastMessage(nick + " has left the chat", this);
-            shutDown();
-        } else {
-            server.broadcastMessage("[" + nick + "] => " + message, this);
-            server.addMessageHistory("[" + nick + "] => " + message);
-        }
-    }
-
-    public static boolean esSoloLetras(String texto) {
-        String regex = "^[a-zA-Z]+$";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(texto);
-        return matcher.matches();
-    }
 
     private void changeNickname(String message) {
         String[] messageSplit = message.split(" ", 2);

@@ -29,7 +29,7 @@ public class TransferenceControlPanel extends Pane {
     public TransferenceControlPanel(String mode, String src_addr, String dst_addr, String fileName, FileTransferManager transferManager) {
         this.mode = mode;
 
-        this.fileNameLabel = new Label(fileName);
+        this.fileNameLabel = new Label(fileName.substring(1));
 
         if (mode.equals("send")) {
             this.titleAddrLabel = new Label("A destino:");
@@ -56,6 +56,7 @@ public class TransferenceControlPanel extends Pane {
 
         this.modeLabel.setPrefSize(90, 1);
         this.titleAddrLabel.setPrefSize(90, 20);
+        this.titleAddrLabel.setStyle("-fx-text-fill: white;");
         this.addrLabel.setPrefSize(120, 20);
         this.fileNameLabel.setPrefSize(150, 20);
 
@@ -110,9 +111,14 @@ public class TransferenceControlPanel extends Pane {
         addrBox.setAlignment(Pos.CENTER_LEFT);
         grid.add(addrBox, 1, 1);
 
-        grid.add(new Label("Nombre de archivo:"), 0, 2);
+
+        Label archivo= new Label("Nombre de archivo:");
+        archivo.setStyle("-fx-text-fill: white;");
+        grid.add(archivo, 0, 2);
         grid.add(this.fileNameLabel, 1, 2);
-        grid.add(new Label("Progreso:"), 0, 3);
+        Label progreso= new Label("Progreso");
+        progreso.setStyle("-fx-text-fill: white;");
+        grid.add(progreso, 0, 3);
         grid.add(this.progressBar, 1, 3, 2, 1);  // La barra de progreso ocupa dos columnas
         grid.add(this.progressPercentageLabel, 3, 3); // Colocar la etiqueta de porcentaje junto a la barra
 

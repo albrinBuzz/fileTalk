@@ -3,7 +3,7 @@ module org.filetalk.filetalk {
     requires javafx.fxml;
     requires java.management;
     requires org.slf4j;
-    requires org.testng;
+
     requires java.logging;
     requires org.apache.logging.log4j;
     requires java.net.http;
