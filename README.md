@@ -1,4 +1,5 @@
-# Proyecto de Transferencia de Archivos en Red Local
+# FileTalk: Transferencia de Archivos en Red Local
+
 
 **Descripción**: Este proyecto proporciona una solución para la transferencia rápida y segura de archivos entre dispositivos en una red local. Sirve como un reemplazo de un dispositivo USB, permitiendo a los usuarios compartir archivos fácilmente sin necesidad de dispositivos físicos, utilizando solo su red local.
 
@@ -28,5 +29,5 @@ Este proyecto actúa como un reemplazo de un dispositivo USB, utilizando la red 
 
 ### 1. Clonar el repositorio
 
-```bash
+bash
 git clone https://github.com/albrinBuzz/fileTalk.git
