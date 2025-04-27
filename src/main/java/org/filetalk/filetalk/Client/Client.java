@@ -1,15 +1,10 @@
 package org.filetalk.filetalk.Client;
 
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
 import org.filetalk.filetalk.model.Observers.HostsObserver;
 import org.filetalk.filetalk.model.Observers.TransferencesObserver;
 import org.filetalk.filetalk.model.Observers.Observer;
+import org.filetalk.filetalk.server.ConfiguracionServidor;
 import org.filetalk.filetalk.shared.*;
-import org.filetalk.filetalk.utils.FileTransferHandler;
 
 import java.io.*;
 import java.net.*;
@@ -17,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 public class Client {
     private List<Observer> observers = new ArrayList<>();
@@ -33,6 +27,7 @@ public class Client {
     private DatagramSocket socketUdp;
     private Servidor servidor;
     private Observer observer;
+    private ConfiguracionServidor config = new ConfiguracionServidor();
 
     public Client(){
         this.executorService = Executors.newFixedThreadPool(10); // Usar un pool de hilos para manejar tareas concurrentes
@@ -49,16 +44,15 @@ public class Client {
         // Obtener el nombre de la máquina
         String hostName = inetAddress.getHostName();
 
-        System.out.println("El nombre de la máquina es: " + hostName);
         salida=new ObjectOutputStream(socket.getOutputStream());
         entrada=new ObjectInputStream(socket.getInputStream());
         salida.writeObject(new Mensaje(hostName, CommunicationType.MESSAGE));
-        TimeUnit.MILLISECONDS.sleep(500); // Esperar 1 segundo antes de la próxima actualización
+        //TimeUnit.MILLISECONDS.sleep(500); // Esperar 1 segundo antes de la próxima actualización
         salida.flush();
 
         // Iniciar hilos para leer mensajes y recibir archivos
         executorService.submit(new ReadMessages(entrada));
-        servidor=new Servidor(9091);
+        servidor=new Servidor(Integer.parseInt(config.obtener("cliente.puerto")));
         executorService.submit(servidor); // Suponiendo que este es el puerto para recibir archivos
         cerrarBusqueda();
     }
@@ -112,7 +106,7 @@ public class Client {
     }
 
 
-    public void handleFileTransfer(String message) throws IOException {
+    public void handleFileTransfer(String message, String host, int port) throws IOException {
         String[] messageSplit = message.split(" ");
         if (messageSplit.length < 3) {
             System.out.println("Usage: /file <RecipientNick> <FilePath>");
@@ -131,9 +125,34 @@ public class Client {
         //new Thread(()->sendFile(file,message)).start();
         FileTransferManager transferManager =new FileTransferManager(transferencesObserver);
 
-        executorService.submit(()->transferManager.sendFile(file, message, SERVER_ADDRESS));
+        executorService.submit(()->transferManager.sendFile(file, message, host,port));
 
         //sendFile(file,message);
+
+    }
+
+    public void handleDirectoryTransfer(String filePath, String host, int port) throws IOException {
+
+        File file = new File(filePath);
+
+
+        if (!file.exists()) {
+            System.out.println("Invalid file path");
+            return;
+        }
+
+        //new Thread(()->sendFile(file,message)).start();
+        //FileTransferManager transferManager =new FileTransferManager(transferencesObserver);
+        DirectoryTransferManager directoryTransferManager=new DirectoryTransferManager(transferencesObserver);
+        //directoryTransferManager.sendDirectory(file);
+
+        executorService.submit(()-> {
+            try {
+                directoryTransferManager.sendDirectory(file,host,port);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
     }
 
@@ -191,7 +210,7 @@ public class Client {
         @Override
         public void run() {
             try {
-                System.out.println("conectado");
+
 
                 while (socket.isConnected()) {
 
@@ -212,7 +231,7 @@ public class Client {
                             // actualizarUIConMensaje(msj); // Actualiza la UI con el mensaje recibido
                         }
                     }else {
-                        logInfo("Mensaje nulo");
+                        Logger.logInfo("Mensaje nulo");
                     }
                 }
 
@@ -254,12 +273,13 @@ public class Client {
         public void run() {
             try  {
                 serverSocket = new ServerSocket(port);
-                System.out.println("Servidor escuchando en el puerto: " + port);
+
+
                 while (!serverSocket.isClosed()) {
                     Socket clientSocket = serverSocket.accept();
-                    System.out.println("Conexión aceptada de un cliente.");
-                    FileTransferManager transferManager =new FileTransferManager(transferencesObserver);
-                    new Thread(() -> transferManager.receiveFiles(clientSocket)).start();
+
+                    new Thread(() -> handleConnection(clientSocket)).start();
+
                 }
             } catch (IOException e) {
                 System.err.println("Error en el servidor: " + e.getMessage());
@@ -270,18 +290,40 @@ public class Client {
             this.serverSocket.close();
         }
 
+        private void handleConnection(Socket socket){
+
+            try {
+
+
+                var entrada = new ObjectInputStream(socket.getInputStream());
+
+                FileDirectoryCommunication communication= (FileDirectoryCommunication) entrada.readObject();
+
+                if (communication.getType().equals(CommunicationType.FILE)){
+
+                    FileTransferManager transferManager =new FileTransferManager(transferencesObserver);
+                    transferManager.receiveFiles(socket,communication,entrada);
+
+                    // new Thread(() -> transferManager.receiveFiles(socket,communication)).start();
+
+                } else if (communication.getType().equals(CommunicationType.DIRECTORY)) {
+
+                    DirectoryTransferManager directoryTransferManager=new DirectoryTransferManager(transferencesObserver);
+                    directoryTransferManager.reciveDirectory(socket,communication,entrada);
+
+                }
+
+
+            } catch (IOException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+
+
+        }
+
     }
 
-    private void logInfo(String message) {
-        // Obtención de la clase, el método y la línea mediante el StackTrace
-        StackTraceElement element = Thread.currentThread().getStackTrace()[2];
-        String className = element.getClassName();
-        String methodName = element.getMethodName();
-        int lineNumber = element.getLineNumber();
 
-        // Registro de la información con detalles de la clase, el método y la línea
-        //LOGGER.info("Clase: {}, Método: {}, Línea: {} - {}", className, methodName, lineNumber, message);
-        System.out.println("Clase: "+className+" Metodo: "+methodName+" Linea: "+lineNumber+" Log: "+message);
-    }
+
 
 }

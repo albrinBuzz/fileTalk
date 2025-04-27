@@ -3,9 +3,9 @@ package org.filetalk.filetalk.server;
 import org.filetalk.filetalk.Client.ClientInfo;
 import org.filetalk.filetalk.shared.Communication;
 import org.filetalk.filetalk.shared.CommunicationType;
+import org.filetalk.filetalk.shared.Logger;
 import org.filetalk.filetalk.shared.Mensaje;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 import java.io.*;
 import java.net.Socket;
@@ -21,9 +21,9 @@ public class ClientHandler implements Runnable {
     private ObjectOutputStream salida;
     private String ip;
     private Server server;
+    private ConfiguracionServidor config = new ConfiguracionServidor();
     // Crear el logger JDK
     //private static final Logger LOGGER = Logger.getLogger(ClientHandler.class.getName());
-    private final Logger LOGGER = LoggerFactory.getLogger(ClientHandler.class);
 
 
     public ClientHandler(Socket socket, Server server) {
@@ -49,11 +49,12 @@ public class ClientHandler implements Runnable {
             }
 
 
-            System.out.println("Cliente aceptado desde: "+clientSocket.getInetAddress().toString());
+            //System.out.println("Cliente aceptado desde: "+clientSocket.getInetAddress().toString());
+            Logger.logInfo("Cliente aceptado desde: "+clientSocket.getInetAddress().toString());
             entrada = new ObjectInputStream(clientSocket.getInputStream());
             salida = new ObjectOutputStream(clientSocket.getOutputStream());
 
-            logInfo("Conectando al Servidor");
+            Logger.logInfo("Conectando al Servidor");
 
             Mensaje mensaje=(Mensaje) entrada.readObject();
 
@@ -61,8 +62,11 @@ public class ClientHandler implements Runnable {
 
             sendComunicacion(new Mensaje( "Conectado al servidor como: " + nick, CommunicationType.MESSAGE));
 
-            Server.clients.put(clientSocket, new ClientInfo(clientSocket, nick));
-            server.addClientUpdate(new ClientInfo(clientSocket, nick));
+            int puerto=Integer.parseInt(config.obtener("cliente.puerto"));
+
+            Server.clients.put(clientSocket, new ClientInfo(clientSocket, nick,puerto));
+
+            server.addClientUpdate(new ClientInfo(clientSocket, nick,puerto));
             //System.out.printf("[%s] has joined the chat%n", nick);
             if (!nick.equals("enviando")){
                 server.broadcastMessage("[ " + nick + "] Se ha unido al Chat", this);
@@ -70,9 +74,9 @@ public class ClientHandler implements Runnable {
 
             server.updateClient(nick);
             Communication communication;
-            logInfo("Esperando mensajes");
+            Logger. logInfo("Esperando mensajes");
             while (clientSocket.isConnected()) {
-                logInfo("Leyendo mensajes mensajes");
+                Logger.logInfo("Leyendo mensajes mensajes");
                 communication =(Communication) entrada.readObject();
                 if (communication != null) {
                         server.totalMessagesReceived.getAndIncrement();
@@ -80,13 +84,14 @@ public class ClientHandler implements Runnable {
                         //handleMessage(mensaje.getContenido());
                         handleComunication(communication);
                 }else {
-                    logInfo("Mensaje nulo");
+                    Logger.logInfo("Mensaje nulo");
                 }
             }
 
         }  catch (EOFException e) {
             // El flujo llegó al final inesperadamente
-            System.err.println("Fin inesperado del flujo de datos.");
+
+            Logger.logInfo("Fin inesperado del flujo de datos.");
             e.printStackTrace();
         } catch (StreamCorruptedException e) {
             // El flujo está dañado
@@ -174,10 +179,12 @@ public class ClientHandler implements Runnable {
 
             ClientHandler recipient = findClientByIp(recipientNick);
 
-                LOGGER.info("Enviando archivo a: {}", recipientNick);
-                LOGGER.info("Ip: {}", recipient.ip.substring(1));
 
-                logInfo("Enviando archivo a: {}"+ recipientNick);
+                Logger.logInfo("Enviando archivo a: " +recipientNick);
+                Logger.logInfo("Ip: "+recipient.ip.substring(1));
+
+
+            Logger.logInfo("Enviando archivo a: {}"+ recipientNick);
 
 
                 try (Socket recipientSocket = new Socket(recipient.ip.substring(1), 9091);
@@ -203,7 +210,7 @@ public class ClientHandler implements Runnable {
                         salida.flush();
                         totalBytesSent += bytesRead;
                         double totalMB = totalBytesSent / 1_048_576.0;
-                        logInfo("Reenviado " + totalMB + " MB Reenviados.");
+                        //logInfo("Reenviado " + totalMB + " MB Reenviados.");
 
                     }
 
@@ -214,15 +221,15 @@ public class ClientHandler implements Runnable {
                         totalBytesSent += bytesRead;
                     }*/
 
-                    System.out.printf("Enviados %d bytes a %s...%n", totalBytesSent, recipientNick);
+                    //System.out.printf("Enviados %d bytes a %s...%n", totalBytesSent, recipientNick);
                     server.addBytes(totalBytesSent);
                     server.updateBytes();
                     salida.flush();
-                    System.out.println("Archivo enviado correctamente a " + recipientNick);
+                    //System.out.println("Archivo enviado correctamente a " + recipientNick);
                     shutDown();
                 } catch (IOException e) {
                     //LOGGER.log(Level.SEVERE, "Error al enviar el archivo a: " + recipientNick, e);
-                    LOGGER.error("Error al enviar el archivo a: {}  Error: {}",recipientNick,e.getMessage());
+                    //LOGGER.error("Error al enviar el archivo a: {}  Error: {}",recipientNick,e.getMessage());
                 } finally {
                     shutDown();
                 }
@@ -235,7 +242,7 @@ public class ClientHandler implements Runnable {
 
     public void shutDown() {
 
-        logInfo("shutDown");
+        Logger.logInfo("shutDown");
 
         try {
 
@@ -250,7 +257,7 @@ public class ClientHandler implements Runnable {
 
 
         } catch (IOException e) {
-            LOGGER.error("Error al cerrar conexión con el cliente: {}",e.getMessage());
+            //LOGGER.error("Error al cerrar conexión con el cliente: {}",e.getMessage());
         }
     }
 
@@ -260,22 +267,13 @@ public class ClientHandler implements Runnable {
             salida.writeObject(communication);
 
         } catch (IOException e) {
-            LOGGER.error("Error al enviar con el cliente: {}",e.getMessage());
+            //LOGGER.error("Error al enviar con el cliente: {}",e.getMessage());
+            Logger.logInfo("Error al enviar con el cliente: "+e.getMessage());
         }
 
     }
 
-    private void logInfo(String message) {
-        // Obtención de la clase, el método y la línea mediante el StackTrace
-        StackTraceElement element = Thread.currentThread().getStackTrace()[2];
-        String className = element.getClassName();
-        String methodName = element.getMethodName();
-        int lineNumber = element.getLineNumber();
 
-        // Registro de la información con detalles de la clase, el método y la línea
-        //LOGGER.info("Clase: {}, Método: {}, Línea: {} - {}", className, methodName, lineNumber, message);
-        System.out.println("Clase: "+className+" Metodo: "+methodName+" Linea: "+lineNumber+" Log: "+message);
-    }
 
     /*public void sendMessage(Object message) {
         try {

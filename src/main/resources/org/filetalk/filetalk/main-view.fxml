@@ -12,7 +12,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="860.0" prefWidth="1676.0" style="-fx-background-color: #2e2e2e;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.filetalk.filetalk.MainViewController">
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: #2e2e2e;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.filetalk.filetalk.MainViewController">
     <children>
         <!-- Main messaging area -->
         <VBox fx:id="vboxMain" layoutX="70.0" layoutY="170.0" prefHeight="320.0" prefWidth="960.0" spacing="10.0" style="-fx-background-color: #2e2e2e; -fx-padding: 10px;">
@@ -25,22 +26,22 @@
             </children>
         </VBox>
 
-        <!-- Message input area -->
-        <HBox layoutX="70.0" layoutY="554.0" prefHeight="66.0" prefWidth="795.0" spacing="10.0" style="-fx-background-color: #2e2e2e;">
+                          <!-- Message input area -->
+        <HBox layoutX="70.0" layoutY="554.0" spacing="10.0" style="-fx-background-color: #2e2e2e;">
             <children>
                 <TextArea fx:id="txtMensajes" maxHeight="60.0" minHeight="60.0" onDragEntered="#enviarMensaje" onMouseDragEntered="#enviarMensaje" prefHeight="60.0" prefWidth="566.0" style="-fx-background-color: #21716d; -fx-text-fill: black; -fx-font-size: 14px; -fx-padding: 5px;" />
                 <Button fx:id="btnEnvirMensaje" layoutX="150.0" layoutY="60.0" mnemonicParsing="false" onAction="#enviarMensaje" prefHeight="28.0" prefWidth="200.0" style="-fx-background-color: #4a90e2; -fx-text-fill: white; -fx-font-size: 14px;" styleClass="mainButton" text="Enviar Mensaje" />
             </children>
         </HBox>
 
-        <!-- Conexión al servidor -->
-        <VBox layoutX="75.0" layoutY="50.0" prefHeight="122.0" prefWidth="600.0" spacing="15.0" style="-fx-background-color: #2e2e2e; -fx-padding: 10px;">
+                    <!-- Conexión al servidor -->
+        <VBox layoutX="75.0" layoutY="50.0" prefHeight="122.0" spacing="15.0" style="-fx-background-color: #2e2e2e; -fx-padding: 10px;">
             <children>
                 <!-- TabPane for connection settings (Basic and Advanced) -->
                 <TabPane prefHeight="200.0" prefWidth="600.0" style="-fx-background-color: #333333;" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
                         <!-- Basic Tab -->
-                        <Tab style="-fx-background-color: 20e4db;" text="Conexión Básica">
+                        <Tab style="-fx-background-color: 20e4db" text="Conexión Básica">
                             <content>
                                 <VBox prefHeight="60.0" prefWidth="569.0" spacing="10.0" style="-fx-background-color: #444444;">
                                     <Label prefHeight="18.0" prefWidth="148.0" style="-fx-text-fill: white;" text="Conexion Automatica" />
@@ -51,7 +52,7 @@
                             </content>
                         </Tab>
 
-                        <!-- Advanced Tab -->
+                                    <!-- Advanced Tab -->
                         <Tab style="-fx-background-color: 20e4db;" text="Conexión Avanzada">
                             <content>
                                 <VBox prefHeight="75.0" prefWidth="600.0" spacing="10.0" style="-fx-background-color: #444444;">
@@ -63,12 +64,12 @@
                                         <TextField fx:id="portField" prefWidth="70.0" promptText="8080" style="-fx-background-color: #333333; -fx-text-fill: white;" />
                                     </HBox>
 
-                                    <!-- Advanced options -->
+                                                <!-- Advanced options -->
                                     <HBox spacing="10.0" style="-fx-background-color: #444444;">
                                         <Button fx:id="connectButton" onAction="#connectToServer" prefHeight="26.0" prefWidth="203.0" style="-fx-background-color: #4a90e2; -fx-text-fill: white;" text="Conectar con Avanzado" />
                                     </HBox>
 
-                                    <!-- Conectar con opciones avanzadas -->
+                                                <!-- Conectar con opciones avanzadas -->
                                     <HBox alignment="center" spacing="10.0" />
                                 </VBox>
                             </content>
@@ -78,21 +79,23 @@
             </children>
         </VBox>
 
-        <!-- Progress Bar for file upload -->
+              <!-- Progress Bar for file upload -->
         <VBox layoutX="70.0" layoutY="620.0" spacing="15.0" style="-fx-background-color: #2e2e2e; -fx-padding: 10px;" />
 
-        <!-- Host panel for connected hosts -->
+                          <!-- Host panel for connected hosts -->
         <Pane fx:id="hostPane" layoutX="1050.0" layoutY="170.0" prefHeight="320.0" prefWidth="602.0" style="-fx-background-color: #2e2e2e;" />
 
-        <!-- Transfers Panel -->
+                    <!-- Transfers Panel -->
         <Pane fx:id="transfersPane" layoutX="70.0" layoutY="617.0" prefHeight="223.0" prefWidth="562.0" style="-fx-background-color: #2e2e2e;" />
 
-        <!-- Connection Label -->
-        <Label fx:id="lblConexion" layoutX="686.0" layoutY="63.0" prefHeight="18.0" prefWidth="153.0" style="-fx-text-fill: white;" text="EsperandoConexion" />
+              <!-- Connection Label -->
+        <Label fx:id="lblConexion" layoutX="712.0" layoutY="63.0" prefHeight="18.0" prefWidth="153.0" style="-fx-text-fill: white;" text="Desconectado" />
 
-        <!-- Server Panel -->
-        <Pane fx:id="serverPane" layoutX="872.0" layoutY="507.0" prefHeight="340.0" prefWidth="795.0" style="-fx-background-color: #2e2e2e;" />
-      <Circle fx:id="crConexion" fill="DODGERBLUE" layoutX="834.0" layoutY="76.0" radius="15.0" stroke="BLACK" strokeType="INSIDE" />
+                          <!-- Server Panel -->
+        <Pane fx:id="serverPane" layoutX="872.0" layoutY="507.0" style="-fx-background-color: #2e2e2e;" />
+      <Circle fx:id="crConexion" fill="DODGERBLUE" layoutX="854.0" layoutY="72.0" radius="15.0" stroke="BLACK" strokeType="INSIDE" />
       <Button fx:id="btnDesconectarse" layoutX="696.0" layoutY="98.0" mnemonicParsing="false" onAction="#desconctarServidor" text="Desconectarse" textAlignment="RIGHT" />
+      <Label fx:id="lblEstadCon" layoutX="712.0" layoutY="48.0" prefHeight="18.0" prefWidth="124.0" text="EstadoConexion:" textFill="#f2f0f0" />
+      <Button fx:id="btnDescargas" layoutX="970.0" layoutY="59.0" mnemonicParsing="false" onAction="#abrirDescargas" text="AbrirDirecotrioDescargas" />
     </children>
 </Pane>

@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import javafx.scene.paint.Color;
 import org.filetalk.filetalk.Client.Client;
 import org.filetalk.filetalk.Client.ClientInfo;
+import org.filetalk.filetalk.shared.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +40,7 @@ public class HostControlPanel extends Pane {
 
         // Crear un ComboBox para seleccionar el tipo de elemento a enviar
         this.selectionComboBox = new ComboBox<>();
-        selectionComboBox.getItems().addAll("Enviar archivo", "Enviar directorio", "Enviar carpeta");
+        selectionComboBox.getItems().addAll("Enviar archivo", "Enviar carpeta");
         selectionComboBox.setValue("Enviar archivo"); // Valor por defecto
         selectionComboBox.setStyle("-fx-text-fill: white;");
 
@@ -48,7 +49,13 @@ public class HostControlPanel extends Pane {
         sendFileButton.setStyle("-fx-text-fill: white; -fx-background-color: #333333;");
 
         // Acción para el botón de enviar
-        this.sendFileButton.setOnAction(event -> performSendAction());
+        this.sendFileButton.setOnAction(event -> {
+            try {
+                performSendAction();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         // Crear un HBox para organizar los elementos horizontalmente
         HBox container = new HBox(10); // Espaciado de 10px entre los elementos
@@ -94,7 +101,7 @@ public class HostControlPanel extends Pane {
     }
 
     // Método para manejar la acción de enviar el elemento seleccionado
-    private void performSendAction() {
+    private void performSendAction() throws IOException {
         String selectedOption = selectionComboBox.getValue();
         File selectedFile = null;
 
@@ -104,25 +111,38 @@ public class HostControlPanel extends Pane {
                 FileChooser fileChooser = new FileChooser();
                 fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("All Files", "*.*"));
                 selectedFile = fileChooser.showOpenDialog(new Stage());
+
+                //Logger.logInfo("Enviado Archivo");
+                if (selectedFile!=null){
+                    client.handleFileTransfer("/file " + host.getAddress() + " " + selectedFile.getAbsolutePath(),host.getAddress(),host.getPort());
+
+                }
                 break;
-            case "Enviar directorio":
+
             case "Enviar carpeta":
                 // Crear un DirectoryChooser para seleccionar el directorio
                 DirectoryChooser directoryChooser = new DirectoryChooser();
                 selectedFile = directoryChooser.showDialog(new Stage());
+
+                if (selectedFile != null) {
+                    client.handleDirectoryTransfer(selectedFile.getAbsolutePath(), host.getAddress(),host.getPort());
+                }
                 break;
         }
 
-        if (selectedFile != null) {
+        /*if (selectedFile != null) {
             try {
                 // Lógica para enviar el archivo o directorio
-                client.handleFileTransfer("/file " + host.getAddress() + " " + selectedFile.getAbsolutePath());
+
+                System.out.println("Direccion del host: "+host.getAddress());
+                client.handleFileTransfer("/file " + host.getAddress() + " " + selectedFile.getAbsolutePath(),host.getAddress());
+
 
                 // Actualizar el temporizador (ejemplo con 90 segundos)
                 long time = 90;
                 int minutes = (int) (time / 60);
                 int seconds = (int) (time % 60);
-                timerLabel.setText(String.format("Tiempo restante: %02d:%02d", minutes, seconds));
+                //timerLabel.setText(String.format("Tiempo restante: %02d:%02d", minutes, seconds));
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -130,7 +150,7 @@ public class HostControlPanel extends Pane {
         } else {
             // Si no se seleccionó ningún archivo o directorio
             System.out.println("No se seleccionó ningún elemento.");
-        }
+        }*/
     }
 
     // Método para habilitar o deshabilitar opciones del host

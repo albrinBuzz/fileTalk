@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.control.ScrollPane;
 import org.filetalk.filetalk.Client.FileTransferManager;
+import org.filetalk.filetalk.Client.TransferManager;
 import org.filetalk.filetalk.model.Observers.TransferencesObserver;
 import org.filetalk.filetalk.shared.FileTransferState;
 
@@ -70,7 +71,7 @@ public class TransferencesPanel extends ScrollPane implements TransferencesObser
     }
 
     @Override
-    public void addTransference(String mode, String src_addr, String dst_addr, String fileName, FileTransferManager transferManager) {
+    public void addTransference(String mode, String src_addr, String dst_addr, String fileName, TransferManager transferManager) {
         TransferenceControlPanel controlPanel = new TransferenceControlPanel(mode, src_addr, dst_addr, fileName, transferManager);
         if (mode.equals(SEND_MODE)) {
             this.clientTransferencesMap.put(dst_addr, controlPanel);

@@ -8,6 +8,7 @@ import org.filetalk.filetalk.model.Observers.HostsObserver;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import org.filetalk.filetalk.Client.Client;
+import org.filetalk.filetalk.shared.Logger;
 
 import java.util.List;
 
@@ -45,7 +46,8 @@ public class HostsPanel extends ScrollPane implements HostsObserver {
     @Override
     public void updateAllHosts(List<ClientInfo> hostList) {
         if (hostList == null || hostList.isEmpty()) {
-            System.out.println("lista vacia de hosts");
+
+            Platform.runLater(() -> vbox.getChildren().clear());
             return;  // Salir si la lista está vacía o nula
         }
 

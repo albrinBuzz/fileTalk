@@ -8,6 +8,7 @@ import javafx.scene.paint.Color;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.filetalk.filetalk.Client.FileTransferManager;
+import org.filetalk.filetalk.Client.TransferManager;
 
 
 public class TransferenceControlPanel extends Pane {
@@ -20,13 +21,13 @@ public class TransferenceControlPanel extends Pane {
     private Label modeLabel;
     private Button stopButton;
     private Button continueButton;
-    private FileTransferManager transferManager;
+    private TransferManager transferManager;
     private String mode;
     private boolean isPaused;
     private Label progressPercentageLabel; // Etiqueta para mostrar el porcentaje
 
     // Constructor
-    public TransferenceControlPanel(String mode, String src_addr, String dst_addr, String fileName, FileTransferManager transferManager) {
+    public TransferenceControlPanel(String mode, String src_addr, String dst_addr, String fileName, TransferManager transferManager) {
         this.mode = mode;
 
         this.fileNameLabel = new Label(fileName.substring(1));

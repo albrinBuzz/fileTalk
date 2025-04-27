@@ -7,18 +7,17 @@ public class ClientInfo implements Serializable {
     private String address;
     private long connectionTime;
     private String nick;
-    public ClientInfo(Socket socket, String nick) {
-        this.address = socket.getInetAddress().toString();
-        this.connectionTime = System.currentTimeMillis();
+    private int port;
 
+    public ClientInfo(Socket socket, String nick,int puerto) {
+        this.address = socket.getInetAddress().toString();
+        this.address=address.substring(1);
+        this.connectionTime = System.currentTimeMillis();
+        this.port=puerto;
         this.nick=nick;
     }
 
-    public ClientInfo(String version, long tiempoConexion, String nick) {
-        this.address = version;
-        this.connectionTime = tiempoConexion;
-        this.nick = nick;
-    }
+
 
     public String getAddress() {
         return address;
@@ -37,6 +36,13 @@ public class ClientInfo implements Serializable {
         return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
 
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
 
     public String getNick() {
         return this.nick;

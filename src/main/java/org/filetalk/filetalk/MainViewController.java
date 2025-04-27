@@ -10,18 +10,18 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.filetalk.filetalk.Client.ConfiguracionCliente;
+import org.filetalk.filetalk.Client.UtilidadesCliente;
 import org.filetalk.filetalk.model.Observers.Observer;
 import org.filetalk.filetalk.Client.Client;
+import org.filetalk.filetalk.shared.Logger;
 import org.filetalk.filetalk.shared.ServerStatusConnection;
 import org.filetalk.filetalk.view.hosts.HostsPanel;
 import org.filetalk.filetalk.view.servidor.ServerInfoPane;
@@ -135,6 +135,10 @@ public class MainViewController implements Initializable, Observer {
 
         vboxMsj.setPadding(new Insets(10));
         vboxMsj.setSpacing(5);
+
+        AnchorPane.setTopAnchor(vboxMain, 0.0);
+        AnchorPane.setLeftAnchor(vboxMain, 0.0);
+        AnchorPane.setRightAnchor(vboxMain, 0.0);
 
         portField.textProperty().addListener((obs, oldValue, newValue) -> validateConnectionFields(ipReceptorTxt, portField));
 
@@ -264,7 +268,7 @@ public class MainViewController implements Initializable, Observer {
     private void searchServer() {
         //statusText.setText("Searching for server...");
         //statusText.setText("Servers found. Select one.");
-        System.out.println("buscando");
+        //System.out.println("buscando");
         ExecutorService executor = Executors.newSingleThreadExecutor();
 
         Callable<Void>task=()->{
@@ -286,7 +290,7 @@ public class MainViewController implements Initializable, Observer {
 
         }
         catch (TimeoutException e) {
-            System.out.println("Timeout: no se encontro el servidor");
+
             client.cerrarBusqueda();
             Platform.runLater(() -> showAlert("Tiempo Excedido", "No se encontró el servidor"));
 
@@ -405,5 +409,26 @@ public class MainViewController implements Initializable, Observer {
         connectButton.setDisable(false);
         searchServerButton.setDisable(false);
         btnDesconectarse.setDisable(true);
+    }
+
+    public void abrirDescargas(ActionEvent actionEvent) {
+        ConfiguracionCliente config = new ConfiguracionCliente();
+        String rutaDescargas = config.obtener("cliente.directorio_descargas");
+
+        new Thread(() -> {
+            boolean exito = UtilidadesCliente.abrirDirectorioDescargas(rutaDescargas);
+            if (!exito) {
+                Platform.runLater(() -> {
+                    // Mostrar un Alert si falla, desde el hilo de la UI
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText("No se pudo abrir la carpeta de descargas.");
+                    alert.setContentText("Verifica que la carpeta exista y tengas permisos.");
+                    alert.showAndWait();
+                });
+            }
+        }).start();
+
+
     }
 }
