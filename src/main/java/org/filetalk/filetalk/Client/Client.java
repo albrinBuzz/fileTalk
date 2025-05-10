@@ -54,7 +54,7 @@ public class Client {
         executorService.submit(new ReadMessages(entrada));
         servidor=new Servidor(Integer.parseInt(config.obtener("cliente.puerto")));
         executorService.submit(servidor); // Suponiendo que este es el puerto para recibir archivos
-        cerrarBusqueda();
+
     }
 
     public void conexionAutomatica() throws IOException, InterruptedException {
@@ -69,6 +69,7 @@ public class Client {
         SERVER_ADDRESS = argsServer[1];
         SERVER_PORT = Integer.parseInt(argsServer[3]);
         setConexion(SERVER_ADDRESS, SERVER_PORT);
+        cerrarBusqueda();
 
     }
 
@@ -239,7 +240,7 @@ public class Client {
                 System.out.println("Error leyendo del servidor: " + e.getMessage());
                 e.printStackTrace();
             } finally {
-                System.out.println("cerrando");
+                Logger.logInfo("cerrando");
                 cleanUp();
             }
         }

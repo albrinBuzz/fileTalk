@@ -29,8 +29,8 @@ public class MainView extends Application {
         // Configurar otras propiedades de la ventana
         stage.setTitle("FileTalk!");  // Título de la ventana
         stage.setScene(scene);  // Establecer la escena en el escenario
-        stage.setMaximized(true);  // Maximizar la ventana cuando se inicie
-        stage.setResizable(true);
+        //stage.setMaximized(true);  // Maximizar la ventana cuando se inicie
+        //stage.setResizable(true);
         stage.setScene(scene);  // Establecer la escena en el escenario
         stage.show();  // Mostrar la ventana
     }

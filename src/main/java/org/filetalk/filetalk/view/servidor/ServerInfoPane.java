@@ -1,9 +1,6 @@
 package org.filetalk.filetalk.view.servidor;
 
 import javafx.application.Platform;
-import javafx.beans.Observable;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,7 +8,6 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -19,17 +15,16 @@ import javafx.scene.shape.Circle;
 import org.filetalk.filetalk.Client.ClientInfo;
 import org.filetalk.filetalk.model.Observers.ServerObserver;
 import org.filetalk.filetalk.server.Server;
-import org.filetalk.filetalk.test.ServerInfoApp;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 
-public class ServerInfoPane extends Pane implements ServerObserver {
+public class ServerInfoPane extends VBox implements ServerObserver {
 
     @FXML
-    private Label lblServerStatus, lblVersion, lblIP, lblPORT, lblOS, lblJavaVersion, lblAvailableProcessors, lblMaxMemory, lblUptime, lblBytesSent, lblThreadsActive;
+    private Label lblServerStatus, lblVersion, lblIP, lblPORT, lblOS, lblJavaVersion, lblAvailableProcessors, lblMaxMemory,lblMemoryUsed, lblUptime, lblBytesSent, lblThreadsActive;
     @FXML
     private TextArea txtClientsInfo;
     @FXML
@@ -87,6 +82,29 @@ public class ServerInfoPane extends Pane implements ServerObserver {
         long maxMemory = Runtime.getRuntime().maxMemory() / (1024 * 1024 * 1024); // GB
         lblMaxMemory = new Label("Memoria Máxima Heap: " + maxMemory + " GB");
         lblMaxMemory.setStyle("-fx-text-fill: white;");
+
+
+        Runtime runtime = Runtime.getRuntime();
+
+        // Ejecuta el recolector de basura
+                runtime.gc();
+
+        // Total de memoria en JVM (en bytes)
+                long totalMemory = runtime.totalMemory();
+
+        // Memoria libre en la JVM (en bytes)
+                long freeMemory = runtime.freeMemory();
+
+        // Memoria usada en la JVM (en bytes)
+                long usedMemory = totalMemory - freeMemory;
+
+        // Convertir de bytes a gigabytes (1 GB = 1024 * 1024 * 1024 bytes)
+                double usedMemoryInGB = (double) usedMemory / (1024 * 1024 * 1024);
+
+        // Mostrar la memoria usada en GB
+         lblMemoryUsed = new Label("Memoria Usada: " + String.format("%.2f", usedMemoryInGB) + " GB");
+        lblMemoryUsed.setStyle("-fx-text-fill: white;");
+
 
         lblUptime = new Label("Uptime: 00:00:00");
         lblUptime.setStyle("-fx-text-fill: white;");
@@ -154,6 +172,7 @@ public class ServerInfoPane extends Pane implements ServerObserver {
                 lblJavaVersion,
                 lblAvailableProcessors,
                 lblMaxMemory,
+                lblMemoryUsed,
                 lblUptime,
                 new Separator(),
                 lblBytesSent,
@@ -287,6 +306,11 @@ public class ServerInfoPane extends Pane implements ServerObserver {
     @Override
     public void updateUptime(String uptime) {
         Platform.runLater(() -> this.lblUptime.setText(uptime));
+    }
+
+
+    public void updateMemory(String memory){
+        Platform.runLater(() -> this.lblMemoryUsed.setText("Memoria Usada: " + memory + " GB"));
     }
 
     @Override

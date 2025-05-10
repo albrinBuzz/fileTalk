@@ -15,15 +15,14 @@ import org.filetalk.filetalk.shared.FileTransferState;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TransferencesPanel extends ScrollPane implements TransferencesObserver {
+public class TransferencesPanel extends VBox implements TransferencesObserver {
 
     private final String SEND_MODE = "send";
     private final String RECEIVE_MODE = "receive";
 
-    private final int MAX_WIDTH = 588;
-
     private VBox transferencesContentPanel;
     private HashMap<String, TransferenceControlPanel> clientTransferencesMap, serverTransferencesMap;
+    private ScrollPane scroll;  // El ScrollPane que contendrá el VBox
 
     public TransferencesPanel(){
         this.clientTransferencesMap = new HashMap<>();
@@ -37,18 +36,24 @@ public class TransferencesPanel extends ScrollPane implements TransferencesObser
 
         // Contenedor principal con espaciado
         this.transferencesContentPanel = new VBox(10);
+        scroll = new ScrollPane();
         //this.transferencesContentPanel.setStyle("-fx-background-color: #ffffff; -fx-border-radius: 8px; -fx-border-color: #e0e0e0; -fx-padding: 15px;");
-        this.transferencesContentPanel.setPrefWidth(MAX_WIDTH);
 
         // Panel de "No hay transferencias"
         HBox infoPanel = new HBox(10);
         infoPanel.setAlignment(Pos.CENTER_LEFT);
         infoPanel.setStyle("-fx-background-color: #2e2e2e; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 2 0;");
         infoPanel.getChildren().add(createLabel("No hay transferencias en proceso", "#888888"));
-        this.transferencesContentPanel.getChildren().add(infoPanel);
+
+        this.getChildren().add(infoPanel);  // HostsPanel ahora contiene el ScrollPane
+
         this.setStyle("-fx-padding: 20; -fx-background-color: #2d2d2d; -fx-border-color: #00BFFF; -fx-border-width: 2;"); // Celeste en los márgenes del root
 
-        setContent(transferencesContentPanel);
+        scroll.setContent(transferencesContentPanel);
+
+        this.getChildren().add(scroll);  // HostsPanel ahora contiene el ScrollPane
+
+
 
     }
 
@@ -61,7 +66,7 @@ public class TransferencesPanel extends ScrollPane implements TransferencesObser
         infoPanel.setStyle("-fx-background-color: #2e2e2e; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 2 0;");
         infoPanel.getChildren().add(createLabel("No hay transferencias en proceso", "#888888"));
 
-        this.transferencesContentPanel.getChildren().add(infoPanel);
+        //this.transferencesContentPanel.getChildren().add(infoPanel);
     }
 
     private Label createLabel(String text, String textColor) {
@@ -73,6 +78,7 @@ public class TransferencesPanel extends ScrollPane implements TransferencesObser
     @Override
     public void addTransference(String mode, String src_addr, String dst_addr, String fileName, TransferManager transferManager) {
         TransferenceControlPanel controlPanel = new TransferenceControlPanel(mode, src_addr, dst_addr, fileName, transferManager);
+
         if (mode.equals(SEND_MODE)) {
             this.clientTransferencesMap.put(dst_addr, controlPanel);
         } else if (mode.equals(RECEIVE_MODE)) {
@@ -119,25 +125,25 @@ public class TransferencesPanel extends ScrollPane implements TransferencesObser
         //this.transferencesContentPanel.getChildren().clear();
 
         // Crear un VBox para contener las barras de progreso
-        VBox content = new VBox(10);
-        content.setStyle("-fx-background-color: #ffffff;");
+        //VBox content = new VBox(10);
+        //content.setStyle("-fx-background-color: #ffffff;");
 
         // Agregar las transferencias del servidor
         for (Map.Entry<String, TransferenceControlPanel> mapElement : this.serverTransferencesMap.entrySet()) {
-            content.getChildren().add(mapElement.getValue());
+            transferencesContentPanel.getChildren().add(mapElement.getValue());
         }
 
         // Agregar las transferencias del cliente
         for (Map.Entry<String, TransferenceControlPanel> mapElement : this.clientTransferencesMap.entrySet()) {
-            content.getChildren().add(mapElement.getValue());
+            transferencesContentPanel.getChildren().add(mapElement.getValue());
         }
 
         // Colocar el contenido en un ScrollPane
-        ScrollPane scrollPane = new ScrollPane(content);
+        /*ScrollPane scrollPane = new ScrollPane(content);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setStyle("-fx-background-color: transparent;");
+        scrollPane.setStyle("-fx-background-color: transparent;");*/
 
-        this.transferencesContentPanel.getChildren().add(scrollPane);
+        //this.transferencesContentPanel.getChildren().add(scrollPane);
     }
 }

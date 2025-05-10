@@ -468,6 +468,27 @@ public class Server {
     }
 
     public void updateStatus(){
+
+        Runtime runtime = Runtime.getRuntime();
+
+    // Ejecuta el recolector de basura
+            runtime.gc();
+
+    // Total de memoria en JVM (en bytes)
+            long totalMemory = runtime.totalMemory();
+
+    // Memoria libre en la JVM (en bytes)
+            long freeMemory = runtime.freeMemory();
+
+    // Memoria usada en la JVM (en bytes)
+            long usedMemory = totalMemory - freeMemory;
+
+    // Convertir de bytes a gigabytes (1 GB = 1024 * 1024 * 1024 bytes)
+            double usedMemoryInGB = (double) usedMemory / (1024 * 1024 * 1024);
+
+            String memoria=String.format("%.2f", usedMemoryInGB);
+
+        this.serverObserver.updateMemory(memoria);
         this.serverObserver.updateUptime(formatUptime(serverStartTime));
         //serverObserver.updateClient(clients.forEach();,Thread.activeCount());
         //clients.forEach(()-> serverObserver.updateClient(t));

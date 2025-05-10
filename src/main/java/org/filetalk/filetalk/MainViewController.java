@@ -3,38 +3,35 @@ package org.filetalk.filetalk;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
+import org.filetalk.filetalk.Client.Client;
 import org.filetalk.filetalk.Client.ConfiguracionCliente;
 import org.filetalk.filetalk.Client.UtilidadesCliente;
 import org.filetalk.filetalk.model.Observers.Observer;
-import org.filetalk.filetalk.Client.Client;
-import org.filetalk.filetalk.shared.Logger;
 import org.filetalk.filetalk.shared.ServerStatusConnection;
 import org.filetalk.filetalk.view.hosts.HostsPanel;
 import org.filetalk.filetalk.view.servidor.ServerInfoPane;
 import org.filetalk.filetalk.view.tranferens.TransferencesPanel;
 
-
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -49,7 +46,7 @@ public class MainViewController implements Initializable, Observer {
     public Label lblStatusConexion;
     public Pane transfersPane;
     public Label lblConexion;
-    public Pane serverPane;
+    public VBox serverPane;
     public Circle crConexion;
     public TextArea txtIpServidor;
     public Button btnDesconectarse;
@@ -65,29 +62,19 @@ public class MainViewController implements Initializable, Observer {
     @FXML
     private Text statusText;
     @FXML
-    private Button sendButton;
-    private Button cancelButton;
-    @FXML
-    private Button chooseFileButton;
-    @FXML
-    private Button chooseFolderButton;
-    private Button clearHistoryButton;
-    @FXML
     private Button searchServerButton;
     @FXML
     private Button connectButton;
-    private Button viewHistoryButton;  // Nuevo botón para ver el historial
-    private Button downloadHistoryButton;  // Nuevo botón para descargar el historial
-    private ListView<String> transferHistory;
+
     @FXML
     private ListView<ProgressBar> receivingFilesList;
-    private List<File> filesToSend = new ArrayList<>();
-    private volatile boolean cancelTransfer = false;
+    private final List<File> filesToSend = new ArrayList<>();
+    private final boolean cancelTransfer = false;
     private String serverIP;
     private int serverPort;
     private ListView<String> clientsListView;
-    private AtomicBoolean isReceiving = new AtomicBoolean(false); // Para controlar la recepción de archivos
-    
+    private final AtomicBoolean isReceiving = new AtomicBoolean(false); // Para controlar la recepción de archivos
+
     @FXML
     private TextField portField;
     public ScrollPane scrollMsj;
@@ -108,22 +95,20 @@ public class MainViewController implements Initializable, Observer {
     @FXML
     private TextArea txtMensajes;
 
-    private Socket socket;
-    private DataOutputStream dataOutputStream;
-    private static final String SERVER_ADDRESS = "192.168.100.5";
-    private static final int SERVER_PORT = 9090;
     private Client client;
     private HostsPanel hostsPanel;
+
     @FXML
     void enviarMensaje(ActionEvent event) throws IOException {
         String message = txtMensajes.getText();
         //PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
         //writer.println(message);
         client.enviarMensaje(message);
-        appendMessage("Yo: " + message+"\n", true); // Mensaje enviado
+        appendMessage("Yo: " + message + "\n", true); // Mensaje enviado
 
         txtMensajes.clear(); // Limpiar el campo de texto después de enviar el mensaje
     }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -144,7 +129,7 @@ public class MainViewController implements Initializable, Observer {
 
 
         // Crear el HostsPanel
-         hostsPanel = new HostsPanel(client);
+        hostsPanel = new HostsPanel(client);
 
         // Establecer un tamaño inicial por defecto o inicializar después de que el Pane sea renderizado
         hostPane.widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -161,7 +146,7 @@ public class MainViewController implements Initializable, Observer {
         // Añadir el HostsPanel al Pane
         hostPane.getChildren().add(hostsPanel);
 
-        TransferencesPanel panelTransfers=new TransferencesPanel();
+        TransferencesPanel panelTransfers = new TransferencesPanel();
 
         transfersPane.widthProperty().addListener((observable, oldValue, newValue) -> {
 
@@ -208,44 +193,39 @@ public class MainViewController implements Initializable, Observer {
         String port = portField.getText();
 
         // Validar IP y puerto
-        if (ip == null || ip.isEmpty() || port.isEmpty()) {
-            connectButton.setDisable(true);
-            //statusText.setText("Please enter both Server IP and Port.");
-        } else {
-            connectButton.setDisable(false);
-            //statusText.setText("Ready to connect...");
-        }
+        //statusText.setText("Please enter both Server IP and Port.");
+        //statusText.setText("Ready to connect...");
+        connectButton.setDisable(ip == null || ip.isEmpty() || port.isEmpty());
     }
 
 
     private void appendMessage(String message, boolean isSent) {
 
-            Platform.runLater(()->{
-                TextArea messageArea = new TextArea(message);
-                messageArea.setEditable(false);
-                messageArea.setWrapText(true);
-                messageArea.setPrefWidth(350); // Ajustar el ancho
+        Platform.runLater(() -> {
+            TextArea messageArea = new TextArea(message);
+            messageArea.setEditable(false);
+            messageArea.setWrapText(true);
+            messageArea.setPrefWidth(350); // Ajustar el ancho
 
-                // Contenedor para el mensaje
-                HBox messageContainer = new HBox();
-                messageContainer.setPadding(new Insets(5));
+            // Contenedor para el mensaje
+            HBox messageContainer = new HBox();
+            messageContainer.setPadding(new Insets(5));
 
-                if (isSent) {
-                    messageArea.setStyle("-fx-background-color: lightblue; -fx-alignment: center-right;");
-                    messageContainer.getChildren().add(messageArea);
-                    messageContainer.setStyle("-fx-alignment: center-right;"); // Alinea a la derecha
-                } else {
-                    messageArea.setStyle("-fx-background-color: lightgray; -fx-alignment: center-left;");
-                    messageContainer.getChildren().add(messageArea);
-                    messageContainer.setStyle("-fx-alignment: center-left;"); // Alinea a la izquierda
-                }
+            if (isSent) {
+                messageArea.setStyle("-fx-background-color: lightblue; -fx-alignment: center-right;");
+                messageContainer.getChildren().add(messageArea);
+                messageContainer.setStyle("-fx-alignment: center-right;"); // Alinea a la derecha
+            } else {
+                messageArea.setStyle("-fx-background-color: lightgray; -fx-alignment: center-left;");
+                messageContainer.getChildren().add(messageArea);
+                messageContainer.setStyle("-fx-alignment: center-left;"); // Alinea a la izquierda
+            }
 
-                vboxMsj.getChildren().add(messageContainer);
-                vboxMsj.heightProperty().addListener((obs, oldVal, newVal) -> {
-                    scrollMsj.setVvalue(1.0); // Desplazar hacia abajo al agregar un nuevo mensaje
-                });
+            vboxMsj.getChildren().add(messageContainer);
+            vboxMsj.heightProperty().addListener((obs, oldVal, newVal) -> {
+                scrollMsj.setVvalue(1.0); // Desplazar hacia abajo al agregar un nuevo mensaje
             });
-
+        });
 
 
     }
@@ -259,10 +239,6 @@ public class MainViewController implements Initializable, Observer {
     }
 
 
-
-
-
-
     // Simulación de la conexión al servidor
     @FXML
     private void searchServer() {
@@ -271,7 +247,7 @@ public class MainViewController implements Initializable, Observer {
         //System.out.println("buscando");
         ExecutorService executor = Executors.newSingleThreadExecutor();
 
-        Callable<Void>task=()->{
+        Callable<Void> task = () -> {
             client.conexionAutomatica();
             Platform.runLater(() -> {
                 connectButton.setDisable(true);
@@ -286,15 +262,14 @@ public class MainViewController implements Initializable, Observer {
 
         try {
 
-            executor.invokeAny(java.util.Collections.singleton(task),5,TimeUnit.SECONDS);
+            executor.invokeAny(java.util.Collections.singleton(task), 5, TimeUnit.SECONDS);
 
-        }
-        catch (TimeoutException e) {
+        } catch (TimeoutException e) {
 
             client.cerrarBusqueda();
             Platform.runLater(() -> showAlert("Tiempo Excedido", "No se encontró el servidor"));
 
-        }catch (InterruptedException | ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             System.out.println("Error: " + e.getMessage());
         } finally {
             executor.shutdown();
@@ -317,14 +292,14 @@ public class MainViewController implements Initializable, Observer {
             serverPort = Integer.parseInt(portStr);
 
             try {
-                client.setConexion(serverIP,serverPort);
+                client.setConexion(serverIP, serverPort);
                 //connectionStatus.setText("Conexión Establecida");
                 connectButton.setDisable(true);
                 searchServerButton.setDisable(true);
                 btnDesconectarse.setDisable(false);
 
             } catch (IOException e) {
-                showAlert("cago",e.getMessage());
+                showAlert("cago", e.getMessage());
                 e.printStackTrace();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
@@ -339,13 +314,11 @@ public class MainViewController implements Initializable, Observer {
     }
 
 
-
-
     @Override
     public void updateServerConnection(ServerStatusConnection statusConnection) {
 
-        if (statusConnection.equals(ServerStatusConnection.DISCONNECTED)){
-            Platform.runLater(()->{
+        if (statusConnection.equals(ServerStatusConnection.DISCONNECTED)) {
+            Platform.runLater(() -> {
                 connectButton.setDisable(false);
                 searchServerButton.setDisable(false);
                 lblConexion.setText("Desconectado");

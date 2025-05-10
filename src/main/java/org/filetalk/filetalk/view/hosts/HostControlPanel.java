@@ -5,6 +5,7 @@ import javafx.scene.control.*;
 import javafx.geometry.Pos;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.DirectoryChooser;
@@ -17,7 +18,7 @@ import org.filetalk.filetalk.shared.Logger;
 import java.io.File;
 import java.io.IOException;
 
-public class HostControlPanel extends Pane {
+public class HostControlPanel extends VBox {
     private Label hostNameLabel;
     private Button sendFileButton;
     private Client client;
@@ -63,9 +64,9 @@ public class HostControlPanel extends Pane {
         container.getChildren().addAll(hostNameLabel, selectionComboBox, sendFileButton);
 
         // Configuración de tamaño preferido para los elementos
-        this.hostNameLabel.setPrefWidth(150);
-        this.selectionComboBox.setPrefWidth(150);
-        this.sendFileButton.setPrefWidth(100);
+        //this.hostNameLabel.setPrefWidth(150);
+        //this.selectionComboBox.setPrefWidth(150);
+        //this.sendFileButton.setPrefWidth(100);
 
         // Estilo del panel: añadir fondo oscuro y bordes opcionales
         this.setStyle("-fx-background-color: #2e2e2e; -fx-padding: 10;");
@@ -85,8 +86,8 @@ public class HostControlPanel extends Pane {
 
 
         // Configurar el tamaño máximo y preferido del pane
-        this.setMaxSize(Region.USE_PREF_SIZE, 48);
-        this.setPrefSize(500, 48);
+        //this.setMaxSize(Region.USE_PREF_SIZE, 48);
+        //this.setPrefSize(500, 48);
         this.setStyle("-fx-padding: 20; -fx-background-color: #2d2d2d; -fx-border-color: #00BFFF; -fx-border-width: 2;"); // Celeste en los márgenes del root
     }
 

@@ -11,7 +11,7 @@ import org.filetalk.filetalk.Client.FileTransferManager;
 import org.filetalk.filetalk.Client.TransferManager;
 
 
-public class TransferenceControlPanel extends Pane {
+public class TransferenceControlPanel extends VBox {
 
     private final int MAX_WIDTH = 500;
     private ProgressBar progressBar;
@@ -49,8 +49,8 @@ public class TransferenceControlPanel extends Pane {
 
     private void initGUI() {
         // Estilo del panel
-        this.setPrefWidth(MAX_WIDTH);
-        this.setMaxWidth(MAX_WIDTH);
+        //this.setPrefWidth(MAX_WIDTH);
+        //this.setMaxWidth(MAX_WIDTH);
 
         // Establecer el color de la etiqueta "modeLabel"
         this.setModeColor();
