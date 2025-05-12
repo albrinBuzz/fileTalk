@@ -8,6 +8,7 @@ module org.filetalk.filetalk {
     requires org.apache.logging.log4j;
     requires java.net.http;
     requires java.desktop;
+    requires javafx.media;
     exports org.filetalk.filetalk.utils;
     exports org.filetalk.filetalk.test;
     opens org.filetalk.filetalk to javafx.fxml;

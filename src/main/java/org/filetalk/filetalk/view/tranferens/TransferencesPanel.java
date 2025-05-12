@@ -49,6 +49,17 @@ public class TransferencesPanel extends VBox implements TransferencesObserver {
 
         this.setStyle("-fx-padding: 20; -fx-background-color: #2d2d2d; -fx-border-color: #00BFFF; -fx-border-width: 2;"); // Celeste en los márgenes del root
 
+
+        this.widthProperty().addListener((observable, oldValue, newValue) -> {
+
+            transferencesContentPanel.setPrefWidth(newValue.doubleValue());
+        });
+
+        this.heightProperty().addListener((observable, oldValue, newValue) -> {
+            transferencesContentPanel.setPrefHeight(newValue.doubleValue());
+        });
+
+
         scroll.setContent(transferencesContentPanel);
 
         this.getChildren().add(scroll);  // HostsPanel ahora contiene el ScrollPane

@@ -12,6 +12,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
+import javafx.scene.control.Alert;
 import org.filetalk.filetalk.Client.ClientInfo;
 import org.filetalk.filetalk.model.Observers.ServerObserver;
 import org.filetalk.filetalk.shared.ClientListMessage;
@@ -46,7 +47,7 @@ public class Server {
     }
 
     // Método que inicia el servidor y maneja las conexiones de los clientes
-    public void startServer() {
+    public void startServer() throws IOException {
         serverStartTime = System.currentTimeMillis();
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
 
@@ -66,13 +67,30 @@ public class Server {
                 new Thread(clientHandler).start(); // Iniciar un nuevo hilo para manejar al cliente
 
             }
+        } catch (BindException e) {
+            System.out.println( e.getMessage());
+            throw new BindException("El puerto "+PORT+" Ya esta siendo ocupado por otro proceso");
+        } catch (SecurityException e) {
+            System.out.println( e.getMessage());
+            throw new SecurityException("No tienes permiso para abrir el puerto " + PORT + ". Verifica los permisos.");
+        } catch (SocketException e) {
+            System.out.println( e.getMessage());
+            throw new SocketException("Hubo un problema con la conexión del servidor: " + e.getMessage());
         } catch (IOException e) {
-            System.out.println("Error con el servidor: " + e.getMessage());
+            System.out.println( e.getMessage());
+            throw new IOException("Hubo un problema al iniciar el servidor debido a un error de red: " + e.getMessage());
         }
+
     }
 
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 
-    public  void starServerCLI(){
+    public  void starServerCLI() throws IOException {
 
         new Thread(this::administrativeInterface).start();
 

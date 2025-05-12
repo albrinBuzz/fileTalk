@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name= FileTalk
+Comment=Breve descripción de tu aplicación
+Exec= java -jar /opt/FileTalk/FileTalk.jar
+Icon= /usr/share/icons/hicolor/48x48/apps/FileTalk.png
+Terminal=false
+Categories=Utility

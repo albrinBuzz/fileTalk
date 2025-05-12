@@ -77,7 +77,7 @@ public class ConfiguracionCliente {
         String home = System.getProperty("user.home");
         String separador = System.getProperty("file.separator");
         propiedades.setProperty("cliente.directorio_descargas", home+separador+"Filetalk"+separador);
-
+        propiedades.setProperty("cliente.directorioConfig", home + separador + ".config" + separador + "fileTalk");
         propiedades.setProperty("cliente.servidor_ip", "192.168.1.100");
         propiedades.setProperty("cliente.servidor_puerto", "8080");
         propiedades.setProperty("cliente.tiempo_espera", "3000");
@@ -108,4 +108,7 @@ public class ConfiguracionCliente {
         }
     }
 
+    public String getRuta() {
+        return ruta;
+    }
 }

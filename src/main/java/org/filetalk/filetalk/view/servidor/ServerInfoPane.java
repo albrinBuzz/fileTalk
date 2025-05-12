@@ -7,12 +7,15 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import org.filetalk.filetalk.Client.ClientInfo;
+import org.filetalk.filetalk.Client.ConfiguracionCliente;
+import org.filetalk.filetalk.Client.UtilidadesCliente;
 import org.filetalk.filetalk.model.Observers.ServerObserver;
 import org.filetalk.filetalk.server.Server;
 
@@ -28,7 +31,7 @@ public class ServerInfoPane extends VBox implements ServerObserver {
     @FXML
     private TextArea txtClientsInfo;
     @FXML
-    private Button btnClearConsole, btnStartServer;
+    private Button btnClearConsole, btnStartServer,btnConfig;
     private Server server;
     private long startTime;
     private boolean isServerRunning;
@@ -125,10 +128,23 @@ public class ServerInfoPane extends VBox implements ServerObserver {
         btnClearConsole.setStyle("-fx-background-color: #444444; -fx-text-fill: white;");
         btnClearConsole.setOnAction(event -> clearConsole());
 
-        // Botón para encender servidor
+
+        // Crear los botones
         btnStartServer = new Button("Encender Servidor");
         btnStartServer.setStyle("-fx-background-color: #444444; -fx-text-fill: white;");
         btnStartServer.setOnAction(event -> startServer());
+
+        btnConfig = new Button("Abrir Configuración");
+        btnConfig.setStyle("-fx-background-color: #444444; -fx-text-fill: white;");
+        btnConfig.setOnAction(event -> openConfiguration());
+
+// Crear un HBox para colocar los botones horizontalmente
+        HBox buttonBox = new HBox(10); // El parámetro 10 es la distancia entre los botones
+        buttonBox.setAlignment(Pos.CENTER); // Opcional: centra los botones
+
+// Agregar los botones al HBox
+        buttonBox.getChildren().addAll(btnStartServer, btnConfig);
+
 
         // Crear una tabla para mostrar los detalles del servidor
         tableView = new TableView<>();
@@ -163,7 +179,7 @@ public class ServerInfoPane extends VBox implements ServerObserver {
         // Agregar las etiquetas de la información del servidor a serverInfoBox
         serverInfoBox.getChildren().addAll(
                 titleLabel,
-                btnStartServer,
+                buttonBox,
                 serverStatusBox,
                 lblVersion,
                 lblIP,
@@ -200,6 +216,28 @@ public class ServerInfoPane extends VBox implements ServerObserver {
         setServerInfoVisible(false);
     }
 
+    private void openConfiguration() {
+
+        ConfiguracionCliente config = new ConfiguracionCliente();
+        String rutaDescargas = config.obtener("cliente.directorioConfig");
+
+
+        new Thread(() -> {
+            boolean exito = UtilidadesCliente.abrirDirectorioDescargas(rutaDescargas);
+            if (!exito) {
+                Platform.runLater(() -> {
+                    // Mostrar un Alert si falla, desde el hilo de la UI
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText("No se pudo abrir la carpeta de descargas.");
+                    alert.setContentText("Verifica que la carpeta exista y tengas permisos.");
+                    alert.showAndWait();
+                });
+            }
+        }).start();
+    }
+
+
     // Método para iniciar el servidor
     private void startServer() {
         if (!isServerRunning) {
@@ -217,8 +255,27 @@ public class ServerInfoPane extends VBox implements ServerObserver {
                     return new Task<Void>() {
                         @Override
                         protected Void call() throws Exception {
-                            // Simulamos una operación de larga duración
-                            server.startServer();
+                            try {
+                                // Intentar iniciar el servidor
+                                server.startServer();
+
+                                // Si se ejecuta correctamente, actualizamos la UI en el hilo principal
+                                Platform.runLater(() -> {
+                                    // Mostrar toda la información del servidor
+                                    setServerInfoVisible(true);
+                                    lblPORT.setText("Puerto: " + server.getPORT());
+                                });
+                            }
+                            catch (Exception e) {
+                                // En caso de error, notificamos al usuario
+                                Platform.runLater(() -> showAlert("Error al iniciar el servidor", e.getMessage()));
+                                // Actualizamos el estado del servidor en la UI
+                                Platform.runLater(() -> {
+                                    isServerRunning = false;
+                                    serverStatusCircle.setFill(Color.RED);  // Indicar que el servidor no está en marcha
+                                    btnStartServer.setText("Iniciar Servidor");  // Restaurar el texto del botón
+                                });
+                            }
                             return null;
                         }
                     };
@@ -227,11 +284,8 @@ public class ServerInfoPane extends VBox implements ServerObserver {
 
             servicio.start(); // Inicia el servicio
 
-            // Mostrar toda la información del servidor
-            setServerInfoVisible(true);
-            lblPORT.setText("Puerto: " + server.getPORT());
         } else {
-            // Detener el servidor
+            // Si el servidor ya está encendido, lo detenemos
             try {
                 stopServer();
             } catch (IOException e) {
@@ -239,6 +293,16 @@ public class ServerInfoPane extends VBox implements ServerObserver {
             }
         }
     }
+
+    // Método para mostrar el alert de error
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
 
     // Método para detener el servidor
     private void stopServer() throws IOException {

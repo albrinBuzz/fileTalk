@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -11,9 +12,10 @@ import org.filetalk.filetalk.Client.FileTransferManager;
 import org.filetalk.filetalk.Client.TransferManager;
 
 
+
+
 public class TransferenceControlPanel extends VBox {
 
-    private final int MAX_WIDTH = 500;
     private ProgressBar progressBar;
     private Label titleAddrLabel;
     private Label addrLabel;
@@ -97,6 +99,13 @@ public class TransferenceControlPanel extends VBox {
         });
         this.continueButton.setDisable(true); // Inicialmente deshabilitado
 
+        Button cancelButton = new Button("Cancelar");
+        cancelButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-border-radius: 5px;");
+        cancelButton.setPrefSize(80, 30);
+        cancelButton.setOnAction(event -> cancelTransference());
+
+
+
         // Contenedor GridPane para organizar la información
         GridPane grid = new GridPane();
         grid.setHgap(10);  // Espaciado horizontal entre columnas
@@ -132,10 +141,17 @@ public class TransferenceControlPanel extends VBox {
         this.getChildren().add(grid);
 
         // Establecer tamaño y bordes del panel
-        this.setPrefSize(530, 140);
-        this.setMaxSize(530, 140);
-        this.setMinSize(530, 140);
+        //this.setPrefSize(530, 140);
+        //this.setMaxSize(530, 140);
+        //this.setMinSize(530, 140);
+
+
+
         this.setStyle("-fx-padding: 20; -fx-background-color: #2d2d2d; -fx-border-color: #00BFFF; -fx-border-width: 2;"); // Celeste en los márgenes del root
+    }
+
+    private void cancelTransference() {
+
     }
 
     // Método para asignar el color dependiendo del modo
