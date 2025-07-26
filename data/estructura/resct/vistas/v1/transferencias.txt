@@ -1,0 +1,43 @@
++------------------------------------------------------------------------------------------------------------------------------+
+| 🔄 Transferencias en curso (3)                                                                                                 |
++------------------------------------------------------------------------------------------------------------------------------+
+| 📤 imagen_producto.png               Enviando a Andrea Ruiz                                                                  |
+|   Progreso: 42% [███████████░░░░░░░░░░░░░]    2.1 MB / 5 MB    Velocidad: 400 KB/s    Tiempo restante: 00:06:15              |
+|   Prioridad: 🔴 Alta      | Tipo: Envío                                                                                      |
+|   Controles: [⏸️ Pausar]  [▶️ Reanudar]  [❌ Cancelar]                                                                         |
+|------------------------------------------------------------------------------------------------------------------------------|
+| 📥 reporte_financiero.pdf           Recibiendo de Carlos Méndez                                                               |
+|   Progreso: 73% [█████████████████░░░░░░░░░░░]    7.3 MB / 10 MB  Velocidad: 600 KB/s    Tiempo restante: 00:02:45             |
+|   Prioridad: 🟡 Normal    | Tipo: Descarga                                                                                   |
+|   Controles: [⏸️ Pausar]  [▶️ Reanudar]  [❌ Cancelar]                                                                         |
+|------------------------------------------------------------------------------------------------------------------------------|
+| 📤 video_promocional.mp4            Enviando a Sara Cárdenas                                                                  |
+|   Progreso: 15% [██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]    1.5 MB / 10 MB  Velocidad: 200 KB/s    Tiempo restante: 00:09:55      |
+|   Prioridad: 🟢 Baja      | Tipo: Envío                                                                                      |
+|   Controles: [⏸️ Pausar]  [▶️ Reanudar]  [❌ Cancelar]                                                                         |
++------------------------------------------------------------------------------------------------------------------------------+
+
+| 🔍 Buscar transferencias: [_____________________]   [Filtro: Todos ▼]   [Ordenar por: Fecha ▼]   [Exportar CSV]                  |
++------------------------------------------------------------------------------------------------------------------------------+
+
+| 🕘 Historial reciente                                                                                                         |
++------------------------------------------------------------------------------------------------------------------------------+
+| ✅ contrato_final.pdf              Enviado a Ana Torres              (17/07/2025 10:22)                                            |
+| ❌ documento_confidencial.doc      Falló transferencia                (16/07/2025 20:15)                                            |
+| ⏳ informe_ventas.xlsx             Pendiente aceptación               (15/07/2025 18:45)                                            |
+| ✅ reporte_julio.pdf              Recibido de Andrea Ruiz            (16/07/2025 18:10)                                            |
+|                                                                                                                              |
+| [Reenviar seleccionado]   [Eliminar seleccionado]  [Ver detalles transferencia]                                              |
++------------------------------------------------------------------------------------------------------------------------------+
+
+| 🔔 Notificaciones de Transferencias                                                                                          |
++------------------------------------------------------------------------------------------------------------------------------+
+| 📩 Archivo recibido: "reporte_julio.pdf" de Andrea Ruiz                                                                       |
+| ⚠️ Transferencia "documento_confidencial.doc" fallida, reintentando...                                                         |
+| 🔔 Transferencia "imagen_producto.png" pausada por baja velocidad de red                                                      |
++------------------------------------------------------------------------------------------------------------------------------+
+
+| 📊 Estadísticas Transferencias                                                                                               |
++------------------------------------------------------------------------------------------------------------------------------+
+| Archivos enviados: 120 (450 GB)  | Archivos recibidos: 98 (360 GB)   | Transferencias exitosas: 95%   | Velocidad promedio: 500 KB/s    |
++------------------------------------------------------------------------------------------------------------------------------+

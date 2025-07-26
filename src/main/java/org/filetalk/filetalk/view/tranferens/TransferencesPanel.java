@@ -10,6 +10,7 @@ import javafx.scene.control.ScrollPane;
 import org.filetalk.filetalk.Client.FileTransferManager;
 import org.filetalk.filetalk.Client.TransferManager;
 import org.filetalk.filetalk.model.Observers.TransferencesObserver;
+import org.filetalk.filetalk.models.Transferencia;
 import org.filetalk.filetalk.shared.FileTransferState;
 
 import java.util.HashMap;
@@ -87,13 +88,13 @@ public class TransferencesPanel extends VBox implements TransferencesObserver {
     }
 
     @Override
-    public void addTransference(String mode, String src_addr, String dst_addr, String fileName, TransferManager transferManager) {
-        TransferenceControlPanel controlPanel = new TransferenceControlPanel(mode, src_addr, dst_addr, fileName, transferManager);
+    public void addTransference(String mode, Transferencia transferencia, TransferManager transferManager) {
+        TransferenceControlPanel controlPanel = new TransferenceControlPanel(mode, transferencia, transferManager);
 
         if (mode.equals(SEND_MODE)) {
-            this.clientTransferencesMap.put(dst_addr, controlPanel);
+            this.clientTransferencesMap.put(transferencia.getDstAddr(), controlPanel);
         } else if (mode.equals(RECEIVE_MODE)) {
-            this.serverTransferencesMap.put(src_addr, controlPanel);
+            this.serverTransferencesMap.put(transferencia.getSrcAddr(), controlPanel);
         }
         Platform.runLater(this::updateTransferenceContent);
     }

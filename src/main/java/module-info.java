@@ -10,10 +10,13 @@ module org.filetalk.filetalk {
     requires java.desktop;
     requires javafx.media;
     exports org.filetalk.filetalk.utils;
-    exports org.filetalk.filetalk.test;
+    exports org.filetalk.filetalk.Tests;
     opens org.filetalk.filetalk to javafx.fxml;
     exports org.filetalk.filetalk;
     exports org.filetalk.filetalk.Client;
     exports org.filetalk.filetalk.server;
     exports org.filetalk.filetalk.shared;
+    exports org.filetalk.filetalk.Tests.Gui;
+    exports org.filetalk.filetalk.Tests.Gui.Transfers;
+    exports org.filetalk.filetalk.models;
 }

@@ -10,8 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.filetalk.filetalk.Client.FileTransferManager;
 import org.filetalk.filetalk.Client.TransferManager;
-
-
+import org.filetalk.filetalk.models.Transferencia;
 
 
 public class TransferenceControlPanel extends VBox {
@@ -29,19 +28,19 @@ public class TransferenceControlPanel extends VBox {
     private Label progressPercentageLabel; // Etiqueta para mostrar el porcentaje
 
     // Constructor
-    public TransferenceControlPanel(String mode, String src_addr, String dst_addr, String fileName, TransferManager transferManager) {
+    public TransferenceControlPanel(String mode, Transferencia transferencia, TransferManager transferManager) {
         this.mode = mode;
 
-        this.fileNameLabel = new Label(fileName.substring(1));
+        this.fileNameLabel = new Label(transferencia.getFileName().substring(1));
 
         if (mode.equals("send")) {
             this.titleAddrLabel = new Label("A destino:");
             this.modeLabel = new Label("[ Enviando ]");
-            this.addrLabel = new Label(dst_addr);
+            this.addrLabel = new Label(transferencia.getDstAddr());
         } else {
             this.titleAddrLabel = new Label("De origen:");
             this.modeLabel = new Label("[ Recibiendo ]");
-            this.addrLabel = new Label(src_addr);
+            this.addrLabel = new Label(transferencia.getSrcAddr());
         }
         this.transferManager=transferManager;
 

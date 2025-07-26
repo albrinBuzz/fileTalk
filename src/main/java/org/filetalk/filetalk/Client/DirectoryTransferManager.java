@@ -1,12 +1,12 @@
 package org.filetalk.filetalk.Client;
 
+import org.filetalk.filetalk.controller.TransferenciaController;
 import org.filetalk.filetalk.model.Observers.TransferencesObserver;
-import org.filetalk.filetalk.shared.FileDirectoryCommunication;
-import org.filetalk.filetalk.shared.FileTransferState;
-import org.filetalk.filetalk.shared.Logger;
+import org.filetalk.filetalk.shared.*;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,19 +20,22 @@ public class DirectoryTransferManager implements TransferManager{
     private String rutaCarpetaActual;
     private String rutaCarpetaDestino;
     private ObjectOutputStream out;
+    private ObjectInputStream entrada;
     private ConfiguracionCliente configCliente;
-
+    InputStream inputData;
+    OutputStream outputData;
     private TransferencesObserver transferencesObserver;
     private String nick;
     private int totalArchivos;
     private int archivosEnviados;
-    public DirectoryTransferManager(TransferencesObserver transferencesObserver) {
+    private TransferenciaController transferenciaController;
+    public DirectoryTransferManager(TransferenciaController transferenciaController) {
         this.configCliente=new ConfiguracionCliente();
         rutaCopia= Paths.get("").toAbsolutePath().toString();
         rutaCopia=configCliente.obtener("cliente.directorio_descargas");
         rutaCarpetaActual=configCliente.obtener("cliente.directorio_descargas");
         //rutaCarpetaActual=Paths.get("").toAbsolutePath().toString();
-
+        this.transferenciaController=transferenciaController;
         rutaCarpetaDestino=rutaCopia;
         this.transferencesObserver = transferencesObserver;
 
@@ -40,34 +43,69 @@ public class DirectoryTransferManager implements TransferManager{
 
     }
 
-    public void sendDirectory(File archivo, String SERVER_ADDRESS, int port) throws IOException {
+    public void sendDirectory(File archivo, String SERVER_ADDRESS, int port,String recipient) throws IOException {
             rutaOriginal=archivo.getAbsolutePath();
             carpeta=archivo.getName();
             nick=SERVER_ADDRESS;
             totalArchivos=0;
-        archivosEnviados=0;
+            archivosEnviados=0;
 
 
-        AtomicInteger totalArchivos = new AtomicInteger(0);
+            AtomicInteger totalArchivos = new AtomicInteger(0);
 
-        archivosTotales(archivo,totalArchivos);
-        this.totalArchivos=totalArchivos.get();
+            archivosTotales(archivo,totalArchivos);
+            this.totalArchivos=totalArchivos.get();
 
         // Imprimir el tiempo en consola
 
 
-        Socket socket=new Socket(SERVER_ADDRESS,port);
+            Socket socket=new Socket(SERVER_ADDRESS,port);
+
+
 
             out= new ObjectOutputStream(socket.getOutputStream());
+            entrada=new ObjectInputStream(socket.getInputStream());
+        out.writeObject(new Mensaje("enviando", CommunicationType.MESSAGE));
+        out.flush();
 
-            out.writeObject(new FileDirectoryCommunication(archivo.getName(),totalArchivos.get()));
-            out.flush();
-
-        transferencesObserver.addTransference("send", SERVER_ADDRESS, SERVER_ADDRESS,archivo.getName(),this);
+        out.writeObject(new FileDirectoryCommunication(archivo.getName(),totalArchivos.get(),recipient));
+        out.flush();
 
 
+            Logger.logInfo("corregir implementacion de la transferencia");
 
-        enviarDirectorio(archivo);
+            //transferencesObserver.addTransference("send", SERVER_ADDRESS, SERVER_ADDRESS,archivo.getName(),this);
+        String idTransfe=  transferenciaController.addTransference(FileTransferState.SENDING.name(), nick, nick,archivo.getName(),this);
+
+
+
+        Object object;
+        while (true) {
+            try {
+                object = entrada.readObject();
+
+                if (object instanceof FileHandshakeCommunication respuesta) {
+
+                    // Validamos que sea la respuesta esperada (ej. inicio de transferencia)
+                    if (respuesta.getAction() == FileHandshakeAction.START_TRANSFER ) {
+
+                        Logger.logInfo("Recibido START_TRANSFER para sesión: " + respuesta.getSessionId());
+                        break; // Salir del bucle, ya tienes la respuesta esperada
+                    }
+
+                } else if (object instanceof Mensaje mensaje) {
+                    Logger.logInfo("Mensaje recibido: " + mensaje.getContenido());
+                    // Puedes seguir esperando o tomar otra acción
+                }
+
+            } catch (ClassNotFoundException | IOException e) {
+                Logger.logError("Error leyendo objeto del servidor: " + e.getMessage());
+                break;
+            }
+        }
+
+
+        enviarDirectorio(archivo,idTransfe);
 
             socket.close();
 
@@ -75,7 +113,7 @@ public class DirectoryTransferManager implements TransferManager{
 
 
 
-        public void enviarDirectorio(File archivo) throws IOException {
+        public void enviarDirectorio(File archivo,String idTransfe) throws IOException {
 
             File[] files = archivo.listFiles();
 
@@ -92,8 +130,9 @@ public class DirectoryTransferManager implements TransferManager{
 
                         copy();
                             archivosEnviados++;
+                            transferenciaController.updateProgress(FileTransferState.SENDING,idTransfe,(int) ((archivosEnviados * 100) / totalArchivos));
                             //transferencesObserver.updateTransference(FileTransferState.SENDING, nick, (int) ((archivosEnviados * 100) / totalArchivos));
-                            transferencesObserver.updateTransference(FileTransferState.SENDING, nick, (int) ((archivosEnviados * 100) / totalArchivos));
+                            //transferencesObserver.updateTransference(FileTransferState.SENDING, nick, (int) ((archivosEnviados * 100) / totalArchivos));
 
 
                             Logger.logInfo("%"+(archivosEnviados * 100) / totalArchivos);
@@ -102,7 +141,7 @@ public class DirectoryTransferManager implements TransferManager{
                     // Si es un directorio, llamar recursivamente
                     else if (file.isDirectory()) {
 
-                            enviarDirectorio(file);
+                            enviarDirectorio(file,idTransfe);
 
                     }
                 }
@@ -114,9 +153,52 @@ public class DirectoryTransferManager implements TransferManager{
         }
 
 
-        public void reciveDirectory(Socket socket, FileDirectoryCommunication communication, ObjectInputStream entrada) throws IOException, ClassNotFoundException {
+        public void reciveDirectory(String SERVER_ADDRESS, String port, FileHandshakeCommunication handshakeCommunication) throws IOException, ClassNotFoundException {
+
+            Socket socket=new Socket(SERVER_ADDRESS, Integer.parseInt(port));
+
+            ObjectOutputStream salida = new ObjectOutputStream(socket.getOutputStream());
+
+            ObjectInputStream entrada=new ObjectInputStream(socket.getInputStream());
+
+            Logger.logInfo("conectandose al servidor para recibir datos");
+
+            salida.writeObject(new Mensaje(handshakeCommunication.getSessionId(), CommunicationType.MESSAGE));
+            salida.flush();
+
+
+
+
+            var communication=handshakeCommunication.getFileInfo();
             carpeta = communication.getName(); // Leer nombre del archivo
             totalArchivos=communication.getTotalArchivos();
+            Logger.logInfo("recibiendo directorio: "+carpeta);
+
+            Object object;
+            while (true) {
+                try {
+                    object = entrada.readObject();
+
+                    if (object instanceof FileHandshakeCommunication respuesta) {
+
+                        // Validamos que sea la respuesta esperada (ej. inicio de transferencia)
+                        if (respuesta.getAction() == FileHandshakeAction.START_TRANSFER &&
+                                respuesta.getSessionId().equals(handshakeCommunication.getSessionId())) {
+
+                            Logger.logInfo("Recibido START_TRANSFER para sesión: " + respuesta.getSessionId());
+                            break; // Salir del bucle, ya tienes la respuesta esperada
+                        }
+
+                    } else if (object instanceof Mensaje mensaje) {
+                        Logger.logInfo("Mensaje recibido: " + mensaje.getContenido());
+                        // Puedes seguir esperando o tomar otra acción
+                    }
+
+                } catch (ClassNotFoundException | IOException e) {
+                    Logger.logError("Error leyendo objeto del servidor: " + e.getMessage());
+                    break;
+                }
+            }
 
             rutaCopia+=carpeta;
             //System.out.println(rutaCopia);
@@ -126,46 +208,67 @@ public class DirectoryTransferManager implements TransferManager{
 
             File file=new File(carpeta);
             file.mkdir();
-            String recipientNick = socket.getLocalAddress().toString();
-            transferencesObserver.addTransference("receive", recipientNick, recipientNick,carpeta,this);
+            String recipientNick = communication.getRecipient();
+            //transferencesObserver.addTransference("receive", recipientNick, recipientNick,carpeta,this);
+            String idTransfe=   transferenciaController.addTransference(FileTransferState.RECEIVING.name(),recipientNick, recipientNick,carpeta,this);
+
+
+
+
+
             while (socket.isConnected()){
-                String nombreArchivo=entrada.readUTF();
-                String rutaArchivo=rutaCarpetaActual+ nombreArchivo;
-                FileDirectoryCommunication archivo= (FileDirectoryCommunication) entrada.readObject();
 
-                crearDirectorios(rutaArchivo);
-                String rutaDescargas = configCliente.obtener("cliente.directorio_descargas");
-                try (FileOutputStream fos = new FileOutputStream(rutaDescargas+nombreArchivo)) {
+                   var obj=entrada.readObject();
+                    if (obj instanceof FileDirectoryCommunication fileCom){
+                        Logger.logInfo(fileCom.toString());
+                        var nombreArchivo=fileCom.getName();
+                        var fileSize=fileCom.getSize();
 
-                    byte[] buffer = new byte[10 * 1024 * 1024];  // 50 MB
 
-                    int bytesRead;
-                    long totalBytesRead = 0;
-                    long fileSize = archivo.getSize();
-                    while (totalBytesRead < fileSize) {
+                        Logger.logInfo("nombre archivo: "+nombreArchivo);
+                        String rutaArchivo=rutaCarpetaActual+ nombreArchivo;
+                        Logger.logInfo("ruta archivo: "+rutaArchivo);
+                        //FileDirectoryCommunication archivo= (FileDirectoryCommunication) entrada.readObject();
 
-                        bytesRead = entrada.read(buffer);
-                        if (bytesRead == -1) break;
-                        fos.write(buffer, 0, bytesRead);
-                        totalBytesRead += bytesRead;
-                        double totalMB = totalBytesRead / 1_048_576.0;
+                        crearDirectorios(rutaArchivo);
+                        String rutaDescargas = configCliente.obtener("cliente.directorio_descargas");
+                        try (FileOutputStream fos = new FileOutputStream(rutaDescargas+nombreArchivo)) {
 
-                        //logInfo("Recibiendo " + totalMB + " MB Recibidos.");
+                            byte[] buffer = new byte[100 * 1024 * 1024];  // 50 MB
+
+                            int bytesRead;
+                            long totalBytesRead = 0;
+                            //long fileSize = archivo.getSize();
+                            while (totalBytesRead < fileSize) {
+
+                                bytesRead = entrada.read(buffer);
+                                if (bytesRead == -1) break;
+                                fos.write(buffer, 0, bytesRead);
+                                totalBytesRead += bytesRead;
+                                double totalMB = totalBytesRead / 1_048_576.0;
+
+                                //logInfo("Recibiendo " + totalMB + " MB Recibidos.");
+                            }
+                            archivosEnviados++;
+                            transferenciaController.updateProgress(FileTransferState.SENDING,idTransfe,(int) ((archivosEnviados * 100) / totalArchivos));
+                            //transferencesObserver.updateTransference(FileTransferState.RECEIVING, recipientNick, (int)((archivosEnviados * 100) / totalArchivos));
+
+                            Logger.logInfo("%"+(archivosEnviados * 100) / totalArchivos);
+
+
+                        } catch (IOException e) {
+
+                            Logger.logInfo(e.getMessage());
+                        }
+                    }else if (obj instanceof Mensaje msj){
+                        Logger.logInfo(msj.getContenido());
                     }
-                    archivosEnviados++;
-                    transferencesObserver.updateTransference(FileTransferState.RECEIVING, recipientNick, (int)((archivosEnviados * 100) / totalArchivos));
-
-                    Logger.logInfo("%"+(archivosEnviados * 100) / totalArchivos);
 
 
-                } catch (IOException e) {
-
-                    Logger.logInfo(e.getMessage());
                 }
 
 
 
-            }
             Logger.logInfo("Directorio Recibido "+communication.getName());
 
 
@@ -186,7 +289,7 @@ public class DirectoryTransferManager implements TransferManager{
 
                 }
             } catch (IOException e) {
-                System.out.println("Error al crear los directorios: " + e.getMessage());
+                Logger.logInfo("Error al crear los directorios: " + e.getMessage());
             }
 
         }
@@ -194,23 +297,39 @@ public class DirectoryTransferManager implements TransferManager{
         private void copy() throws IOException {
 
             String sourcePath = rutaCarpetaActual;
-            String destinationPath =  rutaCarpetaDestino;
-            //System.out.println(rutaCarpetaDestino);
-            //logInfo(rutaCopia);
-            out.writeUTF(rutaCopia);
-            out.flush();
+            Logger.logInfo("Ruta Copia: "+rutaCopia);
+
+
 
             FileInputStream fileInputStream = new FileInputStream(sourcePath);
 
+
             //transferencesObserver.addTransference("send", recipientNick, recipientNick,filePath.substring(filePath.lastIndexOf(File.separator)),this);
 
-            byte[] buffer = new byte[10 * 1024 * 1024];  // 50 MB
+            //byte[] buffer = new byte[10 * 1024 * 1024];  // 50 MB
+            byte[] buffer = new byte[100 * 1024 * 1024];  // 50 MB
+
             //byte[] buffer = new byte[1024*4];
             int bytesRead;
             long totalBytesReaded = 0;
             long totalFileSize=new File(sourcePath).length();
             File archivo=new File(sourcePath);
-            out.writeObject(new FileDirectoryCommunication(archivo.getName(),archivo.length()));
+
+            if (rutaCopia == null || rutaCopia.isEmpty()) {
+                throw new IOException("Nombre de archivo vacío o nulo");
+            }
+
+            if (rutaCopia.getBytes(StandardCharsets.UTF_8).length > 65535) {
+                throw new IOException("Nombre de archivo demasiado largo para writeUTF");
+            }
+
+            //out.writeUTF(rutaCopia);
+            //out.flush();
+            //out.writeLong(archivo.length());
+            /*out.writeUTF(rutaCopia);
+            out.flush();
+            out.writeLong(archivo.length());*/
+            out.writeObject(new FileDirectoryCommunication(rutaCopia,archivo.length()));
             out.flush();
 
             Logger.logInfo("Copiando: "+sourcePath);

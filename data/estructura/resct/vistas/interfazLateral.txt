@@ -1,0 +1,10 @@
++---------------- Detalles del archivo: contrato_final_v3.pdf ----------------+
+| Tipo: PDF       Tamaño: 2.4 MB        Fecha: 17/07/2025                     |
+| Propietario: Juan   Versión actual: v3 (⬅️ Restaurar versión anterior)     |
+| Etiquetas: "final", "contrato"                                             |
+| Accesos: Solo equipo legal                                                 |
+| Comentarios (2):                                                           |
+|   - Ana (hace 1h): “Corregir el nombre del cliente.”                       |
+|   - Carlos (hace 30min): “Ya corregido.”                                   |
+| Permisos: 👀 Lectura ✅ Edición                                             |
++----------------------------------------------------------------------------+

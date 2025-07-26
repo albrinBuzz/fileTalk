@@ -1,13 +1,14 @@
 package org.filetalk.filetalk.Client;
 
+import org.filetalk.filetalk.controller.TransferenciaController;
 import org.filetalk.filetalk.model.Observers.TransferencesObserver;
-import org.filetalk.filetalk.shared.FileDirectoryCommunication;
-import org.filetalk.filetalk.shared.FileTransferState;
-import org.filetalk.filetalk.shared.Logger;
+import org.filetalk.filetalk.models.Transferencia;
+import org.filetalk.filetalk.shared.*;
 
 
 import java.io.*;
 import java.net.Socket;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class FileTransferManager implements TransferManager{
@@ -15,17 +16,21 @@ public class FileTransferManager implements TransferManager{
     private volatile boolean paused = false;
     private final Object pauseLock = new Object();
     private ConfiguracionCliente configCliente;
-
+    private TransferenciaController transferenciaController;
     private TransferencesObserver transferencesObserver;
 
-    public FileTransferManager(TransferencesObserver transferencesObserver) {
-        this.transferencesObserver = transferencesObserver;
+    public FileTransferManager(TransferenciaController transferenciaController) {
+        //this.transferencesObserver = transferencesObserver;
         this.configCliente=new ConfiguracionCliente();
+        this.transferenciaController=transferenciaController;
+
     }
 
     public   void sendFile(File file, String message, String SERVER_ADDRESS, int port) {
         try  {
+            Logger.logInfo("Conectandose al servidor");
             Socket socket=new Socket(SERVER_ADDRESS,port);
+
 
             ObjectOutputStream salida = new ObjectOutputStream(socket.getOutputStream());
             FileInputStream fileInputStream = new FileInputStream(file);
@@ -34,20 +39,26 @@ public class FileTransferManager implements TransferManager{
             String filePath = parts[2];
             long length=file.length();
 
-            transferencesObserver.addTransference("send", recipientNick, recipientNick,filePath.substring(filePath.lastIndexOf(File.separator)),this);
+           String idTransfe=  transferenciaController.addTransference(FileTransferState.SENDING.name(), recipientNick, recipientNick,filePath.substring(filePath.lastIndexOf(File.separator)),this);
 
-            salida.writeObject(new FileDirectoryCommunication(file.getName(),length));
+
+
+            Logger.logInfo("transfrencia agregada al controlador");
+            salida.writeObject(new Mensaje("enviando", CommunicationType.MESSAGE));
+            salida.flush();
+
+
+            salida.writeObject(new FileDirectoryCommunication(file.getName(),length,recipientNick));
             salida.flush();
 
             //TimeUnit.SECONDS.sleep(1);
-            salida.writeUTF(recipientNick);
+            //salida.writeUTF(recipientNick);
             byte[] buffer = new byte[10 * 1024 * 1024];  // 50 MB
             //byte[] buffer = new byte[1024*4];
             int bytesRead;
             long totalBytesReaded = 0;
             //TimeUnit.SECONDS.sleep(1);
             while (totalBytesReaded< length) {
-                    //totalBytesReaded<totalFileSize;
 
                 synchronized (pauseLock) {
 
@@ -62,7 +73,8 @@ public class FileTransferManager implements TransferManager{
                         totalBytesReaded += bytesRead;
                         //transferencesObserver.updateTransference("sending", recipientNick, (int)((totalBytesReaded * 100) / totalFileSize));
                         double totalMB = totalBytesReaded / 1_048_576.0;  // Convertir bytes a MB
-                        transferencesObserver.updateTransference(FileTransferState.SENDING, recipientNick, (int) ((totalBytesReaded * 100) / length));
+                        transferenciaController.updateProgress(FileTransferState.SENDING,idTransfe,(int) ((totalBytesReaded * 100) / length));
+                        //transferencesObserver.updateTransference(FileTransferState.SENDING, recipientNick, (int) ((totalBytesReaded * 100) / length));
                         //logInfo("Bytes leido " + bytesRead/1_048_576.0 + " MB");
                         //logInfo("Enviando " + totalMB + " MB enviados.");
 
@@ -71,12 +83,8 @@ public class FileTransferManager implements TransferManager{
             }
 
             salida.flush();
-            //System.out.println("Archivo Enviado: " + file.getName());
             Logger.logInfo("Archivo Enviado: " + file.getName());
-            //TimeUnit.SECONDS.sleep(15);
-            //salida.writeUTF("termino");
-            salida.close();
-            socket.close();
+
 
 
         } catch (IOException e) {
@@ -89,22 +97,68 @@ public class FileTransferManager implements TransferManager{
 
 
 
-    public   void receiveFiles(Socket socket, FileDirectoryCommunication communication,ObjectInputStream entrada) {
+    public   void receiveFiles(String SERVER_ADDRESS,String port,FileHandshakeCommunication handshakeCommunication) {
         try {
 
-
-            String recipientNick = entrada.readUTF();
+            var communication=handshakeCommunication.getFileInfo();
+            String recipientNick = communication.getRecipient();
             String fileName = communication.getName(); // Leer nombre del archivo
             long fileSize = communication.getSize();  // Leer tamaño del archivo
-            transferencesObserver.addTransference("receive", recipientNick, recipientNick,fileName,this);
+            //transferencesObserver.addTransference("receive", recipientNick, recipientNick,fileName,this);
+
+            var idTrans= transferenciaController.addTransference(FileTransferState.RECEIVING.name(), recipientNick, recipientNick,fileName,this);
+
+
             //TimeUnit.MILLISECONDS.sleep(300); // Esperar 1 segundo antes de la próxima actualización
             //TimeUnit.MILLISECONDS.sleep(1); // Esperar 1 segundo antes de la próxima actualización
+            Socket socket=new Socket(SERVER_ADDRESS, Integer.parseInt(port));
+
+            ObjectOutputStream salida = new ObjectOutputStream(socket.getOutputStream());
+
+            ObjectInputStream entrada=new ObjectInputStream(socket.getInputStream());
+
+            Logger.logInfo("conectandose al servidor para recibir datos");
+
+            salida.writeObject(new Mensaje(handshakeCommunication.getSessionId(), CommunicationType.MESSAGE));
+            salida.flush();
+
+
+            //salida.writeObject(new FileDirectoryCommunication(file.getName(),length,recipientNick));
+            //salida.flush();
 
             String rutaDescargas = configCliente.obtener("cliente.directorio_descargas");
 
+
+// Esperar hasta recibir una respuesta válida
+            Object object;
+            while (true) {
+                try {
+                    object = entrada.readObject();
+
+                    if (object instanceof FileHandshakeCommunication respuesta) {
+
+                        // Validamos que sea la respuesta esperada (ej. inicio de transferencia)
+                        if (respuesta.getAction() == FileHandshakeAction.START_TRANSFER &&
+                                respuesta.getSessionId().equals(handshakeCommunication.getSessionId())) {
+
+                            Logger.logInfo("Recibido START_TRANSFER para sesión: " + respuesta.getSessionId());
+                            break; // Salir del bucle, ya tienes la respuesta esperada
+                        }
+
+                    } else if (object instanceof Mensaje mensaje) {
+                        Logger.logInfo("Mensaje recibido: " + mensaje.getContenido());
+                        // Puedes seguir esperando o tomar otra acción
+                    }
+
+                } catch (ClassNotFoundException | IOException e) {
+                    Logger.logError("Error leyendo objeto del servidor: " + e.getMessage());
+                    break;
+                }
+            }
+
             try (FileOutputStream fileOutputStream = new FileOutputStream(rutaDescargas+fileName)) {
                 //byte[] buffer = new byte[4096];
-                byte[] buffer = new byte[10 * 1024 * 1024];  // 50 MB
+                byte[] buffer = new byte[100 * 1024 * 1024];  // 50 MB
 
                 int bytesRead;
                 long totalBytesRead = 0;
@@ -115,13 +169,15 @@ public class FileTransferManager implements TransferManager{
                     fileOutputStream.write(buffer, 0, bytesRead);
                     totalBytesRead += bytesRead;
                     double totalMB = totalBytesRead / 1_048_576.0;
-                    transferencesObserver.updateTransference(FileTransferState.RECEIVING, recipientNick, (int)((totalBytesRead * 100) / fileSize));
+                   // transferencesObserver.updateTransference(FileTransferState.RECEIVING, recipientNick, (int)((totalBytesRead * 100) / fileSize));
+                    transferenciaController.updateProgress(FileTransferState.RECEIVING,idTrans,(int)((totalBytesRead * 100) / fileSize));
                     //logInfo("Recibiendo " + totalMB + " MB Recibidos.");
                 }
 
 
                 Logger.logInfo("Archivo recibido: " + fileName);
             }
+
             entrada.close();
             socket.close();
         } catch (IOException e) {

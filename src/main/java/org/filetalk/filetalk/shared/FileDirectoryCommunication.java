@@ -9,22 +9,32 @@ public class FileDirectoryCommunication extends Communication implements Seriali
     private long size;              // Tamaño del archivo/directorio en bytes
     private boolean isDirectory;    // Indicador de si es un archivo o un directorio
     private int  totalArchivos;
+    private String recipient;
     // Constructor para archivo
-    public FileDirectoryCommunication(String name, long size) {
+    public FileDirectoryCommunication(String name, long size,String recipient) {
         super(CommunicationType.FILE);  // O puedes usar CommunicationType.DIRECTORY si es un directorio
         this.name = name;
         this.size = size;
+        this.recipient=recipient;
 
         this.isDirectory = false;  // Es un archivo por defecto
     }
 
     // Constructor para directorio
-    public FileDirectoryCommunication(String name,int totalArchivos) {
+    public FileDirectoryCommunication(String name,int totalArchivos,String recipient) {
         super(CommunicationType.DIRECTORY);
         this.name = name;
         this.size = 0;             // Un directorio no tiene un tamaño específico
         this.isDirectory = true;
         this.totalArchivos=totalArchivos;
+        this.recipient=recipient;
+    }
+
+    public FileDirectoryCommunication(String name, long length) {
+        super(CommunicationType.FILE);  // O puedes usar CommunicationType.DIRECTORY si es un directorio
+        this.name = name;
+        this.size = length;
+        this.isDirectory = false;  // Es un archivo por defecto
     }
 
     // Getter para el nombre del archivo/directorio
@@ -47,6 +57,9 @@ public class FileDirectoryCommunication extends Communication implements Seriali
         return totalArchivos;
     }
 
+    public String getRecipient() {
+        return recipient;
+    }
 
     // Representación en cadena (opcional)
     @Override

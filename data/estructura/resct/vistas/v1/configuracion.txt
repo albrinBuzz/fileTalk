@@ -1,0 +1,73 @@
++-------------------------------------------------------------------------------------------------------+
+| ⚙️ Configuración del Servidor y Transferencias                                      [X]               |
++-------------------------------------------------------------------------------------------------------+
+
+| ⚙️ Parámetros de red                                                                                   |
+|-------------------------------------------------------------------------------------------------------|
+| Puerto de conexión del servidor:                      [  8080  ]                                       |
+| Dirección IP (escuchar en):                          [  0.0.0.0 (todas)  ]                           |
+| Número máximo de conexiones simultáneas:             [  50  ]                                         |
+| Permitir conexiones externas:                        (x) Sí    ( ) No                                 |
+| Habilitar cifrado TLS/SSL para transferencias:       (x) Sí    ( ) No                                 |
+| Protocolo de transferencia preferido:                ( ) TCP    (x) UDP (más rápido, menos confiable)  |
+|                                                                                                       |
+| ⚙️ Configuración de almacenamiento                                                                        |
+|-------------------------------------------------------------------------------------------------------|
+| Carpeta para guardar archivos recibidos:                                                        [Seleccionar carpeta...]  |
+| Tamaño máximo de archivo permitido:                      [  1 GB  ]                                    |
+| Límite total de almacenamiento:                           [  50 GB  ]                                   |
+| Política de sobrescritura de archivos:                                                     |
+|    ( ) No permitir sobrescribir archivos existentes                                                 |
+|    (x) Sobrescribir si el archivo tiene el mismo nombre                                            |
+|    ( ) Renombrar automáticamente para evitar sobrescribir                                         |
+| Mantener historial de archivos recibidos:            (x) Sí    ( ) No                              |
+| Número máximo de archivos en historial:                 [  5000  ]                                  |
+| Eliminar archivos automáticamente tras (días):          [  60  ]                                  |
+|                                                                                                       |
+| ⚙️ Transferencias                                                                                         |
+|-------------------------------------------------------------------------------------------------------|
+| Tiempo máximo de espera para transferencia (segundos):       [  180  ]                              |
+| Retransmisiones automáticas en fallo:                  (x) Sí    ( ) No                                |
+| Número máximo de reintentos automáticos:                    [  5  ]                                   |
+| Limitar velocidad de subida (KB/s):                       [  4096  ]  (0 para ilimitado)                 |
+| Limitar velocidad de bajada (KB/s):                       [  4096  ]  (0 para ilimitado)                 |
+| Tamaño del buffer de transferencia (KB):                   [  256  ]                                  |
+| Número máximo de transferencias simultáneas:               [  10  ]                                  |
+| Notificar al usuario al completar transferencia:          (x) Sí    ( ) No                            |
+| Habilitar checksum (MD5/SHA256) para verificar integridad: (x) Sí    ( ) No                            |
+| Permitir reanudación de transferencias interrumpidas:     (x) Sí    ( ) No                            |
+|                                                                                                       |
+| ⚙️ Seguridad y acceso                                                                                     |
+|-------------------------------------------------------------------------------------------------------|
+| Requerir autenticación para clientes:                (x) Sí    ( ) No                                  |
+| Modo autenticación:                                    ( ) Simple   (x) Avanzada (usuario/contraseña)     |
+| Habilitar lista blanca de IPs:                        ( ) Sí    (x) No                                 |
+| Lista blanca (IPs permitidas): [___________________________] [Editar...]                             |
+| Habilitar lista negra de IPs:                        ( ) Sí    (x) No                                 |
+| Lista negra (IPs bloqueadas): [___________________________] [Editar...]                             |
+| Activar notificaciones por email en fallos y eventos:    (x) Sí    ( ) No                            |
+| Email para notificaciones:                            [ admin@ejemplo.com ]                             |
+|                                                                                                       |
+| ⚙️ Avanzado                                                                                              |
+|-------------------------------------------------------------------------------------------------------|
+| Registro detallado (logs) activado:                   (x) Sí    ( ) No                               |
+| Ruta para guardar logs:                                 [ /var/log/transfer_app/ ]                      |
+| Nivel de detalle de logs:                              ( ) Errores  (x) Información  ( ) Debug         |
+| Programar mantenimiento automático:                   ( ) Sí    (x) No                               |
+| Horario mantenimiento:                                 [ 02:00 AM ]                                    |
+| Backup automático de configuración:                   (x) Sí    ( ) No                               |
+| Ruta para backups:                                     [ /backups/transfer_app/ ]                        |
+|                                                                                                       |
+| [ Guardar configuración ]          [ Cancelar ]                                                      |
++-------------------------------------------------------------------------------------------------------+
+
+| 📊 Estado del servidor                                                                               |
+|-------------------------------------------------------------------------------------------------------|
+| Estado:          [🟢 Activo]                                                                         |
+| Usuarios conectados: 5                                                                              |
+| Transferencias activas: 3                                                                           |
+| Uso de CPU:      28%                                                                                |
+| Uso de RAM:      58%                                                                                |
+| Velocidad red actual: 3.8 MB/s                                                                      |
+| Registro de actividad:  [Ver registro...]                                                         |
++-------------------------------------------------------------------------------------------------------+

@@ -1,5 +1,6 @@
 package org.filetalk.filetalk.Client;
 
+import org.filetalk.filetalk.controller.TransferenciaController;
 import org.filetalk.filetalk.model.Observers.HostsObserver;
 import org.filetalk.filetalk.model.Observers.TransferencesObserver;
 import org.filetalk.filetalk.model.Observers.Observer;
@@ -25,12 +26,12 @@ public class Client {
     private String msj;
     private ExecutorService executorService;
     private DatagramSocket socketUdp;
-    private Servidor servidor;
     private Observer observer;
     private ConfiguracionServidor config = new ConfiguracionServidor();
-
+    private TransferenciaController transferenciaController;
     public Client(){
         this.executorService = Executors.newFixedThreadPool(10); // Usar un pool de hilos para manejar tareas concurrentes
+        transferenciaController=new TransferenciaController();
     }
 
 
@@ -52,8 +53,8 @@ public class Client {
 
         // Iniciar hilos para leer mensajes y recibir archivos
         executorService.submit(new ReadMessages(entrada));
-        servidor=new Servidor(Integer.parseInt(config.obtener("cliente.puerto")));
-        executorService.submit(servidor); // Suponiendo que este es el puerto para recibir archivos
+        //servidor=new Servidor(Integer.parseInt(config.obtener("cliente.puerto")));
+        //executorService.submit(servidor); // Suponiendo que este es el puerto para recibir archivos
 
     }
 
@@ -77,6 +78,14 @@ public class Client {
         socketUdp.close();
     }
 
+    public int getSERVER_PORT() {
+        return SERVER_PORT;
+    }
+
+    public String getSERVER_ADDRESS() {
+        return SERVER_ADDRESS;
+    }
+
     public void desconect() {
         try {
             // Verificar si la salida y el socket no están ya cerrados
@@ -93,8 +102,7 @@ public class Client {
                 entrada.close();
             }
 
-            // Llamada al método para desconectar del servidor
-            this.servidor.disconect();
+
 
             // Actualización del estado de la conexión en el observador
             this.observer.updateServerConnection(ServerStatusConnection.DISCONNECTED);
@@ -124,7 +132,7 @@ public class Client {
         }
 
         //new Thread(()->sendFile(file,message)).start();
-        FileTransferManager transferManager =new FileTransferManager(transferencesObserver);
+        FileTransferManager transferManager =new FileTransferManager(transferenciaController);
 
         executorService.submit(()->transferManager.sendFile(file, message, host,port));
 
@@ -132,7 +140,7 @@ public class Client {
 
     }
 
-    public void handleDirectoryTransfer(String filePath, String host, int port) throws IOException {
+    public void handleDirectoryTransfer(String filePath, String host, int port,String recipient) throws IOException {
 
         File file = new File(filePath);
 
@@ -144,12 +152,12 @@ public class Client {
 
         //new Thread(()->sendFile(file,message)).start();
         //FileTransferManager transferManager =new FileTransferManager(transferencesObserver);
-        DirectoryTransferManager directoryTransferManager=new DirectoryTransferManager(transferencesObserver);
+        DirectoryTransferManager directoryTransferManager=new DirectoryTransferManager(transferenciaController);
         //directoryTransferManager.sendDirectory(file);
 
         executorService.submit(()-> {
             try {
-                directoryTransferManager.sendDirectory(file,host,port);
+                directoryTransferManager.sendDirectory(file,host,port,recipient);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -175,8 +183,10 @@ public class Client {
 
     // Notificar a todos los observadores
     private void notifyObservers() {
+        if (this.observer!=null){
+            this.observer.updateMessaje(msj);
+        }
 
-        this.observer.updateMessaje(msj);
     }
 
     private void notifyHostobserves(List<ClientInfo>hosts) {
@@ -196,7 +206,8 @@ public class Client {
         this.msj = message;
         notifyObservers();  // Notificar a los observadores que hay un nuevo mensaje
     }
-
+    
+    
 
 
     // Hilo que lee los mensajes del servidor
@@ -223,11 +234,15 @@ public class Client {
                             ClientListMessage listCliets = (ClientListMessage) communication;
                             //clienteConectados = listCliets.getClientNicks();
                             //actualizarClientesUI(); // Actualiza la UI con los clientes conectados
+
                             notifyHostobserves(listCliets.getClientNicks());
-                        } else {
+                        } else if (communication instanceof FileHandshakeCommunication com) {
+
+                                handleRvc(com);
+                        } else if (communication instanceof Mensaje mensaje){
                             // Si el mensaje es otro tipo de mensaje
-                            Mensaje mensaje=(Mensaje) communication;
                             msj =mensaje.getContenido();
+                            Logger.logInfo(mensaje.getContenido());
                             handleIncomingMessage(msj);  // Procesamos el mensaje recibido
                             // actualizarUIConMensaje(msj); // Actualiza la UI con el mensaje recibido
                         }
@@ -237,12 +252,44 @@ public class Client {
                 }
 
             } catch (IOException | ClassNotFoundException e) {
-                System.out.println("Error leyendo del servidor: " + e.getMessage());
+                Logger.logInfo("Error leyendo del servidor: " + e.getMessage());
                 e.printStackTrace();
+
+            }catch (Exception e) {
+                    Logger.logInfo("Error leyendo del servidor: " + e.getMessage());
+                    e.printStackTrace();
+
             } finally {
                 Logger.logInfo("cerrando");
-                cleanUp();
+                //cleanUp();
             }
+        }
+
+
+        private void handleRvc(FileHandshakeCommunication communication) throws IOException, ClassNotFoundException {
+
+            if (communication.getFileInfo().getType().equals(CommunicationType.FILE)) {
+                Logger.logInfo("corregir ");
+                FileTransferManager transferManager =new FileTransferManager(transferenciaController);
+                System.out.println("Dirección remota: " + SERVER_ADDRESS);
+                System.out.println("Puerto remoto: " + socket.getPort());
+                System.out.println("Dirección local: " + socket.getLocalAddress().getHostAddress());
+                System.out.println("Puerto local: " + socket.getLocalPort());
+                String addresServer=socket.getInetAddress().getHostAddress();
+                String port= String.valueOf(socket.getPort());
+                transferManager.receiveFiles(SERVER_ADDRESS, String.valueOf(SERVER_PORT),communication);
+
+            }
+            else if (communication.getFileInfo().getType().equals(CommunicationType.DIRECTORY)) {
+
+                Logger.logInfo("en direcotrio");
+                DirectoryTransferManager directoryTransferManager=new DirectoryTransferManager(transferenciaController);
+                directoryTransferManager.reciveDirectory(SERVER_ADDRESS, String.valueOf(SERVER_PORT),communication);
+            }
+            /*else if (communication.getType().equals(CommunicationType.DISCONNECT)) {
+
+            }*/
+
         }
 
 
@@ -262,69 +309,12 @@ public class Client {
         }
     }
 
-    // Servidor que recibe los archivos en un puerto diferente
-     class Servidor implements Runnable {
-        private int port;
-        private ServerSocket serverSocket;
-        public Servidor(int port) {
-            this.port = port;
-        }
 
-        @Override
-        public void run() {
-            try  {
-                serverSocket = new ServerSocket(port);
-
-
-                while (!serverSocket.isClosed()) {
-                    Socket clientSocket = serverSocket.accept();
-
-                    new Thread(() -> handleConnection(clientSocket)).start();
-
-                }
-            } catch (IOException e) {
-                System.err.println("Error en el servidor: " + e.getMessage());
-            }
-        }
-
-        public void disconect() throws IOException {
-            this.serverSocket.close();
-        }
-
-        private void handleConnection(Socket socket){
-
-            try {
-
-
-                var entrada = new ObjectInputStream(socket.getInputStream());
-
-                FileDirectoryCommunication communication= (FileDirectoryCommunication) entrada.readObject();
-
-                if (communication.getType().equals(CommunicationType.FILE)){
-
-                    FileTransferManager transferManager =new FileTransferManager(transferencesObserver);
-                    transferManager.receiveFiles(socket,communication,entrada);
-
-                    // new Thread(() -> transferManager.receiveFiles(socket,communication)).start();
-
-                } else if (communication.getType().equals(CommunicationType.DIRECTORY)) {
-
-                    DirectoryTransferManager directoryTransferManager=new DirectoryTransferManager(transferencesObserver);
-                    directoryTransferManager.reciveDirectory(socket,communication,entrada);
-
-                }
-
-
-            } catch (IOException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-
-
-        }
-
+    public TransferenciaController getTransferenciaController() {
+        return transferenciaController;
     }
 
-
-
-
+    public void setTransferenciaController(TransferenciaController transferenciaController) {
+        this.transferenciaController = transferenciaController;
+    }
 }

@@ -94,7 +94,7 @@
                                     <!-- IP y Puerto -->
                                     <HBox spacing="10.0" style="-fx-background-color: #444444;">
                                         <Label style="-fx-text-fill: white;" text="IP Servidor:" />
-                                        <TextField fx:id="ipReceptorTxt" promptText="192.168.100.5" />
+                                        <TextField fx:id="ipReceptorTxt" promptText="192.168.100.111" />
                                         <Label style="-fx-text-fill: white;" text="Puerto:" />
                                         <TextField fx:id="portField" prefWidth="70.0" promptText="8080" style="-fx-background-color: #333333; -fx-text-fill: white;" />
                                     </HBox>

@@ -1,0 +1,68 @@
+/* light-theme.css */
+
+/* Fondo y texto */
+.root {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #333333;
+}
+
+.label {
+    -fx-text-fill: #333333;
+}
+
+/* Barra de navegación superior */
+.hbox {
+    -fx-background-color: #ecf0f1;
+}
+
+.button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: #ffffff;
+}
+
+.button:hover {
+    -fx-background-color: #2980b9;
+}
+
+.text-field {
+    -fx-border-color: #bdc3c7;
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #333333;
+}
+
+.text-area {
+    -fx-background-color: #f5f5f5;
+    -fx-text-fill: #333333;
+    -fx-border-color: #bdc3c7;
+}
+
+/* Barras de progreso */
+.progress-bar {
+    -fx-accent: #3498db;
+}
+
+/* Elementos de estado */
+.label {
+    -fx-text-fill: #333333;
+}
+
+.hbox, .vbox {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #bdc3c7;
+    -fx-border-width: 1;
+}
+
+/* Botones del menú */
+.combo-box, .button {
+    -fx-background-color: #ecf0f1;
+    -fx-text-fill: #333333;
+}
+
+.combo-box:hover, .button:hover {
+    -fx-background-color: #bdc3c7;
+}
+
+/* Fondo de la pantalla */
+.scroll-pane {
+    -fx-background-color: #ffffff;
+}

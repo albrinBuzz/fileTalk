@@ -1,0 +1,119 @@
+📄 Requisitos Funcionales del Software de Transferencia de Archivos
+1. Gestión de Archivos
+Subir archivos individuales y por lotes.
+
+Descargar archivos y carpetas comprimidas (.zip).
+
+Crear, renombrar y eliminar carpetas.
+
+Mover/copiar archivos entre carpetas.
+
+Previsualización de archivos comunes (PDF, imágenes, texto).
+
+Búsqueda por nombre, tipo o fecha de modificación.
+
+2. Transferencia de Archivos
+Transferencia mediante protocolos FTP, SFTP, HTTP/S, FTPS.
+
+Transferencia simultánea de múltiples archivos.
+
+Mostrar barra de progreso por archivo.
+
+Soporte para pausa/reanudación de descargas y subidas.
+
+Notificación al terminar la transferencia.
+
+3. Seguridad
+Autenticación de usuario (con 2FA opcional).
+
+Encriptación SSL/TLS para toda la comunicación.
+
+Validación de tamaño y tipo de archivo antes de la subida.
+
+Control de acceso por permisos (lectura, escritura, administrador).
+
+Caducidad de enlaces de descarga.
+
+4. Gestión de Usuarios
+Registro, inicio de sesión, recuperación de contraseña.
+
+Roles de usuario: Administrador, Editor, Lector.
+
+Asociación de archivos a usuarios específicos.
+
+Límites de espacio por usuario o por grupo.
+
+5. Compatibilidad y Plataforma
+Interfaz web responsiva para escritorio y móviles.
+
+Aplicación nativa (opcional) para Windows/macOS/Linux.
+
+Soporte para almacenamiento externo: Amazon S3, Google Drive, OneDrive.
+
+6. Monitoreo y Registro
+Historial completo de actividad por usuario.
+
+Registro de errores de transferencia.
+
+Reportes descargables de tráfico y archivos más transferidos.
+
+Alertas por espacio utilizado, errores y accesos sospechosos.
+
+7. Usabilidad y Experiencia
+Interfaz de arrastrar y soltar.
+
+Multilenguaje (configurable por usuario).
+
+Soporte accesible (modo alto contraste, lectores de pantalla).
+
+Ayuda integrada y tutorial interactivo.
+
+8. Funcionalidades Adicionales
+Generación de enlaces de descarga pública con caducidad.
+
+Firma digital de archivos (para integridad).
+
+Versión de archivo: historial de versiones y recuperación.
+
+Integración API REST para automatización o conexión con otros sistemas.
+
+📄 Requisitos Funcionales (Extensión y Mejora)
+🔄 9. Automatización y Flujos de Trabajo
+Reglas automáticas para organizar archivos según tipo, fecha o usuario.
+
+Notificaciones automáticas a usuarios cuando se suben archivos a ciertas carpetas.
+
+Programación de transferencias para horas específicas.
+
+Limpieza automática de archivos temporales o caducados.
+
+🧩 10. Colaboración
+Compartición de carpetas con múltiples usuarios.
+
+Comentarios por archivo (tipo chat).
+
+Notificaciones in-app o por email cuando se actualiza un archivo.
+
+Etiquetas y categorías para clasificar archivos colaborativamente.
+
+Control de versiones: posibilidad de restaurar versiones anteriores.
+
+🛠️ 11. Administración del Sistema
+Dashboard administrativo con métricas: uso, usuarios activos, transferencias recientes.
+
+Configuración de cuotas por usuario o grupo.
+
+Gestión de políticas de retención de archivos.
+
+Importación/exportación masiva de datos o configuración.
+
+Registro de auditoría con trazabilidad completa.
+
+📥 12. Integraciones y APIs
+API REST para integrarse con otros sistemas (CRM, ERP, etc.).
+
+Webhooks para eventos (archivo subido, eliminado, compartido).
+
+Integración con Active Directory / LDAP para autenticación corporativa.
+
+Plugins de productividad (por ejemplo, integración con Slack, Microsoft Teams).

@@ -1,0 +1,107 @@
+/* dark-theme.css */
+
+/* Fondo y texto */
+.root {
+    -fx-background-color: #2c3e50;
+    -fx-text-fill: #ecf0f1;
+}
+
+.label {
+    -fx-text-fill: #ecf0f1;
+}
+
+/* Barra de navegación superior */
+.hbox {
+    -fx-background-color: #34495e;
+}
+
+.button {
+    -fx-background-color: #1abc9c;
+    -fx-text-fill: #ffffff;
+}
+
+.button:hover {
+    -fx-background-color: #16a085;
+}
+
+.text-field {
+    -fx-border-color: #7f8c8d;
+    -fx-background-color: #34495e;
+    -fx-text-fill: #ecf0f1;
+}
+
+.text-area {
+    -fx-background-color: #34495e;
+    -fx-text-fill: #ecf0f1;
+    -fx-border-color: #7f8c8d;
+    -fx-padding: 5px;
+}
+
+/* Barras de progreso */
+.progress-bar {
+    -fx-accent: #1abc9c;
+}
+
+/* Elementos de estado */
+.label {
+    -fx-text-fill: #ecf0f1;
+}
+
+.hbox, .vbox {
+    -fx-background-color: #34495e;
+    -fx-border-color: #7f8c8d;
+    -fx-border-width: 1;
+    -fx-padding: 10px;
+}
+
+/* Botones del menú */
+.combo-box, .button {
+    -fx-background-color: #34495e;
+    -fx-text-fill: #ecf0f1;
+}
+
+.combo-box:hover, .button:hover {
+    -fx-background-color: #7f8c8d;
+}
+
+/* Fondo de la pantalla */
+.scroll-pane {
+    -fx-background-color: #2c3e50;
+}
+
+/* Contenedores de usuarios conectados */
+.vbox .label, .vbox .button {
+    -fx-text-fill: #ecf0f1; /* Asegura que el texto de los usuarios sea visible */
+}
+
+.vbox .hbox {
+    -fx-background-color: #2c3e50;
+    -fx-text-fill: #ecf0f1;
+}
+
+.vbox .hbox:hover {
+    -fx-background-color: #34495e; /* Añadir un hover con color más claro */
+}
+
+/* Chat */
+.text-area {
+    -fx-background-color: #34495e;
+    -fx-text-fill: #ecf0f1;
+}
+
+.text-area .user {
+    -fx-text-fill: #1abc9c; /* Color para los nombres de los usuarios */
+}
+
+.text-area .message {
+    -fx-text-fill: #ffffff; /* Color para los mensajes */
+}
+
+.hbox .button {
+    -fx-background-color: #34495e;
+    -fx-text-fill: #ecf0f1;
+}
+
+.hbox .button:hover {
+    -fx-background-color: #7f8c8d;
+}

@@ -1,0 +1,11 @@
++------------------------- Chat con Ana Torres -------------------------+
+| 🟢 En línea       | 📎 Enviar archivo | 📁 Compartido | 🚫 Bloquear     |
++------------------------------------------------------------------------+
+| 📄 Ana: Hola Juan, ¿ya tienes el contrato?                             |
+| 🧑‍💻 Tú: Sí, lo estoy subiendo ahora mismo.                             |
+| 📎 contrato_v3.pdf (1.3MB)  [⬇️ Descargar]  📄 Ver Online                |
+| 📄 Ana: Recibido, ¡gracias! 👍                                          |
+|------------------------------------------------------------------------|
+| [📎 Adjuntar archivo] [🖇 Desde "Mis Archivos"]                         |
+| [⌨️ Escribe un mensaje...]                  [▶️ Enviar]                |
++------------------------------------------------------------------------+

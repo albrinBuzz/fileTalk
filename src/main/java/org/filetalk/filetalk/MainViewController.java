@@ -115,8 +115,8 @@ public class MainViewController implements Initializable, Observer {
         crConexion.setFill(Color.RED);
         client = new Client();
         btnDesconectarse.setDisable(true);
-        //ipReceptorTxt.setPromptText("192.168.100.5");
-        //portField.setPromptText("8080");
+        ipReceptorTxt.setText("192.168.100.111");
+        portField.setText("8080");
 
         vboxMsj.setPadding(new Insets(10));
         vboxMsj.setSpacing(5);
@@ -311,6 +311,7 @@ public class MainViewController implements Initializable, Observer {
         } catch (NumberFormatException e) {
             statusText.setText("Invalid port format.");
         }
+
     }
 
 

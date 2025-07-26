@@ -17,6 +17,7 @@ import org.filetalk.filetalk.Client.ClientInfo;
 import org.filetalk.filetalk.model.Observers.ServerObserver;
 import org.filetalk.filetalk.shared.ClientListMessage;
 import org.filetalk.filetalk.shared.CommunicationType;
+import org.filetalk.filetalk.shared.Logger;
 import org.filetalk.filetalk.shared.Mensaje;
 import org.filetalk.filetalk.utils.Color;
 
@@ -59,10 +60,14 @@ public class Server {
         // Iniciar el socket del servidor para aceptar conexiones de clientes
         try  {
             serverSocket = new ServerSocket(PORT);
+            Logger.logInfo("servidor iniciado en el puerto "+PORT);
             while (!serverSocket.isClosed()) {
+
                 Socket clientSocket = serverSocket.accept();
 
+
                 ClientHandler clientHandler = new ClientHandler(clientSocket, this);
+
                 clientPool.add(clientHandler);
                 new Thread(clientHandler).start(); // Iniciar un nuevo hilo para manejar al cliente
 
@@ -82,6 +87,34 @@ public class Server {
         }
 
     }
+
+    private boolean nickExists(String nick) {
+        for (ClientHandler client : clientPool) {
+            if (client.nick!=null){
+                if (client.nick.equalsIgnoreCase(nick)) {
+                    return true;
+                }
+            }
+
+        }
+        return false;
+    }
+
+    String getUniqueNick(String desiredNick) {
+        if (!nickExists(desiredNick)) {
+            return desiredNick;  // Nick no existe, se puede usar
+        }
+
+        int suffix = 1;
+        String newNick;
+        do {
+            newNick = desiredNick + suffix;
+            suffix++;
+        } while (nickExists(newNick));
+
+        return newNick;
+    }
+
 
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);

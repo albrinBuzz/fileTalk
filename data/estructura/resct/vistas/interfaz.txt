@@ -1,0 +1,22 @@
++---------------------------------------------------------------------------------+
+| [Logo] Transferencia Segura ▸ [Inicio] [Mis Archivos] [Compartidos] [Admin]    |
+|---------------------------------------------------------------------------------|
+| 🟩 Buscar: [_______________________🔍]   🔼 Subir archivos  📁 Nueva carpeta     |
+| Filtros: [📂 Tipo] [👤 Usuario] [📅 Fecha] [🏷️ Etiquetas]  Ordenar por ▼        |
+|---------------------------------------------------------------------------------|
+| Carpeta: /proyectos/clienteABC  ▸ [📤 Compartir] [➕ Añadir etiqueta] [⚙ Config]|
+|---------------------------------------------------------------------------------|
+| ✅ contrato_final_v3.pdf    | 2.4 MB  | PDF     | 17/07/2025 | 👤Juan   | 🕘 12:45 |
+|    🔁 v3 (Ver historial)    📄 Ver 🖨️ Descargar 🗑️ Borrar 💬 Comentarios (2)     |
+| 🟡 propuesta_inicial.docx   | 1.2 MB  | DOCX    | 16/07/2025 | 👤Ana    | 🕘 11:02 |
+|    🏷️ Etiquetas: "legal", "borrador"                                                |
+| 🗂️ imágenes/                | —       | Carpeta | 15/07/2025 | 👤Carlos | 🕘 18:15 |
+|    ↪️ 15 elementos                                                          |
+|---------------------------------------------------------------------------------|
+| 💬 Comentarios recientes | 🔔 Notificaciones (3) | 🧑‍🤝‍🧑 Colaboradores (5)           |
+|---------------------------------------------------------------------------------|
+| Espacio usado: 5.8 GB / 10 GB ▸ Comprar más almacenamiento                       |
+| Última actividad: 2 minutos atrás                                                |
+|---------------------------------------------------------------------------------|
+| 📊 Admin Dashboard | 📁 Backup Manual | ⚙ Configuración | 🚪 Cerrar Sesión        |
++---------------------------------------------------------------------------------+
