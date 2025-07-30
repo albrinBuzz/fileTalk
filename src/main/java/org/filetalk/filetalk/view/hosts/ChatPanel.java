@@ -1,4 +1,4 @@
-package org.filetalk.filetalk.Tests.Gui;
+package org.filetalk.filetalk.view.hosts;
 
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -14,8 +14,6 @@ import org.filetalk.filetalk.model.Observers.Observer;
 import org.filetalk.filetalk.shared.ServerStatusConnection;
 
 import java.io.IOException;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class ChatPanel extends VBox implements Observer {
@@ -64,7 +62,7 @@ public class ChatPanel extends VBox implements Observer {
         inputChatBox.getChildren().addAll(inputChat, sendChatBtn);
 
         // Añadir todos los elementos al VBox del chat
-        chatBox.getChildren().addAll(chatLabel, usuariosChatLabel, chatArea, inputChatBox);
+        chatBox.getChildren().addAll(chatLabel, chatArea, inputChatBox);
 
         // Añadir el VBox del chat al contenedor principal
         this.getChildren().add(chatBox);

@@ -1,18 +1,17 @@
-package org.filetalk.filetalk.Tests.Gui;
+package org.filetalk.filetalk.view;
 
 
-import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import org.filetalk.filetalk.Client.Client;
 
 import java.io.IOException;
@@ -24,7 +23,7 @@ public class MainController {
     private Client client;
     private final MainView mainView;
 
-    public MainController(MainView mainView,Client client) {
+    public MainController(MainView mainView, Client client) {
         this.mainView = mainView;
         this.client=client;
     }

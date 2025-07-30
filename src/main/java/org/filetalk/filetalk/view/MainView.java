@@ -1,9 +1,7 @@
-package org.filetalk.filetalk.Tests.Gui;
+package org.filetalk.filetalk.view;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -14,20 +12,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import org.filetalk.filetalk.Client.Client;
-import org.filetalk.filetalk.Client.ClientInfo;
 import org.filetalk.filetalk.Client.ConfiguracionCliente;
 import org.filetalk.filetalk.Client.UtilidadesCliente;
+import org.filetalk.filetalk.Tests.Gui.ChatPanel;
 import org.filetalk.filetalk.Tests.Gui.Transfers.TransferenciasView;
 import org.filetalk.filetalk.Tests.Gui.hosts.HostsPanel;
-import org.filetalk.filetalk.model.Observers.ServerObserver;
 import org.filetalk.filetalk.server.Server;
 
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.util.List;
-
-public class MainView extends Application implements ServerObserver {
+public class MainView extends Application  {
 
 
     private MainController controller;
@@ -63,10 +55,8 @@ public class MainView extends Application implements ServerObserver {
 
         // Inicializar el servidor
         server = Server.getInstance();
-        server.setServerObserver(this);
+        //server.setServerObserver(this);
 
-        // Tema actual (oscuro o claro)
-        StringProperty currentTheme = new SimpleStringProperty("Claro");
 
         // HEADER
         HBox header = new HBox(15);
@@ -385,68 +375,10 @@ public class MainView extends Application implements ServerObserver {
 
 
     private void findServerAutomatically(TextField ipField, Label connectionStatusLabel) {
-        new Thread(() -> {
-            try {
-                DatagramSocket socket = new DatagramSocket();
-                socket.setBroadcast(true);
 
-                // Enviar mensaje de descubrimiento
-                DatagramPacket packet = new DatagramPacket(DISCOVERY_MESSAGE.getBytes(),
-                        DISCOVERY_MESSAGE.length(), InetAddress.getByName("255.255.255.255"), DISCOVERY_PORT);
-                socket.send(packet);
-
-                // Esperar la respuesta del servidor
-                byte[] buffer = new byte[1024];
-                DatagramPacket responsePacket = new DatagramPacket(buffer, buffer.length);
-                socket.receive(responsePacket);
-
-                String response = new String(responsePacket.getData(), 0, responsePacket.getLength());
-                if (response.startsWith("SERVER_IP:")) {
-                    String serverIP = response.split(":")[1];
-                    System.out.println("Servidor encontrado en la IP: " + serverIP);
-                    // Actualizar el campo de IP
-                    ipField.setText(serverIP);
-
-                    // Actualizar el estado de la conexión
-                    connectionStatusLabel.setText("[🟢 Conectado a " + serverIP + "]");
-                    connectionStatusLabel.setTextFill(Color.LIGHTGREEN);
-                } else {
-                    // Si no se encuentra ningún servidor
-                    connectionStatusLabel.setText("[🔴 No se pudo conectar]");
-                    connectionStatusLabel.setTextFill(Color.RED);
-                }
-
-                socket.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
 
     }
-    private HBox createUserItem(String nombre, String estado, String ultimaConexion, boolean mostrarArchivos) {
-        HBox userItem = new HBox(10);
-        userItem.setPadding(new Insets(5));
-        userItem.setStyle("-fx-border-color: #bdc3c7; -fx-border-width: 0 0 1 0;");
-        userItem.setAlignment(Pos.CENTER_LEFT);
 
-        Label icon = new Label(estado);
-        Label nameLabel = new Label("👤 " + nombre);
-        Label lastConn = new Label("Última conexión: " + ultimaConexion);
-        lastConn.setStyle("-fx-font-style: italic;");
-
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-
-        Button enviarArchivoBtn = new Button("📤 Enviar archivo");
-        userItem.getChildren().addAll(nameLabel, icon, lastConn, spacer, enviarArchivoBtn);
-
-        if (mostrarArchivos) {
-            Button archivosBtn = new Button("📁 Archivos");
-            userItem.getChildren().add(archivosBtn);
-        }
-
-        return userItem;
-    }
 
     public Scene getScene() {
         return scene;
@@ -492,23 +424,5 @@ public class MainView extends Application implements ServerObserver {
         launch(args);
     }
 
-    @Override
-    public void updateClient(List<ClientInfo> clientInfo, int threads) {
 
-    }
-
-    @Override
-    public void updateUptime(String uptime) {
-
-    }
-
-    @Override
-    public void updateMemory(String memory) {
-
-    }
-
-    @Override
-    public void updateBytes(String bytes) {
-
-    }
 }

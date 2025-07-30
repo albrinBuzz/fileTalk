@@ -1,19 +1,19 @@
 package org.filetalk.filetalk.view.hosts;
 
-import javafx.scene.layout.HBox;
-import javafx.scene.control.*;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Circle;
-import javafx.stage.FileChooser;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.Stage;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.filetalk.filetalk.Client.Client;
 import org.filetalk.filetalk.Client.ClientInfo;
-import org.filetalk.filetalk.shared.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,9 +35,26 @@ public class HostControlPanel extends VBox {
     }
 
     private void initGUI(ClientInfo host) {
+
+        this.setSpacing(5);
+        this.setPadding(new Insets(5));
+
+        // Puedes personalizar estos detalles (status, tiempo, etc.) según tu necesidad
+        /*Label usernameLabel = new Label(username);
+        usernameLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #ffffff;");
+        userBox.getChildren().add(usernameLabel);*/
+
+        // Aquí se podría agregar un label para mostrar el estado de conexión, tiempo, etc.
+        Label statusLabel = new Label("🟢 Online");  // Ejemplo de estado
+        statusLabel.setStyle("-fx-font-size: 10px; -fx-text-fill: #888;");
+
+
         // Crear las etiquetas para el nombre y dirección del host
-        this.hostNameLabel = new Label(host.getNick() + " " + host.getAddress());
-        hostNameLabel.setStyle("-fx-text-fill: white;");
+        //this.hostNameLabel = new Label(host.getNick() + " " + host.getAddress());
+        //hostNameLabel.setStyle("-fx-text-fill: white;");
+        this.hostNameLabel = new Label(host.getNick());
+        hostNameLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #ffffff;");
+        this.getChildren().add(statusLabel);
 
         // Crear un ComboBox para seleccionar el tipo de elemento a enviar
         this.selectionComboBox = new ComboBox<>();
@@ -115,6 +132,7 @@ public class HostControlPanel extends VBox {
 
                 //Logger.logInfo("Enviado Archivo");
                 if (selectedFile!=null){
+
                     //client.handleFileTransfer("/file " + host.getAddress() + " " + selectedFile.getAbsolutePath(),host.getAddress(),host.getPort());
                     client.handleFileTransfer("/file " + host.getNick() + " " + selectedFile.getAbsolutePath(), client.getSERVER_ADDRESS(), client.getSERVER_PORT());
                 }
@@ -126,7 +144,7 @@ public class HostControlPanel extends VBox {
                 selectedFile = directoryChooser.showDialog(new Stage());
 
                 if (selectedFile != null) {
-                    client.handleDirectoryTransfer(selectedFile.getAbsolutePath(), host.getAddress(),host.getPort(),host.getNick());
+                    client.handleDirectoryTransfer(selectedFile.getAbsolutePath(),client.getSERVER_ADDRESS(),client.getSERVER_PORT(),host.getNick());
                 }
                 break;
         }

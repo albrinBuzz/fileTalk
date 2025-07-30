@@ -1,15 +1,12 @@
-package org.filetalk.filetalk.Tests.Gui.Transfers;
+package org.filetalk.filetalk.view.tranferens;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.geometry.Pos;
-import javafx.geometry.Insets;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.filetalk.filetalk.Client.FileTransferManager;
 import org.filetalk.filetalk.Client.TransferManager;
 import org.filetalk.filetalk.model.Observers.TransferencesObserver;
 import org.filetalk.filetalk.models.Transferencia;
@@ -17,7 +14,6 @@ import org.filetalk.filetalk.shared.FileTransferState;
 import org.filetalk.filetalk.shared.Logger;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class TransferenciasView extends Application implements TransferencesObserver {
 
