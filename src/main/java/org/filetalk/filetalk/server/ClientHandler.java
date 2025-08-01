@@ -108,11 +108,11 @@ public class ClientHandler implements Runnable {
             // El flujo llegó al final inesperadamente
 
             Logger.logInfo("Fin inesperado del flujo de datos. "+e.getMessage());
-            e.printStackTrace();
+            //e.printStackTrace();
         } catch (StreamCorruptedException e) {
             // El flujo está dañado
             Logger.logInfo("El flujo de datos está dañado."+e.getMessage());
-            e.printStackTrace();
+            //e.printStackTrace();
         } catch (IOException e) {
             // Error de entrada/salida
             Logger.logInfo("Error de I/O: " + e.getMessage());
@@ -120,7 +120,7 @@ public class ClientHandler implements Runnable {
         } catch (ClassNotFoundException e) {
             // La clase no fue encontrada al deserializar el objeto
             Logger.logInfo("Clase no encontrada: " + e.getMessage());
-            e.printStackTrace();
+            //e.printStackTrace();
         }catch (Exception e){
             Logger.logInfo("Error:. "+e.getMessage());
         }
@@ -432,8 +432,12 @@ public class ClientHandler implements Runnable {
             server.updateClient();
             System.out.printf("[%s] has left the chat.%n", nick);
             clientSocket.close();
-            entrada.close();
-            salida.close();
+
+            if (entrada!=null && salida!=null){
+                entrada.close();
+                salida.close();
+            }
+
 
 
         } catch (IOException e) {

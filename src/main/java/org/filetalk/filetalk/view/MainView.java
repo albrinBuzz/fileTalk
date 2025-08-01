@@ -178,7 +178,7 @@ public class MainView extends Application  {
     }
 
     private void connectServer(TextField ipField, TextField puertoField) {
-        System.out.println("Conectado");
+
         this.controller.connectServer(ipField.getText(),puertoField.getText());
 
     }
