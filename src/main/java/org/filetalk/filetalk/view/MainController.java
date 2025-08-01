@@ -13,6 +13,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import org.filetalk.filetalk.Client.Client;
+import org.filetalk.filetalk.shared.Logger;
 
 import java.io.IOException;
 
@@ -275,7 +276,7 @@ public class MainController {
                         }
                         catch (Exception e) {
                             // En caso de error, notificamos al usuario
-                            System.out.println(e.getMessage());
+                            Logger.logInfo(e.getMessage());
                                 /*Platform.runLater(() -> showAlert("Error al iniciar el servidor", e.getMessage()));
                                 // Actualizamos el estado del servidor en la UI
                                 Platform.runLater(() -> {

@@ -40,17 +40,26 @@ public class Client {
     public void setConexion(String SERVER_ADDRESS, int SERVER_PORT) throws IOException, InterruptedException {
         this.SERVER_ADDRESS = SERVER_ADDRESS;
         this.SERVER_PORT = SERVER_PORT;
-        socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
         InetAddress inetAddress = InetAddress.getLocalHost();
 
         // Obtener el nombre de la máquina
         String hostName = inetAddress.getHostName();
+        socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
+        Logger.logInfo("Conectando a " + SERVER_ADDRESS + ":" + SERVER_PORT);
+        socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
+        Logger.logInfo("Conectado");
 
-        salida=new ObjectOutputStream(socket.getOutputStream());
-        entrada=new ObjectInputStream(socket.getInputStream());
-        salida.writeObject(new Mensaje(hostName, CommunicationType.MESSAGE));
-        //TimeUnit.MILLISECONDS.sleep(500); // Esperar 1 segundo antes de la próxima actualización
+        Logger.logInfo("Inicializando ObjectOutputStream...");
+        salida = new ObjectOutputStream(socket.getOutputStream());
         salida.flush();
+        Logger.logInfo("Inicializando ObjectInputStream...");
+        entrada = new ObjectInputStream(socket.getInputStream());
+        Logger.logInfo("ObjectInputStream incializado");
+
+        Logger.logInfo("Enviando objeto Mensaje...");
+        salida.writeObject(new Mensaje(hostName, CommunicationType.MESSAGE));
+        salida.flush();
+        Logger.logInfo("Mensaje enviado");
 
         // Iniciar hilos para leer mensajes y recibir archivos
         executorService.submit(new ReadMessages(entrada));

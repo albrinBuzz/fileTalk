@@ -45,7 +45,7 @@ public class ClientHandler implements Runnable {
 
         try {
 
-
+            Logger.logInfo("CLIENTE CONECTADO");
             if (clientSocket.getInputStream() == null || clientSocket.getOutputStream() == null) {
                 Logger.logInfo("INPUT CLIENTE VACIO");
                 return;
