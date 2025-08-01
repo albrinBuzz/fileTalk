@@ -17,6 +17,9 @@ module org.filetalk.filetalk {
     exports org.filetalk.filetalk.server;
     exports org.filetalk.filetalk.shared;
     exports org.filetalk.filetalk.Tests.Gui;
-    exports org.filetalk.filetalk.Tests.Gui.Transfers;
+    exports org.filetalk.filetalk.view.hosts;
+    exports org.filetalk.filetalk.view;
+    exports org.filetalk.filetalk.view.servidor;
+    exports org.filetalk.filetalk.view.tranferens;
     exports org.filetalk.filetalk.models;
 }

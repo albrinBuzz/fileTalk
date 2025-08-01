@@ -45,22 +45,21 @@ public class ClientHandler implements Runnable {
 
         try {
 
-            if(clientSocket.getInputStream()==null||clientSocket.getOutputStream()==null) {
 
+            if (clientSocket.getInputStream() == null || clientSocket.getOutputStream() == null) {
+                Logger.logInfo("INPUT CLIENTE VACIO");
                 return;
             }
 
-
-            //System.out.println("Cliente aceptado desde: "+clientSocket.getInetAddress().toString());
-            //.logInfo("Cliente aceptado desde: "+clientSocket.getInetAddress().toString());
-            entrada = new ObjectInputStream(clientSocket.getInputStream());
+            // Crear el flujo de salida primero
             salida = new ObjectOutputStream(clientSocket.getOutputStream());
+            salida.flush(); // Aseguramos que el flujo de salida esté limpio antes de escribir
 
-            //.logInfo("Conectando al Servidor");
+            // Crear el flujo de entrada después
+            entrada = new ObjectInputStream(clientSocket.getInputStream());
 
-            Mensaje mensaje=(Mensaje) entrada.readObject();
-
-            Logger.logInfo("mensaje recibido "+mensaje.getContenido());
+            // Leer el mensaje del cliente
+            Mensaje mensaje = (Mensaje) entrada.readObject();
 
             // Solicita al servidor un nick único basado en el deseado
             nick = server.getUniqueNick(mensaje.getContenido());
@@ -73,14 +72,13 @@ public class ClientHandler implements Runnable {
 
             Server.clients.put(clientSocket, new ClientInfo(clientSocket, nick,puerto));
 
-
             //System.out.printf("[%s] has joined the chat%n", nick);
-            Logger.logInfo(nick);
+            //Logger.logInfo(nick);
             if (!nick.equals("enviando") && !nick.chars().allMatch(Character::isDigit)) {
                 // solo se permite si el nick NO es "enviando" y NO es solo dígitos
                 server.addClientUpdate(new ClientInfo(clientSocket, nick, puerto));
                 server.updateClient(nick);
-                Logger.logInfo("[ " + nick + "] Se ha unido al Chat");
+                //Logger.logInfo("[ " + nick + "] Se ha unido al Chat");
                 server.broadcastMessage("[ " + nick + "] Se ha unido al Chat", this);
             }
 
@@ -90,13 +88,13 @@ public class ClientHandler implements Runnable {
             while (clientSocket.isConnected()) {
                 //.logInfo("Leyendo mensajes mensajes");
                 Object incoming = entrada.readObject();
-                Logger.logInfo("clase: "+incoming.getClass());
+                //Logger.logInfo("clase: "+incoming.getClass());
                 Logger.logInfo(this.toString());
                 if (incoming instanceof Communication communication) {
 
                     server.totalMessagesReceived.getAndIncrement();
 
-                    Logger.logInfo("entra en la comumicacion");
+                    //Logger.logInfo("entra en la comumicacion");
                     handleComunication(communication);
                 } else if (incoming instanceof String s) {
                     Logger.logInfo("Se recibió un String inesperado: " + s);
@@ -133,7 +131,7 @@ public class ClientHandler implements Runnable {
     }
 
     private void handleComunication(Communication communication) throws IOException {
-
+            //Logger.logInfo("EN LA COMUNICACION");
         if (communication.getType().equals(CommunicationType.MESSAGE)) {
             Mensaje mensaje=(Mensaje)communication;
             server.broadcastMessage("[" + nick + "] => " + mensaje.getContenido(), this);
@@ -234,21 +232,33 @@ public class ClientHandler implements Runnable {
             long totalBytesSent = 0;
 
 
-            while (true){
 
-                Object incoming = entrada.readObject();
-                Logger.logInfo("Tipo de objeto recibido: " + incoming.getClass().getName());
-                if (incoming instanceof FileDirectoryCommunication fileCom) {
-                    Logger.logInfo("Recibido un FileDirectoryCommunication: " + fileCom.toString());
-                    recipient.salida.writeObject(fileCom);
+            while (this.clientSocket.isConnected()) {
+
+                Object object = entrada.readObject();
+                if (object instanceof FileDirectoryCommunication archivo) {
+
+
+                    String nombreArchivo = entrada.readUTF();
+                    //String rutaArchivo=rutaCarpetaActual+ nombreArchivo;
+                    recipient.salida.writeObject(archivo);
                     recipient.salida.flush();
-                    //FileDirectoryCommunication archivo= (FileDirectoryCommunication) entrada.readObject();
-                    //recipient.salida.writeObject(archivo);
-                    //recipient.salida.flush();
+                    recipient.salida.writeUTF(nombreArchivo);
+                    recipient.salida.flush();
+
+                    //crearDirectorios(rutaArchivo);
+                    //String rutaDescargas = configCliente.obtener("cliente.directorio_descargas");
+
+                    bytesRead = 0;
                     long totalBytesRead = 0;
+                    fileSize = archivo.getSize();
+                    Logger.logInfo(archivo.toString());
+                    if (archivo.isDirectory() && archivo.getSize() == 0) {
+                        Logger.logInfo("directorio vacio");
+                        continue;
+                    }
 
                     while (totalBytesRead < fileSize) {
-
                         bytesRead = entrada.read(buffer);
                         if (bytesRead == -1) break;
 
@@ -257,25 +267,30 @@ public class ClientHandler implements Runnable {
                         recipient.salida.write(buffer, 0, bytesRead);
                         recipient.salida.flush();
                         totalBytesSent += bytesRead;
-                        double totalMB = totalBytesSent / 1_048_576.0;
 
-                        //logInfo("Recibiendo " + totalMB + " MB Recibidos.");
                     }
 
 
-                    //logInfo("Reenviado " + totalMB + " MB Reenviados.");
-                    if (this.clientSocket.isClosed()) break;
-                } else if (incoming instanceof String) {
-                    String message = (String) incoming;
-                    Logger.logInfo("Recibido un String: " + message);
-                } else {
-                    Logger.logInfo("Recibido un objeto desconocido: " + incoming.getClass().getName());
+                }else if (object instanceof FileHandshakeCommunication respuesta) {
+
+                    if (respuesta.getAction().equals(FileHandshakeAction.TRANSFER_DONE)){
+
+                        FileHandshakeCommunication requestCom = new FileHandshakeCommunication(
+                                FileHandshakeAction.TRANSFER_DONE
+                        );
+
+                        recipient.salida.writeObject(requestCom);
+                        recipient.salida.flush();
+                        break;
+
+                    }
                 }
-
-
-
-
             }
+
+
+
+
+
 
 
                     /*while ((bytesRead = entrada.read(buffer)) != -1) {
@@ -290,7 +305,7 @@ public class ClientHandler implements Runnable {
             salida.flush();
             //TimeUnit.MILLISECONDS.sleep(3500);
             //.logInfo("Archivo enviado correctamente a " + recipientNick);
-            //shutDown();
+            shutDown();
         } catch (IOException e) {
             Logger.logInfo("Error: "+e.getMessage());
             e.printStackTrace();
@@ -300,12 +315,15 @@ public class ClientHandler implements Runnable {
             Logger.logInfo("error "+e.getMessage());
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            recipient.shutDown();
         }
 
     }
 
-    private void sendFileToClient(FileDirectoryCommunication communication) throws IOException {
+
+        private void sendFileToClient(FileDirectoryCommunication communication) throws IOException {
             String fileName = communication.getName();
             long fileSize = communication.getSize();
             String recipientNick = communication.getRecipient();
@@ -340,10 +358,10 @@ public class ClientHandler implements Runnable {
                     }
 
                     if (recipient == null) {
-                        //.logInfo("No se pudo encontrar al cliente recipiente después de " + intentos + " intentos.");
+                        Logger.logInfo("No se pudo encontrar al cliente recipiente después de " + intentos + " intentos.");
                         // manejar error o abortar
                     } else {
-                        //.logInfo("Cliente recipiente encontrado: " + recipient);
+                        Logger.logInfo("Cliente recipiente encontrado: " + recipient);
                     }
 
 
@@ -356,7 +374,9 @@ public class ClientHandler implements Runnable {
 
 
                     recipient.salida.writeObject(response);
-
+                    recipient.salida.flush();
+                    this.salida.writeObject(response);
+                    this.salida.flush();
 
 
                     byte[] buffer = new byte[100 * 1024 * 1024];  // 50 MB
@@ -385,10 +405,10 @@ public class ClientHandler implements Runnable {
                     }*/
 
                     //System.out.printf("Enviados %d bytes a %s...%n", totalBytesSent, recipientNick);
-                    server.addBytes(totalBytesSent);
-                    server.updateBytes();
+                    //server.addBytes(totalBytesSent);
+                    //server.updateBytes();
                     salida.flush();
-                    //TimeUnit.MILLISECONDS.sleep(3500);
+                    TimeUnit.MILLISECONDS.sleep(3500);
                     //.logInfo("Archivo enviado correctamente a " + recipientNick);
                     shutDown();
                 } catch (IOException e) {
@@ -417,6 +437,7 @@ public class ClientHandler implements Runnable {
 
 
         } catch (IOException e) {
+            Logger.logInfo("Error al cerrar conexión con el cliente: "+e.getMessage());
             //LOGGER.error("Error al cerrar conexión con el cliente: {}",e.getMessage());
         }
     }

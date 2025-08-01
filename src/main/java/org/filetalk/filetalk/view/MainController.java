@@ -174,7 +174,7 @@ public class MainController {
 
         temaCombo.setOnAction(e -> {
             String tema = temaCombo.getValue();
-            String temaPath = "/dark-theme.css"; // Usar la ruta desde la raíz del classpath
+            String temaPath = "/dark-theme.css";
             if ("Oscuro".equals(tema)) {
                 scene.getStylesheets().clear();
                 scene.getStylesheets().add(getClass().getResource(temaPath).toExternalForm());
@@ -184,6 +184,7 @@ public class MainController {
                 scene.getStylesheets().add(getClass().getResource(temaPath).toExternalForm());
             }
         });
+
 
         Label temaLabel = new Label("Tema:");
         Button personalizarLayout = new Button("⚙️ Personalizar Layout");

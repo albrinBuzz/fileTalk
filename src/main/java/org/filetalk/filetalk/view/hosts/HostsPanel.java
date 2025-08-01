@@ -45,6 +45,7 @@ public class HostsPanel extends VBox implements HostsObserver {
         // Crear un ScrollPane que contendrá el VBox
         usuariosScroll = new ScrollPane(usuariosBox);
         usuariosScroll.setFitToWidth(true);
+        usuariosScroll.setStyle("-fx-padding: 10; -fx-background-color: #2e2e2e;");  // Fondo oscuro con margen;
         usuariosScroll.setPrefHeight(180);
 
         // Título de la sección de clientes conectados
@@ -52,20 +53,16 @@ public class HostsPanel extends VBox implements HostsObserver {
         titleLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #007bff; -fx-padding: 5px;");
 
         // Añadir el título al VBox al principio
-        //usuariosBox.getChildren().add(titleLabel);  // Título añadido al VBox
-
-        // Establecer el VBox como contenido del ScrollPane
-        //usuariosScroll.setContent(usuariosBox);
-
+        usuariosBox.getChildren().add(titleLabel);  // Título añadido al VBox
         // Configuración del ScrollPane
         usuariosScroll.setFitToWidth(true);  // Ajustar el ancho del contenido
-        /*usuariosScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);  // Siempre mostrar la barra de desplazamiento vertical
+        // *usuariosScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);  // Siempre mostrar la barra de desplazamiento vertical
         usuariosScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);  // Nunca mostrar barra de desplazamiento horizontal
         usuariosScroll.setVvalue(1.0);  // Asegurarse de que la barra de desplazamiento esté al final
 
         // Asegurarse de que el ScrollPane ocupe todo el espacio disponible
         usuariosScroll.setMaxHeight(Double.MAX_VALUE);
-        usuariosScroll.setFitToHeight(true);*/
+        usuariosScroll.setFitToHeight(true);
 
         // Añadir el ScrollPane al HostsPanel
         this.getChildren().add(titleLabel);  // HostsPanel ahora contiene el ScrollPane

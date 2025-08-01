@@ -28,16 +28,16 @@ public class ChatPanel extends VBox implements Observer {
         // Crear el VBox que contendrá todo el chat
         chatBox = new VBox(5);
         chatBox.setPadding(new Insets(10));
-        chatBox.setStyle("-fx-border-color: #bdc3c7; -fx-border-width: 1;");
 
         // Título del chat
         Label chatLabel = new Label("💬 Chat y coordinación de transferencias");
         chatLabel.setFont(Font.font(14));
-        chatLabel.setStyle("-fx-font-weight: bold;");
+
 
         // Usuarios en el chat
         Label usuariosChatLabel = new Label("[Usuarios en chat: Ana Torres, Carlos Méndez, Andrea Ruiz]");
-        usuariosChatLabel.setStyle("-fx-font-style: italic;");
+
+
 
         // Área de chat (solo lectura)
         chatArea = new TextArea();
@@ -59,7 +59,17 @@ public class ChatPanel extends VBox implements Observer {
         inputChat.setPromptText("Escribe un mensaje...");
         sendChatBtn = new Button("Enviar");
         sendChatBtn.setOnAction(e -> sendMessage());
+
+        chatBox.getStyleClass().add("chat-box");
+        chatLabel.getStyleClass().add("chat-label");
+        usuariosChatLabel.getStyleClass().add("usuarios-chat-label");
+        chatArea.getStyleClass().add("chat-area");
+        inputChat.getStyleClass().add("chat-input");
+        sendChatBtn.getStyleClass().add("chat-send-button");
+        inputChatBox.getStyleClass().add("chat-input-box");
+        this.getStyleClass().add("chat-panel");
         inputChatBox.getChildren().addAll(inputChat, sendChatBtn);
+
 
         // Añadir todos los elementos al VBox del chat
         chatBox.getChildren().addAll(chatLabel, chatArea, inputChatBox);

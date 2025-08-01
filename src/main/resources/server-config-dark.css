@@ -1,0 +1,163 @@
+/* === FONDO GENERAL === */
+.root {
+    -fx-background-color: #1e272e;
+    -fx-text-fill: #ffffff; /* Texto claro */
+    -fx-font-family: "Segoe UI", sans-serif;
+}
+
+/* === TÍTULOS Y SECCIONES === */
+.titled-pane > .title {
+    -fx-background-color: #34495e;
+    -fx-text-fill: #ffffff;
+    -fx-padding: 8px;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+.label {
+    -fx-text-fill: white;
+}
+
+.titled-pane > .title {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.titled-pane > .content {
+    -fx-background-color: #2d3436;
+}
+
+/* === ETIQUETAS === */
+.label {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 13px;
+}
+
+/* === BOTONES === */
+.button {
+    -fx-background-color: #3c6382;
+    -fx-text-fill: #ffffff;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-font-weight: bold;
+}
+.button:hover {
+    -fx-background-color: #0a3d62;
+}
+.button:disabled {
+    -fx-background-color: #4b6584;
+    -fx-text-fill: #a5b1c2;
+}
+
+/* === CAMPOS DE TEXTO === */
+.text-field, .password-field {
+    -fx-background-color: #2f3640;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #718093;
+    -fx-border-radius: 4px;
+    -fx-padding: 5px;
+}
+.text-field:focused {
+    -fx-border-color: #1abc9c;
+}
+
+/* === ÁREAS DE TEXTO === */
+.text-area {
+    -fx-background-color: #2f3640;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #718093;
+    -fx-border-radius: 4px;
+}
+
+/* === COMBOBOX Y DROPDOWNS === */
+.combo-box {
+    -fx-background-color: #2f3640;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #718093;
+    -fx-border-radius: 4px;
+}
+.combo-box:hover {
+    -fx-background-color: #3c6382;
+}
+
+/* === RADIOBUTTONS Y CHECKBOXES === */
+.radio-button, .check-box {
+    -fx-text-fill: #ffffff;
+}
+.radio-button .radio, .check-box .box {
+    -fx-background-color: #2f3640;
+    -fx-border-color: #7f8c8d;
+}
+.radio-button:selected .radio, .check-box:selected .box {
+    -fx-background-color: #1abc9c;
+}
+
+/* === LISTVIEW === */
+.list-view {
+    -fx-control-inner-background: #2f3640;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #636e72;
+}
+.list-cell {
+    -fx-text-fill: #ffffff;
+}
+.list-cell:hover {
+    -fx-background-color: #3c6382;
+}
+
+/* === PROGRESS BAR === */
+.progress-bar {
+    -fx-accent: #00cec9;
+}
+
+/* === DATEPICKER === */
+.date-picker {
+    -fx-background-color: #2f3640;
+    -fx-text-fill: #ffffff;
+}
+
+/* === SCROLLPANE === */
+.scroll-pane {
+    -fx-background-color: #1e272e;
+}
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+/* === CONTENEDORES === */
+.hbox, .vbox, .grid-pane, .border-pane {
+    -fx-background-color: #2d3436;
+    -fx-border-color: #636e72;
+    -fx-border-width: 1;
+    -fx-padding: 10px;
+}
+
+/* === ESTADO DEL SERVIDOR === */
+.server-status-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2ecc71;
+}
+
+.server-section {
+    -fx-background-color: #2d3436;
+    -fx-padding: 10px;
+    -fx-spacing: 8px;
+    -fx-border-color: #34495e;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+}
+
+/* === CABECERA PERSONALIZADA === */
+.header {
+    -fx-background-color: #34495e;
+    -fx-text-fill: #ffffff;
+}
+
+/* === TOOLTIP === */
+.tooltip {
+    -fx-background-color: #34495e;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 13px;
+    -fx-border-color: #7f8c8d;
+}

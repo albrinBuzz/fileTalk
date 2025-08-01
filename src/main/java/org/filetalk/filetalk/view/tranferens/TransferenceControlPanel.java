@@ -1,172 +1,127 @@
 package org.filetalk.filetalk.view.tranferens;
 
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.text.Font;
 import org.filetalk.filetalk.Client.TransferManager;
 import org.filetalk.filetalk.models.Transferencia;
+
 
 public class TransferenceControlPanel extends VBox {
 
     private ProgressBar progressBar;
-    private Label titleAddrLabel;
-    private Label addrLabel;
+    private Label progressPercentageLabel;
     private Label fileNameLabel;
-    private Label modeLabel;
-    private Button stopButton;
-    private Button continueButton;
+    private Label directionLabel;
+    private Label detailLabel;
+    private Label priorityLabel;
+    private Label speedLabel;
+    private Label timeRemainingLabel;
+    private Label typeLabel;
+    private Button pauseButton;
+    private Button resumeButton;
     private Button cancelButton;
+
+    private boolean isPaused = false;
     private TransferManager transferManager;
     private String mode;
-    private boolean isPaused;
-    private Label progressPercentageLabel;
 
     public TransferenceControlPanel(String mode, Transferencia transferencia, TransferManager transferManager) {
         this.mode = mode;
         this.transferManager = transferManager;
-        this.isPaused = false;
-
-        this.fileNameLabel = new Label(transferencia.getFileName());
-
-        if (mode.equals("SENDING")) {
-            this.titleAddrLabel = new Label("A destino:");
-            this.modeLabel = new Label("[ Enviando ]");
-            this.addrLabel = new Label(transferencia.getDstAddr());
-        } else {
-            this.titleAddrLabel = new Label("De origen:");
-            this.modeLabel = new Label("[ Recibiendo ]");
-            this.addrLabel = new Label(transferencia.getSrcAddr());
-        }
-
-        initGUI();
+        initUI(transferencia);
+        //Logger.logInfo("interfaz de la transferencia creada");
     }
 
-    private void initGUI() {
-        setModeColor();
+    private void initUI(Transferencia transferencia) {
+        setSpacing(10);
+        setPadding(new Insets(15));
+        setStyle("-fx-background-color: #2d2d2d; -fx-border-color: #3a3a3a; -fx-border-width: 1; -fx-background-radius: 5px;");
 
-        this.modeLabel.setPrefSize(90, 1);
-        this.titleAddrLabel.setPrefSize(90, 20);
-        this.titleAddrLabel.setStyle("-fx-text-fill: white;");
-        this.addrLabel.setPrefSize(120, 20);
-        this.fileNameLabel.setPrefSize(150, 20);
+        String directionText = mode.equals("SENDING") ?
+                "📤 " + transferencia.getFileName() + "   Enviando a " + transferencia.getDstAddr()
+                : "📥 " + transferencia.getFileName() + "   Recibiendo de " + transferencia.getSrcAddr();
 
-        this.fileNameLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: white;");
-        this.addrLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: white;");
+        Label title = new Label(directionText);
+        title.setStyle("-fx-font-weight: bold; -fx-text-fill: #ffffff; -fx-font-size: 14px;");
 
-        this.progressBar = new ProgressBar(0);
-        this.progressBar.setProgress(0);
+        // Progreso
+        progressBar = new ProgressBar(0);
+        progressBar.setPrefWidth(400);
+        progressBar.setStyle("-fx-accent: #00BFFF;");
 
-        this.progressPercentageLabel = new Label("0%");
-        this.progressPercentageLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: white;");
-        this.progressPercentageLabel.setPrefSize(40, 20);
+        progressPercentageLabel = new Label("0%");
+        progressPercentageLabel.setStyle("-fx-text-fill: #ffffff; -fx-font-weight: bold;");
 
-        this.stopButton = new Button("Detener");
-        this.stopButton.setStyle("-fx-background-color: #ff6f61; -fx-text-fill: white; -fx-border-radius: 5px;");
-        this.stopButton.setPrefSize(80, 30);
-        this.stopButton.setOnAction(e -> stopTransference());
+        detailLabel = new Label("0 MB / 0 MB    Velocidad: 0 KB/s    Tiempo restante: --:--:--");
+        detailLabel.setStyle("-fx-text-fill: #bbbbbb;");
 
-        this.continueButton = new Button("Continuar");
-        this.continueButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-border-radius: 5px;");
-        this.continueButton.setPrefSize(80, 30);
-        this.continueButton.setOnAction(e -> continueTransference());
-        this.continueButton.setDisable(true);
+        typeLabel = new Label("Tipo: " + (mode.equals("SENDING") ? "Envío" : "Descarga"));
+        typeLabel.setStyle("-fx-text-fill: #dddddd;");
 
-        this.cancelButton = new Button("Cancelar");
-        this.cancelButton.setStyle("-fx-background-color: #757575; -fx-text-fill: white; -fx-border-radius: 5px;");
-        this.cancelButton.setPrefSize(80, 30);
-        this.cancelButton.setOnAction(e -> cancelTransference());
+        HBox infoBox = new HBox(20, typeLabel);
+        infoBox.setAlignment(Pos.CENTER_LEFT);
 
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(5);
-        grid.setAlignment(Pos.CENTER_LEFT);
+        // Botones
+        pauseButton = new Button("⏸️ Pausar");
+        pauseButton.setOnAction(e -> pauseTransfer());
+        pauseButton.setStyle("-fx-background-color: #d97706; -fx-text-fill: white;");
+        pauseButton.setPrefWidth(90);
 
-        grid.add(this.modeLabel, 0, 0);
+        resumeButton = new Button("▶️ Reanudar");
+        resumeButton.setOnAction(e -> resumeTransfer());
+        resumeButton.setStyle("-fx-background-color: #16a34a; -fx-text-fill: white;");
+        resumeButton.setDisable(true);
+        resumeButton.setPrefWidth(90);
 
-        HBox addrBox = new HBox(5, this.titleAddrLabel, this.addrLabel);
-        addrBox.setAlignment(Pos.CENTER_LEFT);
-        grid.add(addrBox, 1, 1);
+        cancelButton = new Button("❌ Cancelar");
+        cancelButton.setOnAction(e -> cancelTransfer());
+        cancelButton.setStyle("-fx-background-color: #ef4444; -fx-text-fill: white;");
+        cancelButton.setPrefWidth(90);
 
-        Label archivo = new Label("Nombre de archivo:");
-        archivo.setStyle("-fx-text-fill: white;");
-        grid.add(archivo, 0, 2);
-        grid.add(this.fileNameLabel, 1, 2);
+        HBox buttonBox = new HBox(10, pauseButton, resumeButton, cancelButton);
+        buttonBox.setAlignment(Pos.CENTER_LEFT);
 
-        Label progreso = new Label("Progreso:");
-        progreso.setStyle("-fx-text-fill: white;");
-        grid.add(progreso, 0, 3);
-        grid.add(this.progressBar, 1, 3, 2, 1);
-        grid.add(this.progressPercentageLabel, 3, 3);
-
-        HBox buttonBox = new HBox(10, stopButton, continueButton, cancelButton);
-        buttonBox.setAlignment(Pos.CENTER_RIGHT);
-        grid.add(buttonBox, 1, 4, 3, 1);
-
-        this.getChildren().add(grid);
-
-        this.setStyle("-fx-padding: 20; -fx-background-color: #2d2d2d; -fx-border-color: #00BFFF; -fx-border-width: 2;");
+        getChildren().addAll(title, createProgressPane(), detailLabel, infoBox, buttonBox);
     }
 
-    private void cancelTransference() {
-        System.out.println("Transferencia cancelada.");
-        // Aquí puedes implementar la lógica real de cancelación si es necesario
-    }
 
-    private void setModeColor() {
-        String color;
-        switch (this.mode) {
-            case "SENDING":
-                color = "#a01515";
-                break;
-            case "RECEIVING":
-                color = "#1c964e";
-                break;
-            case "error":
-                color = "#ff8c00";
-                break;
-            case "PAUSED":
-                color = "#2196F3";
-                break;
-            case "pending":
-                color = "#9C27B0";
-                break;
-            default:
-                color = "#ffffff";
-        }
-        this.modeLabel.setStyle("-fx-text-fill: " + color + ";");
+    private HBox createProgressPane() {
+        HBox box = new HBox(10, progressBar, progressPercentageLabel);
+        box.setAlignment(Pos.CENTER_LEFT);
+        return box;
     }
 
     public void updateProgressBar(int progress) {
         Platform.runLater(() -> {
-            this.progressBar.setProgress(progress / 100.0);
-            this.progressPercentageLabel.setText(progress + "%");
+            double progressValue = progress / 100.0;
+            progressBar.setProgress(progressValue);
+            progressPercentageLabel.setText(progress + "%");
+            //detailLabel.setText(transferred + " / " + total + "    Velocidad: " + speed + "    Tiempo restante: " + timeRemaining);
         });
     }
 
-    private void stopTransference() {
-        this.isPaused = true;
-        this.stopButton.setDisable(true);
-        this.continueButton.setDisable(false);
-        this.modeLabel.setText("[ Pausado ]");
-        this.mode = "PAUSED";
-        setModeColor();
+    private void pauseTransfer() {
+        isPaused = true;
+        pauseButton.setDisable(true);
+        resumeButton.setDisable(false);
         transferManager.pause();
     }
 
-    private void continueTransference() {
-        if (this.isPaused) {
-            this.isPaused = false;
-            this.stopButton.setDisable(false);
-            this.continueButton.setDisable(true);
-            this.modeLabel.setText("[ Enviando ]");
-            this.mode = "SENDING";
-            setModeColor();
+    private void resumeTransfer() {
+        if (isPaused) {
+            isPaused = false;
+            pauseButton.setDisable(false);
+            resumeButton.setDisable(true);
             transferManager.resume();
         }
+    }
+
+    private void cancelTransfer() {
+        System.out.println("Transferencia cancelada.");
+        // Lógica real aquí
     }
 }

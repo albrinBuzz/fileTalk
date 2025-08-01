@@ -14,6 +14,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.filetalk.filetalk.Client.Client;
 import org.filetalk.filetalk.Client.ClientInfo;
+import org.filetalk.filetalk.shared.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -105,7 +106,14 @@ public class HostControlPanel extends VBox {
         // Configurar el tamaño máximo y preferido del pane
         //this.setMaxSize(Region.USE_PREF_SIZE, 48);
         //this.setPrefSize(500, 48);
-        this.setStyle("-fx-padding: 20; -fx-background-color: #2d2d2d; -fx-border-color: #00BFFF; -fx-border-width: 2;"); // Celeste en los márgenes del root
+        this.getStyleClass().add("host-control-panel");
+        statusLabel.getStyleClass().add("status-label");
+        hostNameLabel.getStyleClass().add("host-name");
+        selectionComboBox.getStyleClass().add("combo-dark");
+        sendFileButton.getStyleClass().add("button-dark");
+        connectionStatusLabel.getStyleClass().add("connection-status-label");
+
+        //this.setStyle("-fx-padding: 20; -fx-background-color: #2d2d2d; -fx-border-color: #00BFFF; -fx-border-width: 2;"); // Celeste en los márgenes del root
     }
 
     public void updateConnectionStatus(boolean isConnected) {
@@ -130,7 +138,7 @@ public class HostControlPanel extends VBox {
                 fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("All Files", "*.*"));
                 selectedFile = fileChooser.showOpenDialog(new Stage());
 
-                //Logger.logInfo("Enviado Archivo");
+                Logger.logInfo("Enviado Archivo");
                 if (selectedFile!=null){
 
                     //client.handleFileTransfer("/file " + host.getAddress() + " " + selectedFile.getAbsolutePath(),host.getAddress(),host.getPort());

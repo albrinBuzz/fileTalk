@@ -1,68 +1,296 @@
-/* light-theme.css */
-
-/* Fondo y texto */
+/* === FONDOS Y TEXTO BASE === */
 .root {
-    -fx-background-color: #ffffff;
-    -fx-text-fill: #333333;
+    -fx-background-color: #f5f6fa;
+    -fx-text-fill: #2d3436;
 }
 
 .label {
-    -fx-text-fill: #333333;
+    -fx-text-fill: #2d3436;
+    -fx-font-size: 14px;
 }
 
-/* Barra de navegación superior */
-.hbox {
-    -fx-background-color: #ecf0f1;
-}
-
+/* === BOTONES === */
 .button {
-    -fx-background-color: #3498db;
+    -fx-background-color: #74b9ff;
     -fx-text-fill: #ffffff;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
 }
 
 .button:hover {
-    -fx-background-color: #2980b9;
+    -fx-background-color: #0984e3;
 }
 
-.text-field {
-    -fx-border-color: #bdc3c7;
+.button:disabled {
+    -fx-background-color: #dfe6e9;
+    -fx-text-fill: #b2bec3;
+}
+
+/* === CAMPOS DE TEXTO === */
+.text-field, .password-field {
     -fx-background-color: #ffffff;
-    -fx-text-fill: #333333;
+    -fx-text-fill: #2d3436;
+    -fx-border-color: #b2bec3;
+    -fx-border-radius: 4px;
+    -fx-padding: 5px;
 }
 
+.text-field:focused {
+    -fx-border-color: #0984e3;
+}
+
+/* === ÁREA DE TEXTO === */
 .text-area {
-    -fx-background-color: #f5f5f5;
-    -fx-text-fill: #333333;
-    -fx-border-color: #bdc3c7;
-}
-
-/* Barras de progreso */
-.progress-bar {
-    -fx-accent: #3498db;
-}
-
-/* Elementos de estado */
-.label {
-    -fx-text-fill: #333333;
-}
-
-.hbox, .vbox {
     -fx-background-color: #ffffff;
-    -fx-border-color: #bdc3c7;
+    -fx-text-fill: #2d3436;
+    -fx-border-color: #b2bec3;
+    -fx-border-radius: 4px;
+}
+
+/* === COMBOBOX Y DROPDOWNS === */
+.combo-box {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #2d3436;
+    -fx-border-color: #b2bec3;
+    -fx-border-radius: 4px;
+}
+
+.combo-box:hover {
+    -fx-background-color: #dfe6e9;
+}
+
+/* === SCROLLPANE === */
+.scroll-pane {
+    -fx-background-color: #f5f6fa;
+}
+
+/* === CONTAINERS === */
+.hbox, .vbox, .grid-pane, .border-pane {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dfe6e9;
+    -fx-border-width: 1;
+    -fx-padding: 10px;
+}
+
+/* === BARRA DE PROGRESO === */
+.progress-bar {
+    -fx-accent: #74b9ff;
+}
+
+/* === LISTAS (TRANSFERENCIAS, NOTIFICACIONES, ETC.) === */
+.list-view {
+    -fx-control-inner-background: #ffffff;
+    -fx-text-fill: #2d3436;
+    -fx-border-color: #dfe6e9;
+}
+
+.list-cell {
+    -fx-text-fill: #2d3436;
+}
+
+.list-cell:hover {
+    -fx-background-color: #dfe6e9;
+}
+
+/* === DATEPICKER === */
+.date-picker {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #2d3436;
+}
+
+/* === RADIOBUTTONS Y CHECKBOXES === */
+.radio-button, .check-box {
+    -fx-text-fill: #2d3436;
+}
+
+.radio-button .radio, .check-box .box {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #b2bec3;
+}
+
+.radio-button:selected .radio, .check-box:selected .box {
+    -fx-background-color: #0984e3;
+}
+
+/* === CUSTOM: ESTADOS Y TEXTOS DE STATUS === */
+.status-label-green {
+    -fx-text-fill: #27ae60;
+}
+
+.status-label-red {
+    -fx-text-fill: #e74c3c;
+}
+
+.status-label-yellow {
+    -fx-text-fill: #f39c12;
+}
+
+/* === CABECERAS === */
+.header {
+    -fx-background-color: #dfe6e9;
+    -fx-text-fill: #2d3436;
+}
+
+/* === TOOLTIP === */
+.tooltip {
+    -fx-background-color: #dfe6e9;
+    -fx-text-fill: #2d3436;
+    -fx-font-size: 13px;
+    -fx-border-color: #b2bec3;
+}
+
+/* === Hosts Panel === */
+.hosts-panel {
+    -fx-background-color: #f0f0f0;
+    -fx-border-color: #0984e3;
+    -fx-border-width: 2;
+    -fx-padding: 10;
+}
+
+.usuarios-scroll {
+    -fx-background-color: transparent;
+    -fx-border-color: #b2bec3;
+}
+
+.usuarios-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d3436;
+}
+
+.usuarios-box {
+    -fx-spacing: 10;
+    -fx-background-color: #ffffff;
+    -fx-padding: 10;
+}
+
+.host-control-panel {
+    -fx-background-color: #f0f0f0;
+    -fx-border-color: #0984e3;
+    -fx-border-width: 2;
+    -fx-padding: 10;
+    -fx-spacing: 10;
+}
+
+.host-name {
+    -fx-font-size: 12px;
+    -fx-text-fill: #2d3436;
+}
+
+.status-label {
+    -fx-font-size: 10px;
+    -fx-text-fill: #636e72;
+}
+
+/* Combo personalizado */
+.combo-dark {
+    -fx-background-color: #dfe6e9;
+    -fx-border-color: #b2bec3;
+    -fx-text-fill: #2d3436;
+}
+
+/* Botón claro */
+.button-dark {
+    -fx-background-color: #74b9ff;
+    -fx-text-fill: #ffffff;
+}
+.button-dark:hover {
+    -fx-background-color: #0984e3;
+}
+
+.connection-status-label {
+    -fx-text-fill: #2d3436;
+}
+
+/* === Chat Panel === */
+.chat-panel {
+    -fx-background-color: #f8f9fa;
+    -fx-padding: 10;
+}
+
+.chat-box {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #0984e3;
+    -fx-border-width: 1;
+    -fx-padding: 10;
+    -fx-spacing: 5;
+}
+
+.chat-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d3436;
+}
+
+.usuarios-chat-label {
+    -fx-font-style: italic;
+    -fx-text-fill: #636e72;
+}
+
+.chat-area {
+    -fx-control-inner-background: #ffffff;
+    -fx-text-fill: #2d3436;
+    -fx-border-color: #ccc;
+    -fx-border-width: 1;
+    -fx-padding: 5;
+}
+
+.chat-input {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #2d3436;
+    -fx-border-color: #ccc;
     -fx-border-width: 1;
 }
 
-/* Botones del menú */
-.combo-box, .button {
+.chat-send-button {
+    -fx-background-color: #00BFFF;
+    -fx-text-fill: white;
+}
+.chat-send-button:hover {
+    -fx-background-color: #009acd;
+}
+
+.chat-input-box {
+    -fx-spacing: 5;
+}
+
+/* --- Header --- */
+.main-header {
+    -fx-background-color: #dcdde1;
+    -fx-padding: 10;
+}
+
+/* --- Barra de conexión --- */
+.connection-bar {
     -fx-background-color: #ecf0f1;
-    -fx-text-fill: #333333;
+    -fx-padding: 8;
 }
 
-.combo-box:hover, .button:hover {
-    -fx-background-color: #bdc3c7;
-}
-
-/* Fondo de la pantalla */
-.scroll-pane {
+/* --- Secciones como envío rápido, notificaciones, transferencias --- */
+.card-box {
     -fx-background-color: #ffffff;
+    -fx-border-color: #dfe6e9;
+    -fx-border-width: 1;
+    -fx-padding: 10;
+}
+
+/* --- Estado del sistema y seguridad --- */
+.system-status-bar {
+    -fx-background-color: #f0f0f0;
+    -fx-padding: 10;
+}
+
+.bottom-section {
+    -fx-background-color: #f5f6fa;
+    -fx-text-fill: #2d3436;
+}
+
+/* --- Scroll principal --- */
+.main-scroll {
+    -fx-background: #ffffff;
+    -fx-background-color: #ffffff;
+}
+
+.main-scroll .viewport {
+    -fx-background-color: transparent;
 }

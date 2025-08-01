@@ -1,0 +1,28 @@
+.root {
+    -fx-background-color: #1e1e1e;
+}
+
+.label {
+    -fx-text-fill: white;
+}
+
+.text-field {
+    -fx-background-color: #333333;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: gray;
+}
+
+.button {
+    -fx-background-color: #444444;
+    -fx-text-fill: white;
+}
+
+.combo-box {
+    -fx-background-color: #333333;
+    -fx-text-fill: white;
+}
+
+.titled-pane {
+    -fx-text-fill: white;
+    -fx-collapsible: true;
+}

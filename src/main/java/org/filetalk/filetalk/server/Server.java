@@ -68,6 +68,7 @@ public class Server {
 
                 ClientHandler clientHandler = new ClientHandler(clientSocket, this);
 
+
                 clientPool.add(clientHandler);
                 new Thread(clientHandler).start(); // Iniciar un nuevo hilo para manejar al cliente
 
@@ -510,7 +511,7 @@ public class Server {
 
     public void addClientUpdate(ClientInfo clientInfo){
         List<ClientInfo>clientInfos=new ArrayList<>(clients.values());
-        serverObserver.updateClient(clientInfos, Thread.activeCount());
+        //serverObserver.updateClient(clientInfos, Thread.activeCount());
 
     }
 
@@ -544,7 +545,7 @@ public class Server {
         //serverObserver.updateClient(clients.forEach();,Thread.activeCount());
         //clients.forEach(()-> serverObserver.updateClient(t));
         List<ClientInfo>clientInfos=new ArrayList<>(clients.values());
-        serverObserver.updateClient(clientInfos, Thread.activeCount());
+        //serverObserver.updateClient(clientInfos, Thread.activeCount());
         //clients.forEach((clave,valor)->serverObserver.updateClient(valor, Thread.activeCount()));
     }
 

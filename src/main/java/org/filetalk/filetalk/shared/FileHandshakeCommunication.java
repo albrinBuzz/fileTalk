@@ -19,6 +19,11 @@ public class FileHandshakeCommunication extends Communication {
         this.fileInfo = fileInfo;
     }
 
+    public FileHandshakeCommunication(FileHandshakeAction fileHandshakeAction) {
+        super(CommunicationType.NOTIFICATION);
+        this.action = fileHandshakeAction;
+    }
+
 
     public FileHandshakeAction getAction() {
         return action;

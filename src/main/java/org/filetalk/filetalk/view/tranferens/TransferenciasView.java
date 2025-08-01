@@ -33,8 +33,15 @@ public class TransferenciasView extends Application implements TransferencesObse
         this.busquedaBar = new HBox(10);
         this.notificacionesPane = new TitledPane();
         this.estadisticasPane = new TitledPane();
-
+        transferBox.setStyle("-fx-background-color: #000000;");
         scrollTransa = new ScrollPane(transferBox);
+        scrollTransa.setStyle(
+                "-fx-background: #2a2a2a;" +
+                        "-fx-background-color: #2a2a2a;" +
+                        "-fx-control-inner-background: #2a2a2a;" +
+                        "-fx-border-color: transparent;"
+        );
+
         scrollTransa.setFitToWidth(true);
         scrollTransa.setPrefViewportHeight(300); // puedes ajustar la altura visible
 
@@ -98,12 +105,9 @@ public class TransferenciasView extends Application implements TransferencesObse
 
 
     private void addTransferenceControlPanel(String mode, Transferencia transferencia, TransferManager transferManager) {
-        //Logger.logInfo("creando el controlador de la transferencia");
         TransferenceControlPanel controlPanel = new TransferenceControlPanel(mode, transferencia, transferManager);
-        //Logger.logInfo("id transferencia "+transferencia.getId());
         transferMap.put(transferencia.getId(), controlPanel);
         Platform.runLater(() -> transferBox.getChildren().add(controlPanel));
-        //Logger.logInfo("transfrencia agregada");
     }
 
     private void removeTransferenceControlPanel(String fileName) {
@@ -114,7 +118,7 @@ public class TransferenciasView extends Application implements TransferencesObse
     @Override
     public void addTransference(String mode, Transferencia transferencia, TransferManager transferManager) {
 
-        //Logger.logInfo("agregando la transferencia");
+        Logger.logInfo("agregando la transferencia al observador");
         addTransferenceControlPanel(mode, transferencia,transferManager);
     }
     @Override
@@ -133,6 +137,13 @@ public class TransferenciasView extends Application implements TransferencesObse
 
         // Actualizar progreso según el estado
         if (mode == FileTransferState.SENDING || mode == FileTransferState.RECEIVING) {
+            /*panel.updateProgressBar(
+                    42,
+                    "2.1 MB",
+                    "5 MB",
+                    "400 KB/s",
+                    "00:06:15"
+            );*/
             this.transferMap.get(id).updateProgressBar(progress);
         } else {
             Logger.logInfo("Estado de transferencia desconocido: " + mode);

@@ -1,107 +1,352 @@
-/* dark-theme.css */
-
-/* Fondo y texto */
+/* === FONDOS Y TEXTO BASE === */
 .root {
-    -fx-background-color: #2c3e50;
-    -fx-text-fill: #ecf0f1;
+    -fx-background-color: #1e272e;
+    -fx-text-fill: #dcdde1;
 }
 
 .label {
-    -fx-text-fill: #ecf0f1;
+    -fx-text-fill: #dcdde1;
+    -fx-font-size: 14px;
 }
 
-/* Barra de navegación superior */
-.hbox {
-    -fx-background-color: #34495e;
-}
-
+/* === BOTONES === */
 .button {
-    -fx-background-color: #1abc9c;
+    -fx-background-color: #3c6382;
     -fx-text-fill: #ffffff;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
 }
 
 .button:hover {
-    -fx-background-color: #16a085;
+    -fx-background-color: #0a3d62;
 }
 
-.text-field {
-    -fx-border-color: #7f8c8d;
-    -fx-background-color: #34495e;
-    -fx-text-fill: #ecf0f1;
+.button:disabled {
+    -fx-background-color: #4b6584;
+    -fx-text-fill: #a5b1c2;
 }
 
-.text-area {
-    -fx-background-color: #34495e;
-    -fx-text-fill: #ecf0f1;
-    -fx-border-color: #7f8c8d;
+/* === CAMPOS DE TEXTO === */
+.text-field, .password-field {
+    -fx-background-color: #2f3640;
+    -fx-text-fill: #f5f6fa;
+    -fx-border-color: #718093;
+    -fx-border-radius: 4px;
     -fx-padding: 5px;
 }
 
-/* Barras de progreso */
-.progress-bar {
-    -fx-accent: #1abc9c;
+.text-field:focused {
+    -fx-border-color: #1abc9c;
 }
 
-/* Elementos de estado */
-.label {
-    -fx-text-fill: #ecf0f1;
+/* === ÁREA DE TEXTO === */
+.text-area {
+    -fx-background-color: #2f3640;
+    -fx-text-fill: #f5f6fa;
+    -fx-border-color: #718093;
+    -fx-border-radius: 4px;
 }
 
-.hbox, .vbox {
-    -fx-background-color: #34495e;
-    -fx-border-color: #7f8c8d;
+/* === COMBOBOX Y DROPDOWNS === */
+.combo-box {
+    -fx-background-color: #2f3640;
+    -fx-text-fill: #f5f6fa;
+    -fx-border-color: #718093;
+    -fx-border-radius: 4px;
+}
+
+.combo-box:hover {
+    -fx-background-color: #3c6382;
+}
+
+/* === SCROLLPANE === */
+.scroll-pane {
+    -fx-background-color: #1e272e;
+}
+
+/* === CONTAINERS === */
+.hbox, .vbox, .grid-pane, .border-pane {
+    -fx-background-color: #2d3436;
+    -fx-border-color: #636e72;
     -fx-border-width: 1;
     -fx-padding: 10px;
 }
 
-/* Botones del menú */
-.combo-box, .button {
+/* === BARRA DE PROGRESO === */
+.progress-bar {
+    -fx-accent: #00cec9;
+}
+
+/* === LISTAS (TRANSFERENCIAS, NOTIFICACIONES, ETC.) === */
+.list-view {
+    -fx-control-inner-background: #2f3640;
+    -fx-text-fill: #dcdde1;
+    -fx-border-color: #636e72;
+}
+
+.list-cell {
+    -fx-text-fill: #dcdde1;
+}
+
+.list-cell:hover {
+    -fx-background-color: #3c6382;
+}
+
+/* === DATEPICKER === */
+.date-picker {
+    -fx-background-color: #2f3640;
+    -fx-text-fill: #ffffff;
+}
+
+/* === RADIOBUTTONS Y CHECKBOXES === */
+.radio-button, .check-box {
+    -fx-text-fill: #f5f6fa;
+}
+
+.radio-button .radio, .check-box .box {
+    -fx-background-color: #2f3640;
+    -fx-border-color: #7f8c8d;
+}
+
+.radio-button:selected .radio, .check-box:selected .box {
+    -fx-background-color: #1abc9c;
+}
+
+/* === CUSTOM: ESTADOS Y TEXTOS DE STATUS === */
+.status-label-green {
+    -fx-text-fill: #2ecc71;
+}
+
+.status-label-red {
+    -fx-text-fill: #e74c3c;
+}
+
+.status-label-yellow {
+    -fx-text-fill: #f1c40f;
+}
+
+/* === CABECERAS === */
+.header {
     -fx-background-color: #34495e;
+    -fx-text-fill: white;
+}
+
+/* === TOOLTIP === */
+.tooltip {
+    -fx-background-color: #34495e;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 13px;
+    -fx-border-color: #7f8c8d;
+}
+
+
+
+
+/* Panel general de Hosts */
+.hosts-panel {
+    -fx-background-color: #2d2d2d;
+    -fx-border-color: #00BFFF;
+    -fx-border-width: 2;
+    -fx-padding: 10;
+}
+
+/* Scroll para usuarios */
+.usuarios-scroll {
+    -fx-background-color: transparent;
+    -fx-border-color: #34495e;
+}
+
+/* Título de usuarios */
+.usuarios-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
     -fx-text-fill: #ecf0f1;
 }
 
-.combo-box:hover, .button:hover {
-    -fx-background-color: #7f8c8d;
+/* Caja de usuarios */
+.usuarios-box {
+    -fx-spacing: 10;
+    -fx-background-color: #2e2e2e;
+    -fx-padding: 10;
 }
 
-/* Fondo de la pantalla */
-.scroll-pane {
+/* Panel individual de usuario */
+.host-control-panel {
+    -fx-background-color: #2d2d2d;
+    -fx-border-color: #00BFFF;
+    -fx-border-width: 2;
+    -fx-padding: 10;
+    -fx-spacing: 10;
+}
+
+/* Nombre del host */
+.host-name {
+    -fx-font-size: 12px;
+    -fx-text-fill: #ffffff;
+}
+
+/* Estado del host */
+.status-label {
+    -fx-font-size: 10px;
+    -fx-text-fill: #bbbbbb;
+}
+
+/* Combo personalizado */
+.combo-dark {
+    -fx-background-color: #34495e;
+    -fx-border-color: #7f8c8d;
+    -fx-text-fill: #ecf0f1;
+}
+
+/* Botón oscuro */
+.button-dark {
+    -fx-background-color: #1abc9c;
+    -fx-text-fill: #ffffff;
+}
+.button-dark:hover {
+    -fx-background-color: #16a085;
+}
+
+/* Estado de conexión */
+.connection-status-label {
+    -fx-text-fill: #ecf0f1;
+}
+
+/* Panel general del chat */
+.chat-panel {
+    -fx-background-color: #2d2d2d;
+    -fx-padding: 10;
+}
+
+/* Caja principal del chat */
+.chat-box {
+    -fx-background-color: #333;
+    -fx-border-color: #00BFFF;
+    -fx-border-width: 1;
+    -fx-padding: 10;
+    -fx-spacing: 5;
+}
+
+/* Título del chat */
+.chat-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ecf0f1;
+}
+
+/* Etiqueta de usuarios */
+.usuarios-chat-label {
+    -fx-font-style: italic;
+    -fx-text-fill: #bdc3c7;
+}
+
+/* Área de mensajes */
+.chat-area {
+    -fx-control-inner-background: #1e1e1e;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #444;
+    -fx-border-width: 1;
+    -fx-padding: 5;
+}
+
+/* Input del chat */
+.chat-input {
+    -fx-background-color: #2e2e2e;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #555;
+    -fx-border-width: 1;
+}
+
+/* Botón de enviar */
+.chat-send-button {
+    -fx-background-color: #00BFFF;
+    -fx-text-fill: white;
+}
+.chat-send-button:hover {
+    -fx-background-color: #009acd;
+}
+
+/* HBox de entrada de chat */
+.chat-input-box {
+    -fx-spacing: 5;
+}
+
+
+/* --- General --- */
+.root {
+    -fx-background-color: #1e1e1e;
+    -fx-text-fill: #ffffff;
+}
+
+.label {
+    -fx-text-fill: #e0e0e0;
+}
+
+.button {
+    -fx-background-color: #3b3b3b;
+    -fx-text-fill: #ffffff;
+}
+
+.button:hover {
+    -fx-background-color: #505050;
+}
+
+.text-field {
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #555;
+}
+
+.combo-box {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #555;
+    -fx-text-fill: #ffffff;
+}
+
+.list-view {
+    -fx-control-inner-background: #2b2b2b;
+    -fx-cell-hover-color: #3a3a3a;
+    -fx-text-fill: white;
+}
+
+/* --- Header --- */
+.main-header {
     -fx-background-color: #2c3e50;
+    -fx-padding: 10;
 }
 
-/* Contenedores de usuarios conectados */
-.vbox .label, .vbox .button {
-    -fx-text-fill: #ecf0f1; /* Asegura que el texto de los usuarios sea visible */
-}
-
-.vbox .hbox {
-    -fx-background-color: #2c3e50;
-    -fx-text-fill: #ecf0f1;
-}
-
-.vbox .hbox:hover {
-    -fx-background-color: #34495e; /* Añadir un hover con color más claro */
-}
-
-/* Chat */
-.text-area {
+/* --- Barra de conexión --- */
+.connection-bar {
     -fx-background-color: #34495e;
-    -fx-text-fill: #ecf0f1;
+    -fx-padding: 8;
 }
 
-.text-area .user {
-    -fx-text-fill: #1abc9c; /* Color para los nombres de los usuarios */
+/* --- Envío rápido, notificaciones, transferencias --- */
+.card-box {
+    -fx-background-color: #292929;
+    -fx-border-color: #555;
+    -fx-border-width: 1;
+    -fx-padding: 10;
 }
 
-.text-area .message {
-    -fx-text-fill: #ffffff; /* Color para los mensajes */
+/* --- Estado del sistema y seguridad --- */
+.system-status-bar {
+    -fx-background-color: #222;
+    -fx-padding: 10;
 }
 
-.hbox .button {
-    -fx-background-color: #34495e;
-    -fx-text-fill: #ecf0f1;
+.bottom-section {
+    -fx-background-color: #1e1e1e;
+    -fx-text-fill: white;
+}
+.main-scroll {
+    -fx-background: #1e1e1e;
+    -fx-background-color: #1e1e1e;
 }
 
-.hbox .button:hover {
-    -fx-background-color: #7f8c8d;
+.main-scroll .viewport {
+    -fx-background-color: transparent;
 }
+
+
+

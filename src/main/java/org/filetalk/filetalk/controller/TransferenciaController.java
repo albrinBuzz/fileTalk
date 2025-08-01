@@ -31,7 +31,6 @@ public class TransferenciaController {
     // Método para agregar una nueva transferencia
     public String  addTransference(String mode, String srcAddr, String dstAddr, String fileName, TransferManager transferManager) {
         UUID uuid = UUID.randomUUID();
-
         String uniqueIdString = uuid.toString();
 
         Transferencia transferencia = new Transferencia(uniqueIdString,fileName, srcAddr, dstAddr, FileTransferState.IN_PROGRESS, transferManager);
@@ -42,7 +41,6 @@ public class TransferenciaController {
         }
 
         ///transferencesObserver.addTransference("send", recipientNick, recipientNick,filePath.substring(filePath.lastIndexOf(File.separator)),this);
-        Logger.logInfo("Transferencia agregada: " + fileName);
         // Notificar a la vista para que actualice la interfaz
         //Platform.runLater(() -> view.addTransferenceControlPanel(mode, fileName, transferManager));
 

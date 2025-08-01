@@ -29,6 +29,7 @@ public class Client {
     private Observer observer;
     private ConfiguracionServidor config = new ConfiguracionServidor();
     private TransferenciaController transferenciaController;
+
     public Client(){
         this.executorService = Executors.newFixedThreadPool(10); // Usar un pool de hilos para manejar tareas concurrentes
         transferenciaController=new TransferenciaController();
@@ -227,9 +228,12 @@ public class Client {
                 while (socket.isConnected()) {
 
                     Object object = entrada.readObject();
+                    //Logger.logInfo(object.getClass()+"");
+
                     if (object != null) {
 
                         communication = (Communication) object;
+                        //Logger.logInfo(communication.getType()+"");
                         if (communication instanceof ClientListMessage) {
                             ClientListMessage listCliets = (ClientListMessage) communication;
                             //clienteConectados = listCliets.getClientNicks();
@@ -242,14 +246,17 @@ public class Client {
                         } else if (communication instanceof Mensaje mensaje){
                             // Si el mensaje es otro tipo de mensaje
                             msj =mensaje.getContenido();
-                            Logger.logInfo(mensaje.getContenido());
+                            //Logger.logInfo(mensaje.getContenido());
                             handleIncomingMessage(msj);  // Procesamos el mensaje recibido
                             // actualizarUIConMensaje(msj); // Actualiza la UI con el mensaje recibido
+                        }else {
+                            Logger.logInfo(communication.getType()+"");
                         }
                     }else {
                         Logger.logInfo("Mensaje nulo");
                     }
                 }
+                Logger.logInfo("socket cerrado");
 
             } catch (IOException | ClassNotFoundException e) {
                 Logger.logInfo("Error leyendo del servidor: " + e.getMessage());
@@ -260,8 +267,8 @@ public class Client {
                     e.printStackTrace();
 
             } finally {
-                Logger.logInfo("cerrando");
-                //cleanUp();
+
+                cleanUp();
             }
         }
 
@@ -269,20 +276,14 @@ public class Client {
         private void handleRvc(FileHandshakeCommunication communication) throws IOException, ClassNotFoundException {
 
             if (communication.getFileInfo().getType().equals(CommunicationType.FILE)) {
-                Logger.logInfo("corregir ");
+
                 FileTransferManager transferManager =new FileTransferManager(transferenciaController);
-                System.out.println("Dirección remota: " + SERVER_ADDRESS);
-                System.out.println("Puerto remoto: " + socket.getPort());
-                System.out.println("Dirección local: " + socket.getLocalAddress().getHostAddress());
-                System.out.println("Puerto local: " + socket.getLocalPort());
-                String addresServer=socket.getInetAddress().getHostAddress();
-                String port= String.valueOf(socket.getPort());
+
                 transferManager.receiveFiles(SERVER_ADDRESS, String.valueOf(SERVER_PORT),communication);
 
             }
             else if (communication.getFileInfo().getType().equals(CommunicationType.DIRECTORY)) {
 
-                Logger.logInfo("en direcotrio");
                 DirectoryTransferManager directoryTransferManager=new DirectoryTransferManager(transferenciaController);
                 directoryTransferManager.reciveDirectory(SERVER_ADDRESS, String.valueOf(SERVER_PORT),communication);
             }
