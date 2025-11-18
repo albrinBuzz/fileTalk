@@ -46,20 +46,13 @@ public class Client {
         String hostName = inetAddress.getHostName();
         socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
         Logger.logInfo("Conectando a " + SERVER_ADDRESS + ":" + SERVER_PORT);
-        socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
-        Logger.logInfo("Conectado");
 
-        Logger.logInfo("Inicializando ObjectOutputStream...");
         salida = new ObjectOutputStream(socket.getOutputStream());
-        salida.flush();
-        Logger.logInfo("Inicializando ObjectInputStream...");
+        //salida.flush();
         entrada = new ObjectInputStream(socket.getInputStream());
-        Logger.logInfo("ObjectInputStream incializado");
-
-        Logger.logInfo("Enviando objeto Mensaje...");
+        //salida.flush();
         salida.writeObject(new Mensaje(hostName, CommunicationType.MESSAGE));
         salida.flush();
-        Logger.logInfo("Mensaje enviado");
 
         // Iniciar hilos para leer mensajes y recibir archivos
         executorService.submit(new ReadMessages(entrada));
@@ -166,11 +159,7 @@ public class Client {
         //directoryTransferManager.sendDirectory(file);
 
         executorService.submit(()-> {
-            try {
-                directoryTransferManager.sendDirectory(file,host,port,recipient);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            directoryTransferManager.sendDirectory(file,host,port,recipient);
         });
 
     }

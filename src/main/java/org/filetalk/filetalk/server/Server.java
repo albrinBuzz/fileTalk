@@ -55,7 +55,7 @@ public class Server {
         // Tarea programada para hacer broadcast del estado del servidor cada 1 segundo
         scheduler.scheduleAtFixedRate(this::brocastServer, 0, 1, TimeUnit.SECONDS);
 
-        scheduler.scheduleAtFixedRate(this::updateStatus, 0, 1, TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(this::updateStatus, 0, 1, TimeUnit.MILLISECONDS);
         //new Thread(this::administrativeInterface).start();
         // Iniciar el socket del servidor para aceptar conexiones de clientes
         try  {
@@ -232,32 +232,29 @@ public class Server {
             displayServerStatusWithAnimation();
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
 
     }
 
     // Método para mostrar el estado del servidor con animación
-    private void displayServerStatusWithAnimation() throws UnknownHostException {
+    private void displayServerStatusWithAnimation() throws UnknownHostException, InterruptedException {
         String[] spinner = {"|", "/", "-", "\\"};
         int index = 0;
 
         while (true) {
             clearConsole();
             serverInfo();
-            try {
-                String serverStatusV1 = constructServerStatusV1(spinner[index]);
-                System.out.print("\r" + serverStatusV1);
-                displayClientsInfo();
-                System.out.println();
-                messageHistory.forEach(System.out::println);
-                index = (index + 1) % spinner.length;
-                //TimeUnit.MILLISECONDS.sleep(300); // Esperar 1 segundo antes de la próxima actualización
-                TimeUnit.SECONDS.sleep(6); // Esperar 1 segundo antes de la próxima actualización
-                System.gc(); // Forzar recolección de basura
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                break;
-            }
+            String serverStatusV1 = constructServerStatusV1(spinner[index]);
+            System.out.print("\r" + serverStatusV1);
+            displayClientsInfo();
+            System.out.println();
+            messageHistory.forEach(System.out::println);
+            index = (index + 1) % spinner.length;
+            TimeUnit.MILLISECONDS.sleep(100); // Esperar 1 segundo antes de la próxima actualización
+            //TimeUnit.SECONDS.sleep(1); // Esperar 1 segundo antes de la próxima actualización
+            System.gc(); // Forzar recolección de basura
         }
     }
 
@@ -269,7 +266,7 @@ public class Server {
         String javaVersion = System.getProperty("java.version");
         int availableProcessors = Runtime.getRuntime().availableProcessors();
         //String ip= InetAddress.getLocalHost().getHostAddress();
-        String ip= getPublicIP();
+        //String ip= getPublicIP();
         long maxMemory = Runtime.getRuntime().maxMemory() / (1024 * 1024 * 1024);
         double maxMemoryMB = Runtime.getRuntime().maxMemory() / (1024.0 * 1024.0);
         String maxMem;
@@ -332,7 +329,7 @@ public class Server {
 
         System.out.println(Color.YELLOW_BOLD+"  Versión del Servidor:       " + Color.YELLOW + serverVersion + Color.RESET);
         System.out.println(Color.YELLOW_BOLD+"  Puerto:                     " + Color.YELLOW + PORT + Color.RESET);
-        System.out.println(Color.YELLOW_BOLD+"  Ip:                         " + Color.YELLOW + ip + Color.RESET);
+        //System.out.println(Color.YELLOW_BOLD+"  Ip:                         " + Color.YELLOW + ip + Color.RESET);
         System.out.println(Color.YELLOW_BOLD+"  Hora de Inicio:             " + Color.YELLOW + startTime + Color.RESET);
         System.out.println(Color.YELLOW_BOLD+"  Sistema Operativo:          " + Color.YELLOW + osName + " " + osVersion + Color.RESET);
         System.out.println(Color.YELLOW_BOLD+"  Versión de Java:            " + Color.YELLOW + javaVersion + Color.RESET);

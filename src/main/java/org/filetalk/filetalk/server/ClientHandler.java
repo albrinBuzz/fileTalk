@@ -45,7 +45,7 @@ public class ClientHandler implements Runnable {
 
         try {
 
-            Logger.logInfo("CLIENTE CONECTADO");
+            Logger.logInfo("Cliente conectado"+clientSocket.getRemoteSocketAddress().toString());
             if (clientSocket.getInputStream() == null || clientSocket.getOutputStream() == null) {
                 Logger.logInfo("INPUT CLIENTE VACIO");
                 return;
@@ -53,7 +53,7 @@ public class ClientHandler implements Runnable {
 
             // Crear el flujo de salida primero
             salida = new ObjectOutputStream(clientSocket.getOutputStream());
-            salida.flush(); // Aseguramos que el flujo de salida esté limpio antes de escribir
+            //salida.flush(); // Aseguramos que el flujo de salida esté limpio antes de escribir
 
             // Crear el flujo de entrada después
             entrada = new ObjectInputStream(clientSocket.getInputStream());
@@ -108,7 +108,7 @@ public class ClientHandler implements Runnable {
             // El flujo llegó al final inesperadamente
 
             Logger.logInfo("Fin inesperado del flujo de datos. "+e.getMessage());
-            //e.printStackTrace();
+            e.printStackTrace();
         } catch (StreamCorruptedException e) {
             // El flujo está dañado
             Logger.logInfo("El flujo de datos está dañado."+e.getMessage());
@@ -226,7 +226,8 @@ public class ClientHandler implements Runnable {
 
 
 
-            byte[] buffer = new byte[100 * 1024 * 1024];  // 50 MB
+            //byte[] buffer = new byte[100 * 1024 * 1024];  // 50 MB
+            byte[] buffer = new byte[64 * 1024];
 
             int bytesRead;
             long totalBytesSent = 0;
@@ -252,7 +253,8 @@ public class ClientHandler implements Runnable {
                     bytesRead = 0;
                     long totalBytesRead = 0;
                     fileSize = archivo.getSize();
-                    Logger.logInfo(archivo.toString());
+                    //Logger.logInfo(archivo.toString());
+
                     if (archivo.isDirectory() && archivo.getSize() == 0) {
                         Logger.logInfo("directorio vacio");
                         continue;

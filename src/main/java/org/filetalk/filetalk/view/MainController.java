@@ -257,7 +257,8 @@ public class MainController {
     public void connectServer(String ip, String portStr) {
 
 
-
+        mainView.getConnectionStatusLabel().setText("[🟢 Conectado]");
+        mainView.getConnectionStatusLabel().setTextFill(Color.LIGHTGREEN);
 
         Service<Void> servicio = new Service<Void>() {
             @Override
@@ -270,8 +271,7 @@ public class MainController {
 
 
                             client.setConexion(ip, Integer.parseInt(portStr));
-                            mainView.getConnectionStatusLabel().setText("[🟢 Conectado]");
-                            mainView.getConnectionStatusLabel().setTextFill(Color.LIGHTGREEN);
+
 
                         }
                         catch (Exception e) {
